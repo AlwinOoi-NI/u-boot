@@ -55,6 +55,13 @@
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NETCONSOLE
 
+#define CONFIG_CMD_I2C
+/* not really used */
+#define CONFIG_SYS_I2C_SPEED 400
+#define CONFIG_HARD_I2C
+#define CONFIG_ZYNQ_I2C
+#define CONFIG_ZYNQ_I2C_CTLR_0
+
 /*
  * Physical Memory map
  */
