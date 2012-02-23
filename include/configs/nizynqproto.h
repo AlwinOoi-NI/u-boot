@@ -41,6 +41,8 @@
 #define CONFIG_ZYNQ_GEM
 #define CONFIG_NET_MULTI
 #define CONFIG_XGMAC_PHY_ADDR 0
+#define CONFIG_CMD_MII
+#define CONFIG_MII
 
 /*
  * Physical Memory map
