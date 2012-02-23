@@ -6,6 +6,7 @@
 #include <asm/arch/nand.h>
 #include <asm/arch/sdhci.h>
 #include <asm/io.h>
+#include <i2c.h>
 #include <netdev.h>
 #include <zynqpl.h>
 
@@ -74,6 +75,15 @@ int board_late_init (void)
 #ifdef CONFIG_CMD_NET
 int board_eth_init(bd_t *bis)
 {
+	u8 tmp;
+
+	/*
+	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
+	 * out of reset
+	 */
+	tmp = 0x00;
+	i2c_write(0x40, 0x03, 1, &tmp, 1);
+
 	return zynq_gem_initialize(bis);
 }
 #endif
