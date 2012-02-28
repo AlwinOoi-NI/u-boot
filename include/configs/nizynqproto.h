@@ -21,6 +21,8 @@
 
 #include <config_cmd_default.h>
 #undef CONFIG_CMD_XIMG
+#define CONFIG_FIT
+//#define CONFIG_FIT_VERBOSE /* enable fit_format_{error,warning}() */
 #define CONFIG_CMD_DATE		/* RTC? */
 #define CONFIG_CMD_PING		/* Might be useful for debugging */
 #define CONFIG_REGINFO		/* Again, debugging */
@@ -31,6 +33,14 @@
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_HUSH_PARSER
 #define CONFIG_SYS_PROMPT_HUSH_PS2 "hush> "
+
+#define CONFIG_CMD_UNZIP
+#define CONFIG_CMD_SETEXPR
+#define CONFIG_CRC32_VERIFY
+#define CONFIG_CMD_MD5SUM
+#define CONFIG_MD5SUM_VERIFY
+#define CONFIG_CMD_SHA1SUM
+#define CONFIG_SHA1SUM_VERIFY
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
