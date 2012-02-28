@@ -43,6 +43,14 @@
 #define CONFIG_XGMAC_PHY_ADDR 0
 #define CONFIG_CMD_MII
 #define CONFIG_MII
+#define CONFIG_CMD_DHCP
+#define CONFIG_CMD_LINK_LOCAL
+#define CONFIG_BOOTP_SERVERIP
+#define CONFIG_BOOTP_SUBNETMASK
+#define CONFIG_BOOTP_GATEWAY
+#define CONFIG_BOOTP_DNS
+#define CONFIG_BOOTP_HOSTNAME
+#define CONFIG_BOOTP_SEND_HOSTNAME
 
 /*
  * Physical Memory map
@@ -77,6 +85,7 @@
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS	\
+	"autoload=n\0" \
 	"kernel_size=0x140000\0"	\
 	"ramdisk_size=0x200000\0"	\
 	"nand_kernel_size=0x400000\0"	\
