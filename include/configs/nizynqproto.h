@@ -28,10 +28,17 @@
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
 
+#define CONFIG_SYS_LONGHELP
+#define CONFIG_SYS_HUSH_PARSER
+#define CONFIG_SYS_PROMPT_HUSH_PS2 "hush> "
+
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
 #define CONFIG_IDENT_STRING	"\nNational Instruments Zynq Prototype"
 #define CONFIG_PANIC_HANG /* For development/debugging */
+
+#undef CONFIG_SYS_PROMPT
+#define CONFIG_SYS_PROMPT	"ni-zynq> "
 
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
