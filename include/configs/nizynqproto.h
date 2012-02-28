@@ -97,6 +97,16 @@
 #define CONFIG_SYS_MAX_NAND_DEVICE 1
 #define CONFIG_SYS_NAND_BASE XPSS_NAND_BASEADDR
 #define CONFIG_MTD_DEVICE
+#define CONFIG_CMD_MTDPARTS
+#define MTDIDS_DEFAULT "nand0=xilinx_nand"
+#define MTDPARTS_DEFAULT \
+	"mtdparts=xilinx_nand:" \
+		"128k(fsbl)ro," \
+		"512k(u-boot)ro," \
+		"256k(u-boot-env1)," \
+		"256k(u-boot-env2)," \
+		"60M(boot-config)," \
+		"-(root)"
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
 
@@ -130,6 +140,8 @@
 	"ramdisk_size=0x200000\0"	\
 	"nand_kernel_size=0x400000\0"	\
 	"nand_ramdisk_size=0x400000\0"	\
+	"mtdids=" MTDIDS_DEFAULT "\0" \
+	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"norboot=echo Copying Linux from NOR flash to RAM...;" \
 		"cp 0xE2100000 0x8000 ${kernel_size};" \
 		"cp 0xE2600000 0x1000000 0x8000;" \
