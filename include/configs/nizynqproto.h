@@ -51,6 +51,7 @@
 #define CONFIG_BOOTP_DNS
 #define CONFIG_BOOTP_HOSTNAME
 #define CONFIG_BOOTP_SEND_HOSTNAME
+#define CONFIG_NETCONSOLE
 
 /*
  * Physical Memory map
@@ -86,6 +87,11 @@
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 	"autoload=n\0" \
+	"ncoutport=7865\0" \
+	"ncinport=8473\0" \
+	"ncip=255.255.255.255\0" \
+	"nc=setenv stdout nc;setenv stdin nc\0" \
+	"sc=setenv stdout serial;setenv stdin serial\0" \
 	"kernel_size=0x140000\0"	\
 	"ramdisk_size=0x200000\0"	\
 	"nand_kernel_size=0x400000\0"	\
