@@ -83,6 +83,8 @@
  * Physical Memory map
  */
 #define PHYS_SDRAM_1_SIZE (512 * 1024 * 1024)
+#define CONFIG_SYS_ALT_MEMTEST
+#define CONFIG_SYS_MEMTEST_SCRATCH 0xFFFFF000
 
 /*
  * NAND Flash settings
