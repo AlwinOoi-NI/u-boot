@@ -59,6 +59,7 @@
 /* Not needed when OOB is used */
 #define CONFIG_ENV_OFFSET		0xA0000
 #define CONFIG_ENV_OFFSET_REDUND	0xE0000
+#undef CONFIG_ENV_SIZE
 #define CONFIG_ENV_SIZE			0x20000
 #define CONFIG_ENV_SIZE_REDUND		CONFIG_ENV_SIZE
 #define CONFIG_ENV_RANGE		0x40000
@@ -121,7 +122,9 @@
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
 
+#define CONFIG_MTD_UBOOT_OFFSET		0x20000
 #define CONFIG_BOARD_SIZE_LIMIT		524288
+#define CONFIG_BOOTFS_VOLUME_SIZE	0x3600000
 
 /* Secure Digital */
 #define CONFIG_MMC
@@ -136,6 +139,10 @@
 #define CONFIG_CMD_EXT2
 #define CONFIG_DOS_PARTITION
 #endif
+
+#undef CONFIG_SYS_LOAD_ADDR
+#define CONFIG_SYS_LOAD_ADDR 0x8000000
+#define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS	\
@@ -153,6 +160,7 @@
 	"nand_ramdisk_size=0x400000\0"	\
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
+	"verifyaddr=0x10000000\0" \
 	"norboot=echo Copying Linux from NOR flash to RAM...;" \
 		"cp 0xE2100000 0x8000 ${kernel_size};" \
 		"cp 0xE2600000 0x1000000 0x8000;" \
@@ -181,6 +189,29 @@
 		"tftp 0x8000 zImage;" \
 		"tftp 0x1000000 devicetree.dtb;" \
 		"tftp 0x800000 ramdisk8M.image.gz;" \
-		"go 0x8000\0"
+		"go 0x8000\0" \
+	"writepartitions=" \
+		"nand erase.part boot-config && " \
+		"ubi part boot-config && " \
+		"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
+		"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
+		"ubi create bootfs " __stringify(CONFIG_BOOTFS_VOLUME_SIZE) " dynamic && " \
+		"ubi create config - dynamic && " \
+		"nand erase.part root && " \
+		"ubi part root && " \
+		"ubi create rootfs - dynamic;\0" \
+	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
+		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
+		"nand read $verifyaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
+		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_ENV_OFFSET) ";\0" \
+	"writefsbl=nand erase.part fsbl; " \
+		"nand write $loadaddr fsbl; " \
+		"nand read $verifyaddr fsbl; " \
+		"cmp.b $loadaddr $verifyaddr 0x20000;\0" \
+	"writeuboot=nand erase.part u-boot; " \
+		"nand write $loadaddr u-boot; " \
+		"nand read $verifyaddr u-boot; " \
+		"cmp.b $loadaddr $verifyaddr " \
+			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
 #endif /* __CONFIG_NIZYNQPROTO_H */
