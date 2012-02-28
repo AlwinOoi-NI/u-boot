@@ -25,6 +25,8 @@
 #define CONFIG_CMD_PING		/* Might be useful for debugging */
 #define CONFIG_REGINFO		/* Again, debugging */
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
+/* check for input to stop even if delay is 0 */
+#define CONFIG_ZERO_BOOTDELAY_CHECK
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
