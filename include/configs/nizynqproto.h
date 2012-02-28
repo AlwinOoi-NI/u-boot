@@ -53,7 +53,18 @@
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
 
-#define CONFIG_ENV_IS_NOWHERE
+#define CONFIG_ENV_IS_IN_NAND
+/* Writing to OOB 0 is apparently not compatible with BootROM */
+//#define CONFIG_ENV_OFFSET_OOB
+/* Not needed when OOB is used */
+#define CONFIG_ENV_OFFSET		0xA0000
+#define CONFIG_ENV_OFFSET_REDUND	0xE0000
+#define CONFIG_ENV_SIZE			0x20000
+#define CONFIG_ENV_SIZE_REDUND		CONFIG_ENV_SIZE
+#define CONFIG_ENV_RANGE		0x40000
+
+#define CONFIG_CMD_SAVEENV	/* Command to save ENV to Flash */
+#define CONFIG_ENV_OVERWRITE
 
 /* HW to use */
 #define CONFIG_ZYNQ_UART1
