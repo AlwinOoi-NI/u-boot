@@ -92,6 +92,8 @@
 	"ncip=255.255.255.255\0" \
 	"nc=setenv stdout nc;setenv stdin nc\0" \
 	"sc=setenv stdout serial;setenv stdin serial\0" \
+	"fdt_high=0x17ffffff\0" \
+	"initrd_high=0x17ffffff\0" \
 	"kernel_size=0x140000\0"	\
 	"ramdisk_size=0x200000\0"	\
 	"nand_kernel_size=0x400000\0"	\
