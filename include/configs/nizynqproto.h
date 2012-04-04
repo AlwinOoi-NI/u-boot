@@ -12,6 +12,7 @@
  * High Level Configuration Options
  */
 #define CONFIG_NIZYNQPROTO /* Board */
+#define CONFIG_DEVICE_CODE 7659
 
 #include <configs/zynq_common.h>
 
@@ -154,6 +155,9 @@
 	"sc=setenv stdout serial;setenv stdin serial\0" \
 	"fdt_high=0x17ffffff\0" \
 	"initrd_high=0x17ffffff\0" \
+	"TargetClass=cRIO\0" \
+	"DeviceDesc=cRIO-Zynq\0" \
+	"DeviceCode=0x" __stringify(CONFIG_DEVICE_CODE) "\0" \
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
