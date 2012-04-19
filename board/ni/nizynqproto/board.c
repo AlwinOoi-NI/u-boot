@@ -7,6 +7,7 @@
 #include <asm/arch/sdhci.h>
 #include <asm/io.h>
 #include <i2c.h>
+#include <miiphy.h>
 #include <netdev.h>
 #include <zynqpl.h>
 
@@ -75,6 +76,7 @@ int board_late_init (void)
 #ifdef CONFIG_CMD_NET
 int board_eth_init(bd_t *bis)
 {
+	int retval;
 	u8 tmp;
 
 	/*
@@ -84,7 +86,14 @@ int board_eth_init(bd_t *bis)
 	tmp = 0x00;
 	i2c_write(0x40, 0x03, 1, &tmp, 1);
 
-	return zynq_gem_initialize(bis);
+	retval = zynq_gem_initialize(bis);
+
+	/* Override the primary phy's drive strength to maximum */
+	miiphy_write("zynq_gem", 0, 22, 2);
+	miiphy_write("zynq_gem", 0, 24, 0x1F4F);
+	miiphy_write("zynq_gem", 0, 22, 0);
+
+	return retval;
 }
 #endif
 
