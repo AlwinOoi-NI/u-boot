@@ -6,6 +6,7 @@
 #include <asm/arch/nand.h>
 #include <asm/arch/sdhci.h>
 #include <asm/io.h>
+#include <environment.h>
 #include <i2c.h>
 #include <miiphy.h>
 #include <netdev.h>
@@ -46,7 +47,11 @@ Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 
 struct serial_device *default_serial_console(void)
 {
+#ifdef CONFIG_BRINGUP
+	return &eserial1_device;
+#else
 	return &null_serial_device;
+#endif
 }
 
 int board_init(void)
@@ -80,6 +85,9 @@ int board_late_init (void)
 	u8 tmp;
 	struct ulpi_viewport usb_phy;
 	struct ulpi_regs *ulpi = (struct ulpi_regs *)0;
+#ifdef CONFIG_BRINGUP
+	char serial[11] = "";
+#endif
 
 	/*
 	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
@@ -100,6 +108,14 @@ int board_late_init (void)
 	   in the OTG Control register, otherwise the PHY will never turn on
 	   power to the USB port. */
 	ulpi_write(&usb_phy, &ulpi->otg_ctrl_set, ULPI_OTG_DRVVBUS_EXT);
+
+#ifdef CONFIG_BRINGUP
+	if (getenv("serial#") != NULL)
+		strcpy(serial, getenv("serial#"));
+	set_default_env("Default env required for auto-bringup.\n");
+	if (strlen(serial) != 0)
+		setenv("serial#", serial);
+#endif
 
 	return 0;
 }
@@ -163,7 +179,11 @@ int board_nand_init(struct nand_chip *nand_chip)
 	 * This is crappy (using 0 as the device), but this is what the Zynq
 	 * NAND driver does, so we do it too to make sure we get the same device
 	 */
+#ifdef CONFIG_BRINGUP
+	off = 0;
+#else
 	off = CONFIG_ENV_OFFSET;
+#endif
 	size = nand_info[0].size - off;
 
 	nand_unlock(&nand_info[0], off, size, 0);

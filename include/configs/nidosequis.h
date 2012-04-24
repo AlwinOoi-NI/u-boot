@@ -24,8 +24,14 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
+#ifdef CONFIG_BRINGUP
+#undef CONFIG_BOOTDELAY
+/* -1 to Disable autoboot, -2 to force boot */
+#define CONFIG_BOOTDELAY	0
+#else
 #define CONFIG_SILENT_CONSOLE
 #define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
+#endif
 #define CONFIG_SYS_DEVICE_NULLDEV
 #define CONFIG_BAUDRATE_UPDATE_ON_RELOC
 
@@ -35,6 +41,9 @@
 
 #define CONFIG_CMD_UNZIP
 #define CONFIG_CMD_SETEXPR
+#ifdef CONFIG_BRINGUP
+#define CONFIG_CMD_ASKENV
+#endif
 #define CONFIG_CRC32_VERIFY
 #define CONFIG_CMD_MD5SUM
 #define CONFIG_MD5SUM_VERIFY
@@ -200,8 +209,7 @@
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
-#undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS \
+#define REAL_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
 	"consolecmd=setenv console ttyS0,$baudrate\0" \
@@ -434,15 +442,14 @@
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND	\
+#define REAL_BOOTCOMMAND \
 	"if test $bootmode = safemode -o $bootmode = install; then " \
 		"run boot_safemode; " \
 	"else " \
 		"run boot_runmode; "\
 	"fi"
 
-#define CONFIG_PREBOOT \
+#define REAL_PREBOOT \
 	"setenv silent 1; " \
 	"dcache on; " \
 	"nand lock tight; " \
@@ -477,5 +484,67 @@
 			"bootmode=safemode; " \
 		"fi; " \
 	"fi;"
+
+#ifndef CONFIG_BRINGUP
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	REAL_EXTRA_ENV_SETTINGS
+
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND \
+	REAL_BOOTCOMMAND
+
+#define CONFIG_PREBOOT \
+	REAL_PREBOOT
+
+#else
+
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	REAL_EXTRA_ENV_SETTINGS \
+	"realbootcmd=" \
+	REAL_BOOTCOMMAND "\0" \
+	"realpreboot=" \
+	REAL_PREBOOT "\0"
+
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND	\
+	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
+		"askenv serial# 'Enter board serial number: ' 10; " \
+	"fi; " \
+	"if test -n \\\\\"${serial\\\\#}\\\\\" && " \
+	"defethaddr && " \
+	"defethaddr 1 && " \
+	"run ipresetcmd && " \
+	"setenv bootdelay -2 && " \
+	"setenv bootcmd \\\\\"$realbootcmd\\\\\" && " \
+	"setenv realbootcmd && " \
+	"setenv preboot \\\\\"$realpreboot\\\\\" && " \
+	"setenv realpreboot && " \
+	"saveenv && saveenv && " \
+	"mmcinfo && " \
+	"echo '*******' && " \
+	"echo '*******  Installing BOOT_NAND.BIN...' && " \
+	"echo '*******' && " \
+	"fatload mmc 0 $loadaddr BOOT_NAND.BIN && " \
+	"run writeboot && " \
+	"echo '*******' && " \
+	"echo '*******  Partitioning NAND flash...' && " \
+	"echo '*******' && " \
+	"run writepartitions && " \
+	"echo '*******' && " \
+	"echo '*******  Installing dosequis_bootfs.ubifs...' && " \
+	"echo '*******' && " \
+	"fatload mmc 0 $loadaddr dosequis_bootfs.ubifs && " \
+	"ubi part boot-config && " \
+	"ubi write $loadaddr bootfs $filesize && " \
+	"echo '*******' && " \
+	"echo '*******  Set bootmode jumpers to (off)(off)(on) NAND boot mode and reboot.'; then " \
+	"else " \
+		"echo '*******' && " \
+		"echo '*******  Auto-bringup failed!  Contact Joe Hershberger.'; " \
+	"fi;"
+
+#endif
 
 #endif /* __CONFIG_NIDOSEQUIS_H */
