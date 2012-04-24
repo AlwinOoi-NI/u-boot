@@ -6,6 +6,7 @@
 #include <asm/arch/nand.h>
 #include <asm/arch/sdhci.h>
 #include <asm/io.h>
+#include <environment.h>
 #include <i2c.h>
 #include <miiphy.h>
 #include <netdev.h>
@@ -70,6 +71,16 @@ int board_init(void)
 
 int board_late_init (void)
 {
+#ifdef CONFIG_BRINGUP
+	char serial[11] = "";
+
+	if (getenv("serial#") != NULL)
+		strcpy(serial, getenv("serial#"));
+	set_default_env("Default env required for auto-bringup.\n");
+	if (strlen(serial) != 0)
+		setenv("serial#", serial);
+#endif
+
 	return 0;
 }
 
