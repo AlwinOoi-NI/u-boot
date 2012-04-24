@@ -68,30 +68,6 @@ int board_init(void)
 
 int board_late_init (void)
 {
-	u32 boot_mode;
-
-	boot_mode = (in_le32(BOOT_MODE_REG) & BOOT_MODES_MASK);
-	switch(boot_mode) {
-	case QSPI_MODE:
-		setenv("modeboot", "run qspiboot");
-		break;
-	case NAND_FLASH_MODE:
-		setenv("modeboot", "run nandboot");
-		break;
-	case NOR_FLASH_MODE:
-		setenv("modeboot", "run norboot");
-		break;
-	case SD_MODE:
-		setenv("modeboot", "run sdboot");
-		break;
-	case JTAG_MODE:
-		setenv("modeboot", "run jtagboot");
-		break;
-	default:
-		setenv("modeboot", "");
-		break;
-	}
-
 	return 0;
 }
 
