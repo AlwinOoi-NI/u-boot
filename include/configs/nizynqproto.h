@@ -68,6 +68,11 @@
 #define CONFIG_CMD_SAVEENV	/* Command to save ENV to Flash */
 #define CONFIG_ENV_OVERWRITE
 
+#define CONFIG_FPGA
+#define CONFIG_FPGA_XILINX
+#define CONFIG_FPGA_ZYNQPL
+#define CONFIG_CMD_FPGA
+
 /* HW to use */
 #define CONFIG_ZYNQ_UART1
 #define CONFIG_ZYNQ_GEM
