@@ -174,6 +174,9 @@
 			"echo $safemode_err; " \
 		"fi;\0" \
 	"safemode_err=Failed to find a valid safemode image.\0" \
+	"updateenv=env export -b $loadaddr; " \
+		"env default -f; " \
+		"env import -b $loadaddr;\0" \
 	"writepartitions=" \
 		"nand erase.part boot-config && " \
 		"ubi part boot-config && " \
