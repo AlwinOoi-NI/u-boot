@@ -100,6 +100,8 @@
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
 
+#define CONFIG_BOARD_SIZE_LIMIT		524288
+
 /* Secure Digital */
 #define CONFIG_MMC
 
