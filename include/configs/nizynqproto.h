@@ -42,6 +42,8 @@
 #define CONFIG_MD5SUM_VERIFY
 #define CONFIG_CMD_SHA1SUM
 #define CONFIG_SHA1SUM_VERIFY
+#define CONFIG_CMD_INI
+#define CONFIG_INI_CASE_INSENSITIVE
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
