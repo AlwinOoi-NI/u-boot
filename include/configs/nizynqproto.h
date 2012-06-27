@@ -190,6 +190,63 @@
 		"else " \
 			"echo $safemode_err; " \
 		"fi;\0" \
+	"readsoftdip=if ubifsmount ubi:config && " \
+		"ubifsload $loadaddr ni-rt.ini && " \
+		"ini systemsettings; then " \
+			"setenv safemode.enabled ${safemode.enabled:-true}; " \
+			"setenv ipreset.enabled ${ipreset.enabled:-false}; " \
+			"setenv consoleout.enabled ${consoleout.enabled:-true}; " \
+			"setenv nofpgaapp.enabled ${nofpgaapp.enabled:-false}; " \
+		"else " \
+			"setenv safemode.enabled true; " \
+			"setenv ipreset.enabled false; " \
+			"setenv consoleout.enabled true; " \
+			"setenv nofpgaapp.enabled false; " \
+		"fi;\0" \
+	"readcplddip=i2c read 0x40 1 1 $loadaddr; " \
+		"setexpr.b cpld.safemode *$loadaddr \\\\& 0x01; " \
+		"setexpr.b cpld.ipreset *$loadaddr \\\\& 0x02; " \
+		"setexpr.b cpld.consoleout *$loadaddr \\\\& 0x04; " \
+		"setexpr.b cpld.softboot *$loadaddr \\\\& 0x20; " \
+		"i2c read 0x40 2 1 $loadaddr; " \
+		"setexpr.b cpld.resetbybutton *$loadaddr \\\\& 0x01;\0" \
+	"evaldip=" \
+		"if test ${cpld.safemode} -ne 0 -o " \
+			"\\\"${safemode.enabled}\\\" != false; " \
+		"then " \
+			"issafemode=1; " \
+		"fi; " \
+		"if test ${cpld.ipreset} -ne 0 -o " \
+			"\\\"${ipreset.enabled}\\\" != false; " \
+		"then " \
+			"isipreset=1; " \
+		"fi; " \
+		"if test ${cpld.consoleout} -ne 0 -o " \
+			"\\\"${consoleout.enabled}\\\" != false; " \
+		"then " \
+			"isconsoleout=1; " \
+		"fi; " \
+		"if test \\\"${nofpgaapp.enabled}\\\" != false; then " \
+			"isnofpgaapp=1; " \
+		"fi; " \
+		"if test ${cpld.softboot} -eq 0 -a " \
+			"${cpld.resetbybutton} -ne 0; " \
+		"then " \
+			"isforcedrecoverymode=1; " \
+		"fi; " \
+		"setenv safemode.enabled; " \
+		"setenv ipreset.enabled; " \
+		"setenv consoleout.enabled; " \
+		"setenv nofpgaapp.enabled; " \
+		"setenv noapp.enabled; " \
+		"setenv host_name; " \
+		"setenv primarymac; " \
+		"setenv language; " \
+		"setenv cpld.safemode; " \
+		"setenv cpld.ipreset; " \
+		"setenv cpld.consoleout; " \
+		"setenv cpld.softboot; " \
+		"setenv cpld.resetbybutton;\0" \
 	"safemode_err=Failed to find a valid safemode image.\0" \
 	"updateenv=env export -b $loadaddr; " \
 		"env default -f; " \
@@ -225,5 +282,8 @@
 #define CONFIG_PREBOOT \
 	"dcache on; " \
 	"ubi part boot-config; " \
+	"run readsoftdip; " \
+	"run readcplddip; " \
+	"run evaldip; " \
 
 #endif /* __CONFIG_NIZYNQPROTO_H */
