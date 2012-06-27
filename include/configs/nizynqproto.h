@@ -54,6 +54,8 @@
 #undef CONFIG_SYS_PROMPT
 #define CONFIG_SYS_PROMPT	"ni-zynq> "
 
+#define CONFIG_DEFAULT_HOSTNAME_BASE	"zynq-"
+
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
 
@@ -190,6 +192,43 @@
 		"else " \
 			"echo $safemode_err; " \
 		"fi;\0" \
+	"fpgaloadcmd=ubifsmount ubi:bootfs; " \
+		"if test -n \\\"$isnofpgaapp\\\" -o -n \\\"$issafemode\\\"; then " \
+			"loaddefaultbit=1; " \
+		"else " \
+			"if ubifsload $verifyaddr user.bit.crc && " \
+				"ubifsload $loadaddr user.bit.bin && " \
+				"md5sum -vp $loadaddr $filesize $verifyaddr; " \
+			"then " \
+				"configfpga=1; " \
+			"else " \
+				"loaddefaultbit=1; " \
+			"fi; " \
+		"fi; " \
+		"if test -n \\\"$loaddefaultbit\\\"; then " \
+			"if ubifsload $verifyaddr default.bit.crc && " \
+				"ubifsload $loadaddr default.bit.bin && " \
+				"md5sum -vp $loadaddr $filesize $verifyaddr; " \
+			"then " \
+				"configfpga=1; " \
+			"fi; " \
+		"fi; " \
+		"if test -n \\\"$configfpga\\\"; then " \
+			"fpga load 0 $loadaddr $filesize; " \
+		"fi;\0" \
+	"ipresetcmd=echo Resetting primary Ethernet configuration; " \
+		"setenv dhcpenabled 1; " \
+		"setenv linklocalenabled 1; " \
+		"setenv sdnsip; " \
+		"setenv sgatewayip; " \
+		"setenv sipaddr; " \
+		"setenv snetmask; " \
+		"setenv hostname " CONFIG_DEFAULT_HOSTNAME_BASE "${serial#}; " \
+		"setenv mtu; " \
+		"setenv ncip 255.255.255.255; " \
+		"savesilent=$silent;setenv silent 1; " \
+		"saveenv;saveenv; " \
+		"setenv silent $savesilent;\0" \
 	"readsoftdip=if ubifsmount ubi:config && " \
 		"ubifsload $loadaddr ni-rt.ini && " \
 		"ini systemsettings; then " \
@@ -285,5 +324,9 @@
 	"run readsoftdip; " \
 	"run readcplddip; " \
 	"run evaldip; " \
+	"run fpgaloadcmd; " \
+	"if test -n \\\"$isipreset\\\"; then " \
+		"run ipresetcmd; " \
+	"fi;"
 
 #endif /* __CONFIG_NIZYNQPROTO_H */
