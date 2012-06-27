@@ -203,6 +203,11 @@
 	"recoverybootcmd=setenv bootcmd $savebootcmd; " \
 		"setenv bootdelay $savebootdelay;\0" \
 	"recoverycmd=echo Entering recovery mode!; " \
+		"run markhardbootcomplete; " \
+		"if test -n \\\"$forcedrecovery\\\"; " \
+		"then " \
+			"run ipresetcmd; " \
+		"fi;" \
 		"savebootcmd=$bootcmd; " \
 		"setenv bootcmd \\\"$recoverybootcmd\\\"; " \
 		"savebootdelay=$bootdelay; " \
@@ -240,7 +245,8 @@
 		"fi; " \
 		"if test -n \\\"$configfpga\\\"; then " \
 			"fpga load 0 $loadaddr $filesize; " \
-		"fi;\0" \
+		"fi; " \
+		"run markhardbootcomplete;\0" \
 	"ipresetcmd=echo Resetting primary Ethernet configuration; " \
 		"setenv dhcpenabled 1; " \
 		"setenv linklocalenabled 1; " \
@@ -254,6 +260,8 @@
 		"savesilent=$silent;setenv silent 1; " \
 		"saveenv;saveenv; " \
 		"setenv silent $savesilent;\0" \
+	"markhardbootcomplete=" \
+		"i2c mw 0x40 1 0x20;\0" \
 	"readsoftdip=if ubifsmount ubi:config && " \
 		"ubifsload $loadaddr ni-rt.ini && " \
 		"ini systemsettings; then " \
@@ -350,20 +358,28 @@
 	"run readsoftdip; " \
 	"run readcplddip; " \
 	"run evaldip; " \
-	"run fpgaloadcmd; " \
-	"if test -n \\\"$isipreset\\\"; then " \
-		"run ipresetcmd; " \
-	"fi; " \
-	"if test -n \\\"$isconsoleout\\\"; then " \
-		"setenv silent; " \
-		"run consolecmd; " \
-		"setenv consoleparam console=$console earlyprintk; " \
+	"if test -n \\\"$isforcedrecoverymode\\\"; then " \
+		"if test -n \\\"$isconsoleout\\\"; then " \
+			"setenv silent; " \
+		"fi; " \
+		"forcedrecovery=1; " \
+		"run recoverycmd; " \
 	"else " \
-		"setenv consoleparam console= quiet; " \
-		"setenv stderr nulldev; " \
-		"setenv stdin nulldev; " \
-		"setenv stdout nulldev; " \
-		"setenv bootdelay 0; " \
+		"run fpgaloadcmd; " \
+		"if test -n \\\"$isipreset\\\"; then " \
+			"run ipresetcmd; " \
+		"fi; " \
+		"if test -n \\\"$isconsoleout\\\"; then " \
+			"setenv silent; " \
+			"run consolecmd; " \
+			"setenv consoleparam console=$console earlyprintk; " \
+		"else " \
+			"setenv consoleparam console= quiet; " \
+			"setenv stderr nulldev; " \
+			"setenv stdin nulldev; " \
+			"setenv stdout nulldev; " \
+			"setenv bootdelay -2; " \
+		"fi; " \
 	"fi;"
 
 #endif /* __CONFIG_NIZYNQPROTO_H */
