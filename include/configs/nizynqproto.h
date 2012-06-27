@@ -31,6 +31,10 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
+#define CONFIG_SILENT_CONSOLE
+#define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
+#define CONFIG_SYS_DEVICE_NULLDEV
+#define CONFIG_BAUDRATE_UPDATE_ON_RELOC
 
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_HUSH_PARSER
@@ -165,8 +169,10 @@
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS	\
+#define CONFIG_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
+	"silent=1\0" \
+	"consolecmd=setenv console ttyPS0,$baudrate\0" \
 	"ncoutport=7865\0" \
 	"ncinport=8473\0" \
 	"ncip=255.255.255.255\0" \
@@ -234,12 +240,12 @@
 		"ini systemsettings; then " \
 			"setenv safemode.enabled ${safemode.enabled:-true}; " \
 			"setenv ipreset.enabled ${ipreset.enabled:-false}; " \
-			"setenv consoleout.enabled ${consoleout.enabled:-true}; " \
+			"setenv consoleout.enabled ${consoleout.enabled:-false}; " \
 			"setenv nofpgaapp.enabled ${nofpgaapp.enabled:-false}; " \
 		"else " \
 			"setenv safemode.enabled true; " \
 			"setenv ipreset.enabled false; " \
-			"setenv consoleout.enabled true; " \
+			"setenv consoleout.enabled false; " \
 			"setenv nofpgaapp.enabled false; " \
 		"fi;\0" \
 	"readcplddip=i2c read 0x40 1 1 $loadaddr; " \
@@ -319,6 +325,7 @@
 	"run boot_safemode; "
 
 #define CONFIG_PREBOOT \
+	"setenv silent 1; " \
 	"dcache on; " \
 	"ubi part boot-config; " \
 	"run readsoftdip; " \
@@ -327,6 +334,17 @@
 	"run fpgaloadcmd; " \
 	"if test -n \\\"$isipreset\\\"; then " \
 		"run ipresetcmd; " \
+	"fi; " \
+	"if test -n \\\"$isconsoleout\\\"; then " \
+		"setenv silent; " \
+		"run consolecmd; " \
+		"setenv consoleparam console=$console earlyprintk; " \
+	"else " \
+		"setenv consoleparam console= quiet; " \
+		"setenv stderr nulldev; " \
+		"setenv stdin nulldev; " \
+		"setenv stdout nulldev; " \
+		"setenv bootdelay 0; " \
 	"fi;"
 
 #endif /* __CONFIG_NIZYNQPROTO_H */
