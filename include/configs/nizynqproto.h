@@ -208,6 +208,7 @@
 		"then " \
 			"run ipresetcmd; " \
 		"fi;" \
+		"run ipconfigcmd; " \
 		"savebootcmd=$bootcmd; " \
 		"setenv bootcmd \\\"$recoverybootcmd\\\"; " \
 		"savebootdelay=$bootdelay; " \
@@ -260,6 +261,30 @@
 		"savesilent=$silent;setenv silent 1; " \
 		"saveenv;saveenv; " \
 		"setenv silent $savesilent;\0" \
+	"ipconfigcmd=if test \\\"$dhcpenabled\\\" -ne 0 -a " \
+			"-z \\\"$forcedrecovery\\\";" \
+		"then " \
+			"dhcpfail=0; " \
+			"dhcp || dhcpfail=1;" \
+		"else " \
+			"dhcpfail=-1;" \
+		"fi;" \
+		"if test \\\"$linklocalenabled\\\" -ne 0 -a " \
+			"\\\"$dhcpfail\\\" -ne 0 -o " \
+			"-n \\\"$forcedrecovery\\\";" \
+		"then " \
+			"llfail=0;" \
+			"linklocal || llfail=1;" \
+		"else " \
+			"llfail=-1;" \
+		"fi;" \
+		"if test \\\"$llfail\\\" -ne 0 -a " \
+			"\\\"$dhcpfail\\\" -ne 0; " \
+		"then " \
+			"setenv ipaddr $sipaddr; " \
+			"setenv netmask $snetmask; " \
+			"setenv gatewayip $sgatewayip; " \
+		"fi;\0" \
 	"markhardbootcomplete=" \
 		"i2c mw 0x40 1 0x20;\0" \
 	"readsoftdip=if ubifsmount ubi:config && " \
