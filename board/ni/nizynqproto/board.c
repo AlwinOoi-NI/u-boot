@@ -130,3 +130,19 @@ void reset_cpu(ulong addr)
 
 	while(1) {;}
 }
+
+#if defined(CONFIG_OF_BOARD_SETUP)
+void ft_board_setup(void *blob, bd_t *bd)
+{
+	const char *product_id_str;
+	u16 product_id_val;
+
+	/* Add the product ID to the device tree */
+	product_id_str = getenv("DeviceCode");
+	if (product_id_str != NULL) {
+		product_id_val = simple_strtoul(product_id_str, NULL, 0);
+		fdt_find_and_setprop(blob, "/", "DeviceCode",
+			&product_id_val, sizeof(product_id_val), 1);
+	}
+}
+#endif

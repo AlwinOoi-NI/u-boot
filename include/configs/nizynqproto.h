@@ -23,6 +23,7 @@
 #include <config_cmd_default.h>
 #undef CONFIG_CMD_XIMG
 #define CONFIG_FIT
+#define CONFIG_OF_BOARD_SETUP
 //#define CONFIG_FIT_VERBOSE /* enable fit_format_{error,warning}() */
 #define CONFIG_CMD_DATE		/* RTC? */
 #define CONFIG_CMD_PING		/* Might be useful for debugging */
