@@ -197,7 +197,26 @@
 			"source $loadaddr:bootscript; " \
 		"else " \
 			"echo $safemode_err; " \
+			"run recoverycmd; " \
+			"run recoverybootcmd;" \
 		"fi;\0" \
+	"recoverybootcmd=setenv bootcmd $savebootcmd; " \
+		"setenv bootdelay $savebootdelay;\0" \
+	"recoverycmd=echo Entering recovery mode!; " \
+		"savebootcmd=$bootcmd; " \
+		"setenv bootcmd \\\"$recoverybootcmd\\\"; " \
+		"savebootdelay=$bootdelay; " \
+		"setenv bootdelay 0; " \
+		"setenv silent; " \
+		"run nc; " \
+		"while sleep 1; do " \
+			"echo \\\"${DeviceCode:-<not-set>}, " \
+				"${serial#:-<not-set>}, " \
+				"${ethaddr:-<not-set>}, " \
+				"${ipaddr:-<not-set>}, " \
+				"${hostname:-<not-set>}, " \
+				"${comment:-<not-set>}\\\"; " \
+		"done;\0" \
 	"fpgaloadcmd=ubifsmount ubi:bootfs; " \
 		"if test -n \\\"$isnofpgaapp\\\" -o -n \\\"$issafemode\\\"; then " \
 			"loaddefaultbit=1; " \
