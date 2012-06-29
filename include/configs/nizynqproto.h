@@ -200,6 +200,14 @@
 			"run recoverycmd; " \
 			"run recoverybootcmd;" \
 		"fi;\0" \
+	"boot_runmode=" \
+		"if ubifsload $loadaddr linux_runmode.itb && " \
+		"imi $loadaddr; then " \
+			"setenv verify n; " \
+			"source $loadaddr:bootscript; " \
+		"else " \
+			"run boot_safemode; " \
+		"fi;\0" \
 	"recoverybootcmd=setenv bootcmd $savebootcmd; " \
 		"setenv bootdelay $savebootdelay;\0" \
 	"recoverycmd=echo Entering recovery mode!; " \
@@ -224,7 +232,7 @@
 				"${comment:-<not-set>}\\\"; " \
 		"done;\0" \
 	"fpgaloadcmd=ubifsmount ubi:bootfs; " \
-		"if test -n \\\"$isnofpgaapp\\\" -o -n \\\"$issafemode\\\"; then " \
+		"if test -n \\\"$isnofpgaapp\\\" -o $bootmode = safemode; then " \
 			"loaddefaultbit=1; " \
 		"else " \
 			"if ubifsload $verifyaddr user.bit.crc && " \
@@ -287,6 +295,14 @@
 		"fi;\0" \
 	"markhardbootcomplete=" \
 		"i2c mw 0x40 1 0x20;\0" \
+	"readbootmode=i2c read 0x40 0xFF 1 $loadaddr; " \
+		"setexpr.b bootmodeval *$loadaddr \\\\& 0x3; " \
+		"if test $bootmodeval -eq 1; then " \
+			"bootmode=safemode; " \
+		"else " \
+			"bootmode=runmode; " \
+		"fi; " \
+		"setenv bootmodeval;\0" \
 	"readsoftdip=if ubifsmount ubi:config && " \
 		"ubifsload $loadaddr ni-rt.ini && " \
 		"ini systemsettings; then " \
@@ -374,7 +390,11 @@
 
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND	\
-	"run boot_safemode; "
+	"if test $bootmode = safemode -o $bootmode = install; then " \
+		"run boot_safemode; " \
+	"else " \
+		"run boot_runmode; "\
+	"fi"
 
 #define CONFIG_PREBOOT \
 	"setenv silent 1; " \
@@ -404,6 +424,10 @@
 			"setenv stdin nulldev; " \
 			"setenv stdout nulldev; " \
 			"setenv bootdelay -2; " \
+		"fi; " \
+		"run readbootmode; " \
+		"if test -n \\\"$issafemode\\\"; then " \
+			"bootmode=safemode; " \
 		"fi; " \
 	"fi;"
 
