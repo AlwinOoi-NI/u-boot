@@ -124,8 +124,11 @@
 
 /*
  * Physical Memory map
+ *
+ * Note that we only declare the lower 128MB
+ * of ram, the other 128MB is used for usermode DMA.
  */
-#define PHYS_SDRAM_1_SIZE (512 * 1024 * 1024)
+#define PHYS_SDRAM_1_SIZE (128 * 1024 * 1024)
 #define CONFIG_SYS_ALT_MEMTEST
 #define CONFIG_SYS_MEMTEST_SCRATCH 0xFFFFF000
 #define CONFIG_CMD_CACHE
@@ -149,8 +152,8 @@
 		"512k(u-boot)ro," \
 		"256k(u-boot-env1)," \
 		"256k(u-boot-env2)," \
-		"10M(boot-config)," \
-		"40M(root)"
+		"26M(boot-config)," \
+		"53M(root)"
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
 
@@ -214,11 +217,12 @@
 		"ubi part boot-config && " \
 		"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
 		"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
-		"ubi create bootfs " __stringify(CONFIG_BOOTFS_VOLUME_SIZE) " dynamic && " \
+		"ubi create bootfs 0x1400000 dynamic && " \
 		"ubi create config - dynamic && " \
 		"nand erase.part root && " \
 		"ubi part root && " \
-		"ubi create rootfs - dynamic;\0" \
+		"ubi create rootfs1 0x1900000 dynamic && " \
+		"ubi create rootfs2 0x1900000 dynamic;\0" \
 	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
 		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
 		"nand read $verifyaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
