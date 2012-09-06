@@ -29,7 +29,6 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
-#define CONFIG_SILENT_CONSOLE
 #define CONFIG_SYS_DEVICE_NULLDEV
 
 #define CONFIG_SYS_LONGHELP
@@ -191,7 +190,6 @@
 
 #define LCI_ENV_SETTINGS \
 	"autoload=n\0" \
-	"silent=1\0" \
 	"console=ttyPS0,115200\0" \
 	"fdt_high=0x17ffffff\0" \
 	"initrd_high=0x17ffffff\0" \
