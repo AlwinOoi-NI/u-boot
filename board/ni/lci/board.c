@@ -6,6 +6,7 @@
 #include <asm/arch/nand.h>
 #include <asm/arch/sdhci.h>
 #include <asm/io.h>
+#include <environment.h>
 #include <i2c.h>
 #include <miiphy.h>
 #include <netdev.h>
@@ -70,6 +71,16 @@ int board_init(void)
 
 int board_late_init (void)
 {
+#if defined CONFIG_BRINGUP
+	char serial[11] = "";
+
+	if (getenv("serial#") != NULL)
+		strcpy(serial, getenv("serial#"));
+	set_default_env("Default env required for auto-bringup.\n");
+	if (strlen(serial) != 0)
+		setenv("serial#", serial);
+#endif
+
 	return 0;
 }
 
@@ -134,7 +145,11 @@ int board_nand_init(struct nand_chip *nand_chip)
 	 * This is crappy (using 0 as the device), but this is what the Zynq
 	 * NAND driver does, so we do it too to make sure we get the same device
 	 */
+#if defined CONFIG_BRINGUP
+	off = 0;
+#else
 	off = CONFIG_ENV_OFFSET;
+#endif
         size = nand_info[0].size - off;
 
 	nand_unlock(&nand_info[0], off, size, 0);

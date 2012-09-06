@@ -35,6 +35,8 @@
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_HUSH_PARSER
 #define CONFIG_SYS_PROMPT_HUSH_PS2 "hush> "
+#undef CONFIG_SYS_MAXARGS
+#define CONFIG_SYS_MAXARGS 64
 
 #define CONFIG_CMD_UNZIP
 #define CONFIG_CMD_SETEXPR
@@ -209,7 +211,7 @@
 		"fi; " \
 		"dcache on;\0" \
 	"updateenv=env export -b $loadaddr; " \
-		"env default -f; " \
+		"env default -f -a; " \
 		"env import -b $loadaddr;\0" \
 	"writepartitions=" \
 		"nand erase.part boot-config && " \
@@ -236,19 +238,76 @@
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
-#undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS LCI_ENV_SETTINGS
-
 #define LCI_BOOTCOMMAND \
 	"dcache on; " \
 	"run fpgaloadcmd; ubifsload $loadaddr lci.itb; source $loadaddr:bootscript"
 
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND LCI_BOOTCOMMAND
 
 #define LCI_PREBOOT \
 	"ubi part boot-config;"
 
+#ifndef CONFIG_BRINGUP
+
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS LCI_ENV_SETTINGS
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND LCI_BOOTCOMMAND
 #define CONFIG_PREBOOT LCI_PREBOOT
+
+#else /* CONFIG_BRINGUP */
+
+#define CONFIG_CMD_ASKENV
+
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	LCI_ENV_SETTINGS \
+	"realbootcmd="LCI_BOOTCOMMAND"\0" \
+	"realpreboot="LCI_PREBOOT"\0"
+
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND	\
+       "env default -f -a;" \
+       "if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
+               "askenv serial# 'Enter board serial number: ' 10; " \
+       "fi; " \
+       "if test -n \\\\\"${serial\\\\#}\\\\\" && " \
+       "defethaddr && " \
+       "defethaddr 1 && " \
+       "setenv bootdelay 3 && " \
+       "setenv bootcmd \"$realbootcmd\" && " \
+       "setenv realbootcmd && " \
+       "setenv preboot \"$realpreboot\" && " \
+       "setenv realpreboot && " \
+       "saveenv && saveenv && " \
+       "mmcinfo && " \
+       "echo '*******' && " \
+       "echo '*******  Installing BOOT_NAND.BIN...' && " \
+       "echo '*******' && " \
+       "fatload mmc 0 $loadaddr BOOT_NAND.BIN && " \
+       "run writeboot && " \
+       "echo '*******' && " \
+       "echo '*******  Partitioning NAND flash...' && " \
+       "echo '*******' && " \
+       "run writepartitions && " \
+       "echo '*******' && " \
+       "echo '*******  Installing boot-config.ubi.img...' && " \
+       "echo '*******' && " \
+       "fatload mmc 0 $loadaddr boot-config.ubi.img && " \
+       "ubi part boot-config && " \
+       "ubi write $loadaddr bootfs $filesize && " \
+       "echo '*******' && " \
+       "echo '*******  Installing root.sqsh...' && " \
+       "echo '*******' && " \
+       "fatload mmc 0 $loadaddr root.sqsh && " \
+       "ubi part root && " \
+       "ubi write $loadaddr rootfs1 $filesize && " \
+       "echo '*******' && " \
+       "echo '*******  Set bootmode jumpers to (off)(off)(on) NAND boot mode and reboot.'; then " \
+       "else " \
+               "echo '*******' && " \
+               "echo '*******  Auto-bringup failed!  Contact Nathan Sullivan.'; " \
+        "fi;"
+
+#endif
 
 #endif /* __CONFIG_NILCI_H */
