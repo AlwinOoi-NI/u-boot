@@ -78,6 +78,9 @@ int board_eth_init(bd_t *bis)
 {
 	int retval;
 	u8 tmp;
+	int phy_addr;
+	const char *name = "zynq_gem0";
+	u16 regval;
 
 	/*
 	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
@@ -88,10 +91,23 @@ int board_eth_init(bd_t *bis)
 
 	retval = zynq_gem_initialize(bis);
 
+	/* nizynqproto has a Marvell Gigabit PHY on gem0 */
+	phy_addr = zynq_gem_get_phyaddr(name);
+
+	/* Page 2 */
+	miiphy_write(name, phy_addr, 22, 2);
+
 	/* Override the primary phy's drive strength to maximum */
-	miiphy_write("zynq_gem", 0, 22, 2);
-	miiphy_write("zynq_gem", 0, 24, 0x1F4F);
-	miiphy_write("zynq_gem", 0, 22, 0);
+	miiphy_write(name, phy_addr, 24, 0x1F4F);
+
+	/* Page 0 */
+	miiphy_write(name, phy_addr, 22, 0);
+
+	/* Copper specific control register 1 */
+	miiphy_read(name, phy_addr, 16, &regval);
+	regval |= (7 << 12); /* max number of gigabit attempts */
+	regval |= (1 << 11); /* enable downshift */
+	miiphy_write(name, phy_addr, 16, regval);
 
 	return retval;
 }
