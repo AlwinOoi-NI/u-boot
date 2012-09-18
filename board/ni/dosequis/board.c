@@ -11,6 +11,7 @@
 #include <netdev.h>
 #include <serial.h>
 #include <zynqpl.h>
+#include <usb/ulpi.h>
 
 #define BOOT_MODE_REG     (XPSS_SYS_CTRL_BASEADDR + 0x25C)
 #define BOOT_MODES_MASK    0x0000000F
@@ -76,18 +77,9 @@ int board_init(void)
 
 int board_late_init (void)
 {
-	return 0;
-}
-
-#ifdef CONFIG_CMD_NET
-int board_eth_init(bd_t *bis)
-{
-	int retval;
 	u8 tmp;
-	int phy_addr;
-	char name[10];
-	int i;
-	u16 regval;
+	struct ulpi_viewport usb_phy;
+	struct ulpi_regs *ulpi = (struct ulpi_regs *)0;
 
 	/*
 	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
@@ -95,6 +87,31 @@ int board_eth_init(bd_t *bis)
 	 */
 	tmp = 0x00;
 	i2c_write(0x40, 0x03, 1, &tmp, 1);
+
+	/* Wait for the TI USB PHY to come out of reset. */
+	udelay(1000);
+
+	/* ULPI_VIEWPORT register */
+	usb_phy.viewport_addr = CONFIG_USB_BASE_ADDR + 0x170;
+	usb_phy.port_num = 0;
+
+	/* The TI PHY on DosEquis and myRIO behaves slightly differently than
+	   the SMSC PHY we used previously. We must set the DrvVbusExternal bit
+	   in the OTG Control register, otherwise the PHY will never turn on
+	   power to the USB port. */
+	ulpi_write(&usb_phy, &ulpi->otg_ctrl_set, ULPI_OTG_DRVVBUS_EXT);
+
+	return 0;
+}
+
+#ifdef CONFIG_CMD_NET
+int board_eth_init(bd_t *bis)
+{
+	int retval;
+	int phy_addr;
+	char name[10];
+	int i;
+	u16 regval;
 
 	retval = zynq_gem_initialize(bis);
 
