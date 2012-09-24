@@ -36,9 +36,9 @@ COBJS	:= $(sort $(COBJS-y))
 
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
 
-all:	$(obj).depend $(START) $(LIB)
+all:	$(obj).depend $(LIB)
 
-$(LIB):	$(OBJS)
+$(LIB): $(OBJS)
 	$(call cmd_link_o_target, $(OBJS))
 
 #########################################################################
