@@ -92,7 +92,7 @@ int board_late_init (void)
 	udelay(1000);
 
 	/* ULPI_VIEWPORT register */
-	usb_phy.viewport_addr = CONFIG_USB_BASE_ADDR + 0x170;
+	usb_phy.viewport_addr = CONFIG_USB_BASE_ADDR + XPSS_USB_ULPI_VIEWPORT;
 	usb_phy.port_num = 0;
 
 	/* The TI PHY on DosEquis and myRIO behaves slightly differently than
