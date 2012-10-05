@@ -187,8 +187,7 @@
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
-#undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS \
+#define LCI_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
 	"console=ttyPS0,115200\0" \
@@ -237,12 +236,19 @@
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND	\
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS LCI_ENV_SETTINGS
+
+#define LCI_BOOTCOMMAND \
 	"dcache on; " \
 	"run fpgaloadcmd; ubifsload $loadaddr lci.itb; source $loadaddr:bootscript"
 
-#define CONFIG_PREBOOT \
-	"ubi part boot-config;" \
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND LCI_BOOTCOMMAND
+
+#define LCI_PREBOOT \
+	"ubi part boot-config;"
+
+#define CONFIG_PREBOOT LCI_PREBOOT
 
 #endif /* __CONFIG_NILCI_H */
