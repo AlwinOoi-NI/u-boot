@@ -77,17 +77,9 @@ int board_late_init (void)
 int board_eth_init(bd_t *bis)
 {
 	int retval;
-	u8 tmp;
 	int phy_addr;
 	const char *name = "zynq_gem0";
 	u16 regval;
-
-	/*
-	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
-	 * out of reset
-	 */
-	tmp = 0x00;
-	i2c_write(0x40, 0x03, 1, &tmp, 1);
 
 	retval = zynq_gem_initialize(bis);
 
@@ -123,7 +115,31 @@ int board_mmc_init(bd_t *bd)
 #ifdef CONFIG_CMD_NAND
 int board_nand_init(struct nand_chip *nand_chip)
 {
-	return zynq_nand_init(nand_chip);
+	loff_t off;
+	loff_t size;
+	int ret;
+
+	/*
+	 * Deassert NAND write protect
+	 */
+	out_le32(0xE000A244, 0x80000);
+	out_le32(0xE000A248, 0x80000);
+	out_le32(0xE000A044, 0x80000);
+
+	ret = zynq_nand_init(nand_chip);
+	if (ret)
+		return ret;
+
+	/*
+	 * This is crappy (using 0 as the device), but this is what the Zynq
+	 * NAND driver does, so we do it too to make sure we get the same device
+	 */
+	off = CONFIG_ENV_OFFSET;
+        size = nand_info[0].size - off;
+
+	nand_unlock(&nand_info[0], off, size, 0);
+
+	return ret;
 }
 #endif
 
