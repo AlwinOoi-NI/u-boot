@@ -196,10 +196,14 @@
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
-	"fpgaloadcmd=ubifsmount ubi:bootfs; " \
-		"if ubifsload $loadaddr lci.itb && " \
+	"fpgaloadcmd=if ubifsload $loadaddr $imagefile && " \
 			"iminfo $loadaddr; " \
 		"then " \
+			"configfpga=1; " \
+		"elif ubifsload $loadaddr $altimagefile && " \
+			"iminfo $loadaddr; " \
+		"then " \
+			"run switchfw; " \
 			"configfpga=1; " \
 		"fi; " \
 		"dcache off; " \
@@ -207,6 +211,13 @@
 			"fpga loadmk 0 $loadaddr:fpga; " \
 		"fi; " \
 		"dcache on;\0" \
+	"switchfw=" \
+		"oldimagefile=$imagefile; " \
+		"oldrootdev=$rootdev; " \
+		"imagefile=$altimagefile; " \
+		"rootdev=$altrootdev; " \
+		"altimagefile=$oldimagefile; " \
+		"altrootdev=$oldrootdev;\0" \
 	"updateenv=env export -b $loadaddr; " \
 		"env default -f -a; " \
 		"env import -b $loadaddr;\0" \
@@ -237,11 +248,26 @@
 
 #define LCI_BOOTCOMMAND \
 	"dcache on; " \
-	"run fpgaloadcmd; source $loadaddr:bootscript"
-
+	"if test -n \\\"$configfpga\\\"; then " \
+		"source $loadaddr:bootscript;" \
+	"fi; " \
+	"echo 'Boot failed!' "
 
 #define LCI_PREBOOT \
-	"ubi part boot-config;"
+	"ubi part boot-config; ubifsmount ubi:bootfs; " \
+	"if ubifsload $loadaddr image_1_active; " \
+	"then " \
+		"imagefile=lci1.itb; " \
+		"rootdev=mtdblock11; " \
+		"altimagefile=lci0.itb; " \
+		"altrootdev=mtdblock10; " \
+	"else " \
+		"imagefile=lci0.itb; " \
+                "rootdev=mtdblock10; " \
+                "altimagefile=lci1.itb; " \
+                "altrootdev=mtdblock11; " \
+	"fi; " \
+	"run fpgaloadcmd"
 
 #ifndef CONFIG_BRINGUP
 
