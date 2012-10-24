@@ -197,15 +197,14 @@
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
 	"fpgaloadcmd=ubifsmount ubi:bootfs; " \
-		"if ubifsload $verifyaddr lci.bit.crc && " \
-			"ubifsload $loadaddr lci.bit.bin && " \
-			"md5sum -vp $loadaddr $filesize $verifyaddr; " \
+		"if ubifsload $loadaddr lci.itb && " \
+			"iminfo $loadaddr; " \
 		"then " \
 			"configfpga=1; " \
 		"fi; " \
 		"dcache off; " \
 		"if test -n \\\"$configfpga\\\"; then " \
-			"fpga load 0 $loadaddr $filesize; " \
+			"fpga loadmk 0 $loadaddr:fpga; " \
 		"fi; " \
 		"dcache on;\0" \
 	"updateenv=env export -b $loadaddr; " \
@@ -238,7 +237,7 @@
 
 #define LCI_BOOTCOMMAND \
 	"dcache on; " \
-	"run fpgaloadcmd; ubifsload $loadaddr lci.itb; source $loadaddr:bootscript"
+	"run fpgaloadcmd; source $loadaddr:bootscript"
 
 
 #define LCI_PREBOOT \
