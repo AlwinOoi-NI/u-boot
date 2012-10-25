@@ -133,7 +133,6 @@
 #define CONFIG_SYS_ALT_MEMTEST
 #define CONFIG_SYS_MEMTEST_SCRATCH 0xFFFFF000
 #define CONFIG_CMD_CACHE
-#define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
 
 /*
  * NAND Flash settings
@@ -206,11 +205,9 @@
 			"run switchfw; " \
 			"configfpga=1; " \
 		"fi; " \
-		"dcache off; " \
 		"if test -n \\\\\"$configfpga\\\\\"; then " \
 			"fpga loadmk 0 $loadaddr:fpga; " \
-		"fi; " \
-		"dcache on;\0" \
+		"fi;\0" \
 	"switchfw=" \
 		"oldimagefile=$imagefile; " \
 		"oldrootdev=$rootdev; " \
@@ -247,13 +244,13 @@
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
 #define LCI_BOOTCOMMAND \
-	"dcache on; " \
 	"if test -n \\\\\"$configfpga\\\\\"; then " \
 		"source $loadaddr:bootscript;" \
 	"fi; " \
 	"echo 'Boot failed!' "
 
 #define LCI_PREBOOT \
+	"dcache on; " \
 	"ubi part boot-config; ubifsmount ubi:bootfs; " \
 	"if ubifsload $loadaddr image_1_active; " \
 	"then " \
