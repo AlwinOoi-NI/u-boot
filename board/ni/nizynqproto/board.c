@@ -112,7 +112,7 @@ int board_eth_init(bd_t *bis)
 	miiphy_write(name, phy_addr, 16, 0x444E);
 
 	/* Override the primary phy's drive strength to maximum */
-	miiphy_write(name, phy_addr, 24, 0x1F4F);
+	miiphy_write(name, phy_addr, 24, 0xBF4F);
 
 	/* Page 0 */
 	miiphy_write(name, phy_addr, 22, 0);
