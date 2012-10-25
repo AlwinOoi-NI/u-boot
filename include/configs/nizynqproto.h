@@ -318,7 +318,7 @@
 		"setenv mtu; " \
 		"setenv ncip 255.255.255.255; " \
 		"savesilent=$silent;setenv silent 1; " \
-		"saveenv;saveenv; " \
+		"saveenv; " \
 		"setenv silent $savesilent;\0" \
 	"ipconfigcmd=if test \\\\\"$dhcpenabled\\\\\" -ne 0 -a " \
 			"-z \\\\\"$forcedrecovery\\\\\";" \
@@ -518,7 +518,7 @@
 	"setenv realbootcmd && " \
 	"setenv preboot \\\\\"$realpreboot\\\\\" && " \
 	"setenv realpreboot && " \
-	"saveenv && saveenv && " \
+	"saveenv && " \
 	"mmcinfo && " \
 	"echo '*******' && " \
 	"echo '*******  Installing BOOT_NAND.BIN...' && " \
