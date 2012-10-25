@@ -207,7 +207,7 @@
 			"configfpga=1; " \
 		"fi; " \
 		"dcache off; " \
-		"if test -n \\\"$configfpga\\\"; then " \
+		"if test -n \\\\\"$configfpga\\\\\"; then " \
 			"fpga loadmk 0 $loadaddr:fpga; " \
 		"fi; " \
 		"dcache on;\0" \
@@ -248,7 +248,7 @@
 
 #define LCI_BOOTCOMMAND \
 	"dcache on; " \
-	"if test -n \\\"$configfpga\\\"; then " \
+	"if test -n \\\\\"$configfpga\\\\\"; then " \
 		"source $loadaddr:bootscript;" \
 	"fi; " \
 	"echo 'Boot failed!' "
