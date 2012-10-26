@@ -103,7 +103,9 @@ int board_nand_init(struct nand_chip *nand_chip)
 	 * This is crappy (using 0 as the device), but this is what the Zynq
 	 * NAND driver does, so we do it too to make sure we get the same device
 	 */
-	off = CONFIG_ENV_OFFSET;
+	/* for now, unlock all of NAND until things are a bit more stable. */
+	/* off = CONFIG_ENV_OFFSET; */
+	off = 0;
 	size = nand_info[0].size - off;
 
 	nand_unlock(&nand_info[0], off, size, 0);
