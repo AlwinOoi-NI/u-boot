@@ -123,6 +123,27 @@ int board_eth_init(bd_t *bis)
 	regval |= (1 << 11); /* enable downshift */
 	miiphy_write(name, phy_addr, 16, regval);
 
+	/* Page 0xFF */
+	miiphy_write(name, phy_addr, 22, 0xFF);
+
+	/* Errata settings */
+	miiphy_write(name, phy_addr, 17, 0x214b);
+	miiphy_write(name, phy_addr, 16, 0x2144);
+	miiphy_write(name, phy_addr, 17, 0x0c28);
+	miiphy_write(name, phy_addr, 16, 0x2146);
+	miiphy_write(name, phy_addr, 17, 0xb233);
+	miiphy_write(name, phy_addr, 16, 0x214d);
+	miiphy_write(name, phy_addr, 17, 0xcc0c);
+	miiphy_write(name, phy_addr, 16, 0x2159);
+
+	/* Page 0xFB */
+	miiphy_write(name, phy_addr, 22, 0xFB);
+
+	miiphy_write(name, phy_addr, 7, 0xc00d);
+
+	/* Page 0 */
+	miiphy_write(name, phy_addr, 22, 0);
+
 	return retval;
 }
 #endif
