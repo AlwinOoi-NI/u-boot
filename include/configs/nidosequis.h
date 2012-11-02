@@ -265,6 +265,8 @@
 			"fatload usb 0 $loadaddr dosequis_recovery.cfg && " \
 			"iminfo && " \
 			"fdt addr $loadaddr && " \
+			"fdt get value recoverType /images/recover type && " \
+			"test $recoverType = script && " \
 			"fdt get value recoveryDeviceCode / DeviceCode && " \
 			"test $recoveryDeviceCode = $DeviceCode;" \
 		"then " \
