@@ -310,15 +310,15 @@
        "echo '*******' && " \
        "run writepartitions && " \
        "echo '*******' && " \
-       "echo '*******  Installing boot-config.ubi.img...' && " \
+       "echo '*******  Installing bootfs.ubifs...' && " \
        "echo '*******' && " \
-       "fatload mmc 0 $loadaddr boot-config.ubi.img && " \
+       "fatload mmc 0 $loadaddr bootfs.ubifs && " \
        "ubi part boot-config && " \
        "ubi write $loadaddr bootfs $filesize && " \
        "echo '*******' && " \
-       "echo '*******  Installing root.sqsh...' && " \
+       "echo '*******  Installing root.squashfs...' && " \
        "echo '*******' && " \
-       "fatload mmc 0 $loadaddr root.sqsh && " \
+       "fatload mmc 0 $loadaddr root.squashfs && " \
        "ubi part root && " \
        "ubi write $loadaddr rootfs1 $filesize && " \
        "echo '*******' && " \
