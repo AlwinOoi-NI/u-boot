@@ -322,7 +322,7 @@
        "ubi part root && " \
        "ubi write $loadaddr rootfs1 $filesize && " \
        "echo '*******' && " \
-       "echo '*******  Set bootmode jumpers to (off)(off)(on) NAND boot mode and reboot.'; then " \
+       "echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
        "else " \
                "echo '*******' && " \
                "echo '*******  Auto-bringup failed!  Contact Nathan Sullivan.'; " \
