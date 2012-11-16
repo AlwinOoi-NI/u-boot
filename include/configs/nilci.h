@@ -152,8 +152,8 @@
 		"512k(u-boot)ro," \
 		"256k(u-boot-env1)," \
 		"256k(u-boot-env2)," \
-		"26M(boot-config)," \
-		"53M(root)"
+		"30M(boot-config)," \
+		"95M(root)"
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
 
@@ -223,12 +223,13 @@
 		"ubi part boot-config && " \
 		"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
 		"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
-		"ubi create bootfs 0x1400000 dynamic && " \
+		"ubi create bootfs 0x1600000 dynamic && " \
 		"ubi create config - dynamic && " \
 		"nand erase.part root && " \
 		"ubi part root && " \
-		"ubi create rootfs1 0x1900000 dynamic && " \
-		"ubi create rootfs2 0x1900000 dynamic;\0" \
+		"ubi create rootfs1 0x1C00000 dynamic && " \
+		"ubi create rootfs2 0x1C00000 dynamic &&" \
+		"ubi create sfp - dynamic; \0"\
 	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
 		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
 		"nand read $verifyaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
