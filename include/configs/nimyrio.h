@@ -11,11 +11,14 @@
 #define CONFIG_NIMYRIO /* Board */
 #ifdef CONFIG_BOARD_ONLY
 #define CONFIG_DEVICE_CODE "76D3"
+#define CONFIG_RECOVERY_FILE "myrioboard_recovery.cfg"
 #else
 #ifdef CONFIG_PROTO
 #define CONFIG_DEVICE_CODE "76E2"
+#define CONFIG_RECOVERY_FILE "myrioproto_recovery.cfg"
 #else
 #define CONFIG_DEVICE_CODE "762F"
+#define CONFIG_RECOVERY_FILE "myrio_recovery.cfg"
 #endif
 #endif
 
@@ -258,7 +261,7 @@
 		"savebootdelay=$bootdelay; " \
 		"setenv bootdelay 0; " \
 		"if usb start && " \
-			"fatload usb 0 $loadaddr myrio_recovery.cfg && " \
+			"fatload usb 0 $loadaddr " CONFIG_RECOVERY_FILE " && " \
 			"iminfo && " \
 			"fdt addr $loadaddr && " \
 			"fdt get value recoverType /images/recover type && " \
