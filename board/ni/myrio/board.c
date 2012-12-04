@@ -104,7 +104,7 @@ int board_nand_init(struct nand_chip *nand_chip)
 	 * NAND driver does, so we do it too to make sure we get the same device
 	 */
 	/* for now, unlock all of NAND until things are a bit more stable. */
-	/* off = CONFIG_ENV_OFFSET; */
+	/* off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT; */
 	off = 0;
 	size = nand_info[0].size - off;
 

@@ -214,7 +214,7 @@ int board_nand_init(struct nand_chip *nand_chip)
 #ifdef CONFIG_BRINGUP
 	off = 0;
 #else
-	off = CONFIG_ENV_OFFSET;
+	off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT;
 #endif
 	size = nand_info[0].size - off;
 
