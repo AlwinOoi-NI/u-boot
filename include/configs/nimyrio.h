@@ -47,6 +47,9 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
+#define CONFIG_SILENT_CONSOLE
+#define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
+#define CONFIG_SYS_DEVICE_NULLDEV
 #define CONFIG_BAUDRATE_UPDATE_ON_RELOC
 
 #define CONFIG_SYS_LONGHELP
