@@ -58,16 +58,16 @@
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
 
-#define CONFIG_ENV_IS_IN_NAND
-/* Writing to OOB 0 is apparently not compatible with BootROM */
-//#define CONFIG_ENV_OFFSET_OOB
-/* Not needed when OOB is used */
-#define CONFIG_ENV_OFFSET		0xA0000
-#define CONFIG_ENV_OFFSET_REDUND	0xE0000
+#define CONFIG_ENV_IS_IN_UBI
+#define CONFIG_ENV_UBI_PART "boot-config"
+#define CONFIG_ENV_UBI_VOLUME "u-boot-env1"
+#define CONFIG_ENV_UBI_VOLUME_REDUND "u-boot-env2"
 #undef CONFIG_ENV_SIZE
-#define CONFIG_ENV_SIZE			0x20000
-#define CONFIG_ENV_SIZE_REDUND		CONFIG_ENV_SIZE
-#define CONFIG_ENV_RANGE		0x40000
+#define CONFIG_ENV_SIZE                 0x20000
+/* Old NAND env settings */
+#define CONFIG_ENV_OFFSET               0xA0000
+#define CONFIG_ENV_OFFSET_REDUND        0xE0000
+#define CONFIG_ENV_RANGE                0x40000
 
 #define CONFIG_CMD_SAVEENV	/* Command to save ENV to Flash */
 #define CONFIG_ENV_OVERWRITE
@@ -150,10 +150,8 @@
 	"mtdparts=xilinx_nand:" \
 		"128k(fsbl)ro," \
 		"512k(u-boot)ro," \
-		"256k(u-boot-env1)," \
-		"256k(u-boot-env2)," \
 		"30M(boot-config)," \
-		"95M(root)"
+		"-(root)"
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
 
@@ -230,14 +228,14 @@
 		"ubi create rootfs1 0x1C00000 dynamic && " \
 		"ubi create rootfs2 0x1C00000 dynamic &&" \
 		"ubi create sfp - dynamic; \0"\
-	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
-		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
-		"nand read $verifyaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
-		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_ENV_OFFSET) ";\0" \
+	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET_REDUND) "; " \
+		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET_REDUND) "; " \
+		"nand read $verifyaddr 0 "  __stringify(CONFIG_ENV_OFFSET_REDUND) "; " \
+		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_ENV_OFFSET_REDUND) ";\0" \
 	"writefsbl=nand erase.part fsbl; " \
 		"nand write $loadaddr fsbl; " \
 		"nand read $verifyaddr fsbl; " \
-		"cmp.b $loadaddr $verifyaddr 0x20000;\0" \
+		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_MTD_UBOOT_OFFSET) ";\0" \
 	"writeuboot=nand erase.part u-boot; " \
 		"nand write $loadaddr u-boot; " \
 		"nand read $verifyaddr u-boot; " \
@@ -256,14 +254,14 @@
 	"if ubifsload $loadaddr image_1_active; " \
 	"then " \
 		"imagefile=lci1.itb; " \
-		"rootdev=mtdblock11; " \
+		"rootdev=mtdblock9; " \
 		"altimagefile=lci0.itb; " \
-		"altrootdev=mtdblock10; " \
+		"altrootdev=mtdblock8; " \
 	"else " \
 		"imagefile=lci0.itb; " \
-                "rootdev=mtdblock10; " \
+                "rootdev=mtdblock8; " \
                 "altimagefile=lci1.itb; " \
-                "altrootdev=mtdblock11; " \
+                "altrootdev=mtdblock9; " \
 	"fi; " \
 	"run fpgaloadcmd"
 
@@ -299,7 +297,6 @@
        "setenv realbootcmd && " \
        "setenv preboot \"$realpreboot\" && " \
        "setenv realpreboot && " \
-       "saveenv && saveenv && " \
        "mmcinfo && " \
        "echo '*******' && " \
        "echo '*******  Installing BOOT_NAND.BIN...' && " \
@@ -310,6 +307,7 @@
        "echo '*******  Partitioning NAND flash...' && " \
        "echo '*******' && " \
        "run writepartitions && " \
+       "saveenv && " \
        "echo '*******' && " \
        "echo '*******  Installing bootfs.ubifs...' && " \
        "echo '*******' && " \
