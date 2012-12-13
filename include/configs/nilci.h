@@ -235,10 +235,10 @@
 		"ubi create rootfs1 0x1C00000 dynamic && " \
 		"ubi create rootfs2 0x1C00000 dynamic &&" \
 		"ubi create sfp - dynamic; \0"\
-	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET_REDUND) "; " \
-		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET_REDUND) "; " \
-		"nand read $verifyaddr 0 "  __stringify(CONFIG_ENV_OFFSET_REDUND) "; " \
-		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_ENV_OFFSET_REDUND) ";\0" \
+	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
+		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
+		"nand read $verifyaddr 0 "  __stringify(CONFIG_ENV_OFFSET) "; " \
+		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_ENV_OFFSET) ";\0" \
 	"writefsbl=nand erase.part fsbl; " \
 		"nand write $loadaddr fsbl; " \
 		"nand read $verifyaddr fsbl; " \
