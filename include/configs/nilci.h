@@ -193,6 +193,9 @@
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
+	"DeviceCode=0x76F6\0" \
+	"TargetClass=LCI\0" \
+	"DeviceDesc=LCI-9000\0" \
 	"fpgaloadcmd=if ubifsload $loadaddr $imagefile && " \
 			"iminfo $loadaddr; " \
 		"then " \
