@@ -29,6 +29,8 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
+#define CONFIG_SILENT_CONSOLE
+#define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
 #define CONFIG_SYS_DEVICE_NULLDEV
 
 #define CONFIG_SYS_LONGHELP
@@ -187,6 +189,8 @@
 
 #define LCI_ENV_SETTINGS \
 	"autoload=n\0" \
+	"silent=1\0" \
+	"bootdelay=-2\0" \
 	"console=ttyPS0,115200\0" \
 	"fdt_high=0x17ffffff\0" \
 	"initrd_high=0x17ffffff\0" \
@@ -289,13 +293,13 @@
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND	\
        "env default -f -a;" \
+       "setenv silent;" \
        "if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
                "askenv serial# 'Enter board serial number: ' 10; " \
        "fi; " \
        "if test -n \\\\\"${serial\\\\#}\\\\\" && " \
        "defethaddr && " \
        "defethaddr 1 && " \
-       "setenv bootdelay 3 && " \
        "setenv bootcmd \"$realbootcmd\" && " \
        "setenv realbootcmd && " \
        "setenv preboot \"$realpreboot\" && " \
