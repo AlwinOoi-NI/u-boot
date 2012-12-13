@@ -545,33 +545,7 @@
 		"fi; " \
 	"fi;"
 
-#ifndef CONFIG_BRINGUP
-#undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	REAL_EXTRA_ENV_SETTINGS
-
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND \
-	REAL_BOOTCOMMAND
-
-#define CONFIG_PREBOOT \
-	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-		"echo Attepting to load serial# from old env.; " \
-		"nand read $loadaddr " __stringify(CONFIG_ENV_OFFSET_REDUND) \
-			" " __stringify(CONFIG_ENV_SIZE) " && " \
-		"env import -c $loadaddr " __stringify(CONFIG_ENV_SIZE) " && " \
-		"ser=${serial#} && " \
-		"env default -a && " \
-		"setenv serial# $ser && " \
-		"defethaddr && " \
-		"defethaddr 1 && " \
-		"run ipresetcmd && " \
-		"setenv bootdelay -2 && " \
-		"saveenv; " \
-	"fi; " \
-	REAL_PREBOOT
-
-#else
+#ifdef CONFIG_BRINGUP
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
@@ -630,6 +604,51 @@
 		"echo '*******' && " \
 		"echo '*******  Auto-bringup failed!  Contact Joe Hershberger.'; " \
 	"fi;"
+
+#elif defined(CONFIG_MFG)
+
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	"ipaddr=192.168.1.180\0" \
+	"netmask=255.255.255.0\0" \
+	"gatewayip=192.168.1.185\0" \
+	"serverip=192.168.1.185\0" \
+	REAL_EXTRA_ENV_SETTINGS
+
+#undef CONFIG_BOOTCOMMAND
+
+#define CONFIG_PREBOOT \
+	"dcache on; " \
+	"nand unlock; " \
+	"run nc; " \
+	"setenv silent;"
+
+#else /* !CONFIG_MFG && !CONFIG_BRINGUP */
+
+#undef CONFIG_EXTRA_ENV_SETTINGS
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	REAL_EXTRA_ENV_SETTINGS
+
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND \
+	REAL_BOOTCOMMAND
+
+#define CONFIG_PREBOOT \
+	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
+		"echo Attepting to load serial# from old env.; " \
+		"nand read $loadaddr " __stringify(CONFIG_ENV_OFFSET_REDUND) \
+			" " __stringify(CONFIG_ENV_SIZE) " && " \
+		"env import -c $loadaddr " __stringify(CONFIG_ENV_SIZE) " && " \
+		"ser=${serial#} && " \
+		"env default -a && " \
+		"setenv serial# $ser && " \
+		"defethaddr && " \
+		"defethaddr 1 && " \
+		"run ipresetcmd && " \
+		"setenv bootdelay -2 && " \
+		"saveenv; " \
+	"fi; " \
+	REAL_PREBOOT
 
 #endif
 
