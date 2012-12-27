@@ -191,6 +191,7 @@
 	"autoload=n\0" \
 	"silent=1\0" \
 	"bootdelay=-2\0" \
+	"verify=n\0" \
 	"console=ttyPS0,115200\0" \
 	"fdt_high=0x17ffffff\0" \
 	"initrd_high=0x17ffffff\0" \
@@ -200,12 +201,10 @@
 	"DeviceCode=0x76F6\0" \
 	"TargetClass=LCI\0" \
 	"DeviceDesc=LCI-9000\0" \
-	"fpgaloadcmd=if ubifsload $loadaddr $imagefile && " \
-			"iminfo $loadaddr; " \
+	"fpgaloadcmd=if ubifsload $loadaddr $imagefile; " \
 		"then " \
 			"configfpga=1; " \
-		"elif ubifsload $loadaddr $altimagefile && " \
-			"iminfo $loadaddr; " \
+		"elif ubifsload $loadaddr $altimagefile; " \
 		"then " \
 			"run switchfw; " \
 			"configfpga=1; " \
