@@ -210,7 +210,13 @@
 			"configfpga=1; " \
 		"fi; " \
 		"if test -n \\\\\"$configfpga\\\\\"; then " \
-			"fpga loadmk 0 $loadaddr:fpga; " \
+			"if fpga loadmk 0 $loadaddr:fpga; " \
+			"then " \
+			"else " \
+				"run switchfw; " \
+				"ubifsload $loadaddr $imagefile; " \
+				"fpga loadmk 0 $loadaddr:fpga; " \
+			"fi; " \
 		"fi;\0" \
 	"switchfw=" \
 		"oldimagefile=$imagefile; " \
