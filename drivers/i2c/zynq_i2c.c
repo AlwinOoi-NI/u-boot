@@ -39,7 +39,10 @@ static inline void Xout_le32(u32 *addr, u32 value)
 
 static inline u32 Xin_le32(u32 *addr)
 {
-	volatile u32 temp = *(volatile u32 *)addr;
+	volatile u32 temp;
+
+	flush_dcache_range(0xE0004000, 0x2000);
+	temp = *(volatile u32 *)addr;
 	SYNCHRONIZE_IO;
 	return temp;
 }
