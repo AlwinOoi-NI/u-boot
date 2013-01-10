@@ -607,6 +607,7 @@
 	"echo '*******' && " \
 	"echo '*******  Partitioning NAND flash...' && " \
 	"echo '*******' && " \
+	"nand erase.part boot-config && " \
 	"run writepartitions && " \
 	"saveenv && saveenv && " \
 	"echo '*******' && " \
