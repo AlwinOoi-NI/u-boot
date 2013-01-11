@@ -29,6 +29,9 @@
 /* -1 to Disable autoboot, -2 to force boot */
 #define CONFIG_BOOTDELAY	0
 #else
+#undef CONFIG_BOOTDELAY
+/* -1 to Disable autoboot, -2 to force boot */
+#define CONFIG_BOOTDELAY	-2
 #define CONFIG_SILENT_CONSOLE
 #define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
 #endif
@@ -575,7 +578,6 @@
 	"defethaddr && " \
 	"defethaddr 1 && " \
 	"run ipresetcmd && " \
-	"setenv bootdelay -2 && " \
 	"flags=${.flags} && " \
 	"setenv .flags bootcmd,preboot && " \
 	"setenv bootcmd \\\\\"$realbootcmd\\\\\" && " \
@@ -647,7 +649,6 @@
 		"defethaddr && " \
 		"defethaddr 1 && " \
 		"run ipresetcmd && " \
-		"setenv bootdelay -2 && " \
 		"saveenv; " \
 	"fi; " \
 	REAL_PREBOOT
