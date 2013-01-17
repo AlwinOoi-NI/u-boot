@@ -12,7 +12,8 @@
  * High Level Configuration Options
  */
 #define CONFIG_NIZYNQPROTO /* Board */
-#define CONFIG_DEVICE_CODE 7659
+#define CONFIG_DEVICE_CODE "7659"
+#define CONFIG_FPGA_DEVICE_CODE "7659"
 
 #include <configs/zynq_common.h>
 
@@ -217,7 +218,7 @@
 #define READONLY_DEFAULT_ENV_FLAGS \
 	"consolecmd:so,ncoutport:do,ncinport:do,nc:so,sc:so," \
 	"fdt_high:xo,initrd_high:xo,TargetClass:so,DeviceDesc:so," \
-	"DeviceCode:xo,loadaddr:xo,verifyaddr:xo," \
+	"DeviceCode:xo,FPGADeviceCode:xo,loadaddr:xo,verifyaddr:xo," \
 	"boot_safemode:so,boot_runmode:so,consoleoutcmd:so," \
 	"recoverybootcmd:so,recoverycmd:so,fpgaloadcmd:so,ipresetcmd:so," \
 	"ipconfigcmd:so,markhardbootcomplete:so,readbootmode:so," \
@@ -251,7 +252,8 @@
 	"initrd_high=0x17ff7fff\0" \
 	"TargetClass=cRIO\0" \
 	"DeviceDesc=cRIO-Zynq\0" \
-	"DeviceCode=0x" __stringify(CONFIG_DEVICE_CODE) "\0" \
+	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
+	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
