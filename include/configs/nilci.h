@@ -334,6 +334,11 @@
        "ubi part root && " \
        "ubi write $loadaddr rootfs1 $filesize && " \
        "echo '*******' && " \
+       "echo '*******  Installing sfp.iso...' && " \
+       "echo '*******' && " \
+       "fatload mmc 0 $loadaddr sfp.iso && " \
+       "ubi write $loadaddr sfp1 $filesize && " \
+       "echo '*******' && " \
        "echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
        "else " \
                "echo '*******' && " \
