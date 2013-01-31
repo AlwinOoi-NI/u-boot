@@ -61,7 +61,11 @@
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
+#ifdef CONFIG_MFG
+#define CONFIG_IDENT_STRING	"\nNational Instruments Dos Equis Manufacturing"
+#else
 #define CONFIG_IDENT_STRING	"\nNational Instruments Dos Equis"
+#endif
 #define CONFIG_PANIC_HANG /* For development/debugging */
 
 #undef CONFIG_SYS_PROMPT
