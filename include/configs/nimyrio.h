@@ -561,6 +561,7 @@
 	"fi; " \
 	"setenv silent 1; " \
 	"dcache on; " \
+	"nand lock tight; " \
 	"ubi part boot-config; " \
 	"run readsoftdip; " \
 	"run readcplddip; " \
