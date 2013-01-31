@@ -6,7 +6,11 @@
  */
 #define CONFIG_NIDOSEQUIS /* Board */
 #define CONFIG_DEVICE_CODE "76D6"
+#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
 #define CONFIG_FPGA_DEVICE_CODE "76D6"
+#else
+#define CONFIG_FPGA_DEVICE_CODE "76F8"
+#endif
 
 #include <configs/zynq_common.h>
 
