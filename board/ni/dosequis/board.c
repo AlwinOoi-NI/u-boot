@@ -109,7 +109,7 @@ int board_late_init (void)
 	   power to the USB port. */
 	ulpi_write(&usb_phy, &ulpi->otg_ctrl_set, ULPI_OTG_DRVVBUS_EXT);
 
-#ifdef CONFIG_BRINGUP
+#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
 	if (getenv("serial#") != NULL)
 		strcpy(serial, getenv("serial#"));
 	set_default_env("Default env required for auto-bringup.\n");
