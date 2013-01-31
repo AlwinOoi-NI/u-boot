@@ -83,8 +83,10 @@ int board_init(void)
 int board_late_init (void)
 {
 	u8 tmp;
+#ifdef CONFIG_REV_A
 	struct ulpi_viewport usb_phy;
 	struct ulpi_regs *ulpi = (struct ulpi_regs *)0;
+#endif
 #if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
 	char serial[11] = "";
 #endif
@@ -96,6 +98,7 @@ int board_late_init (void)
 	tmp = 0x00;
 	i2c_write(0x40, 0x03, 1, &tmp, 1);
 
+#ifdef CONFIG_REV_A
 	/* Wait for the TI USB PHY to come out of reset. */
 	udelay(1000);
 
@@ -108,6 +111,7 @@ int board_late_init (void)
 	   in the OTG Control register, otherwise the PHY will never turn on
 	   power to the USB port. */
 	ulpi_write(&usb_phy, &ulpi->otg_ctrl_set, ULPI_OTG_DRVVBUS_EXT);
+#endif
 
 #if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
 	if (getenv("serial#") != NULL)
