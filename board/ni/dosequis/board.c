@@ -85,7 +85,7 @@ int board_late_init (void)
 	u8 tmp;
 	struct ulpi_viewport usb_phy;
 	struct ulpi_regs *ulpi = (struct ulpi_regs *)0;
-#ifdef CONFIG_BRINGUP
+#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
 	char serial[11] = "";
 #endif
 
@@ -208,14 +208,17 @@ int board_nand_init(struct nand_chip *nand_chip)
 		return ret;
 
 	/*
-	 * This is crappy (using 0 as the device), but this is what the Zynq
-	 * NAND driver does, so we do it too to make sure we get the same device
+	 * Unlock the entire flash for SD bringup and manufacturing
 	 */
-#ifdef CONFIG_BRINGUP
+#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
 	off = 0;
 #else
 	off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT;
 #endif
+	/*
+	 * This is crappy (using 0 as the device), but this is what the Zynq
+	 * NAND driver does, so we do it too to make sure we get the same device
+	 */
 	size = nand_info[0].size - off;
 
 	nand_unlock(&nand_info[0], off, size, 0);
