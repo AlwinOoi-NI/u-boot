@@ -657,7 +657,6 @@
 #undef CONFIG_BOOTCOMMAND
 
 #define CONFIG_PREBOOT \
-	"dcache on; " \
 	"run nc; " \
 	"setenv silent;"
 
