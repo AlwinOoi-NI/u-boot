@@ -302,20 +302,23 @@
        "env default -f -a;" \
        "setenv silent;" \
        "if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-               "askenv serial# 'Enter board serial number: ' 10; " \
+               "setenv serial# DEADBEEF; " \
        "fi; " \
        "if test -n \\\\\"${serial\\\\#}\\\\\" && " \
-       "defethaddr && " \
-       "defethaddr 1 && " \
        "setenv bootcmd \"$realbootcmd\" && " \
        "setenv realbootcmd && " \
        "setenv preboot \"$realpreboot\" && " \
        "setenv realpreboot && " \
-       "mmcinfo && " \
+       "mw.l 0x40101010 1 && " \
+       "usb start &&" \
+       "usb reset &&" \
+       "setenv ipaddr 192.168.1.2 && " \
+       "setenv netmask 255.255.255.0 && " \
+       "setenv serverip 192.168.1.1 && " \
        "echo '*******' && " \
        "echo '*******  Installing BOOT_NAND.BIN...' && " \
        "echo '*******' && " \
-       "fatload mmc 0 $loadaddr BOOT_NAND.BIN && " \
+       "tftpboot BOOT.BIN && " \
        "run writeboot && " \
        "echo '*******' && " \
        "echo '*******  Partitioning NAND flash...' && " \
@@ -325,19 +328,19 @@
        "echo '*******' && " \
        "echo '*******  Installing bootfs.ubifs...' && " \
        "echo '*******' && " \
-       "fatload mmc 0 $loadaddr bootfs.ubifs && " \
        "ubi part boot-config && " \
+       "tftpboot bootfs.ubifs && " \
        "ubi write $loadaddr bootfs $filesize && " \
        "echo '*******' && " \
        "echo '*******  Installing root.squashfs...' && " \
        "echo '*******' && " \
-       "fatload mmc 0 $loadaddr root.squashfs && " \
        "ubi part root && " \
+       "tftpboot root.squashfs && " \
        "ubi write $loadaddr rootfs1 $filesize && " \
        "echo '*******' && " \
        "echo '*******  Installing sfp.iso...' && " \
        "echo '*******' && " \
-       "fatload mmc 0 $loadaddr sfp.iso && " \
+       "tftpboot sfp.iso && " \
        "ubi write $loadaddr sfp1 $filesize && " \
        "echo '*******' && " \
        "echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
