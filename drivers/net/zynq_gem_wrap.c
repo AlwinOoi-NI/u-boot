@@ -435,13 +435,13 @@ int Xgmac_init(struct eth_device *dev, bd_t *bis)
 	/* Assumes IO PLL clock is 1000 MHz */
 	if (link_speed == 1000)		/* 125MHz */
 		Out32(slcr_gem_tx_clk,
-			((1 << 20) | (8 << 8) | (0 << 4) | (1 << 0)));
+			((1 << 20) | (12 << 8) | (0 << 4) | (1 << 0)));
 	else if (link_speed == 100)	/* 25 MHz */
 		Out32(slcr_gem_tx_clk,
-			((1 << 20) | (40 << 8) | (0 << 4) | (1 << 0)));
+			((5 << 20) | (12 << 8) | (0 << 4) | (1 << 0)));
 	else				/* 2.5 MHz */
 		Out32(slcr_gem_tx_clk,
-			((10 << 20) | (40 << 8) | (0 << 4) | (1 << 0)));
+			((50 << 20) | (12 << 8) | (0 << 4) | (1 << 0)));
 #endif
 
 	/* SLCR lock */
