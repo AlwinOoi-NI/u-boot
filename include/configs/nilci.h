@@ -128,10 +128,10 @@
 /*
  * Physical Memory map
  *
- * Note that we only declare the lower 232MB
- * of ram, the remaining 24MB is used for usermode DMA.
+ * Note that we only declare the lower 228MB
+ * of ram, the remaining 28MB is used for usermode DMA.
  */
-#define PHYS_SDRAM_1_SIZE (232 * 1024 * 1024)
+#define PHYS_SDRAM_1_SIZE (228 * 1024 * 1024)
 #define CONFIG_SYS_ALT_MEMTEST
 #define CONFIG_SYS_MEMTEST_SCRATCH 0xFFFFF000
 #define CONFIG_CMD_CACHE
