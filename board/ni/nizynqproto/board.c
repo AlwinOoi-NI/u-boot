@@ -45,20 +45,6 @@ Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 
 int board_init(void)
 {
-	/* temporary hack to clear pending irqs before Linux as it 
-	   will hang Linux */
-
-	out_le32(0xe0001014, 0x26d);
-
-	/* temporary hack to take USB out of reset til the is fixed
-	   in Linux */
-
-	out_le32(0xe000a204, 0x80);
-	out_le32(0xe000a208, 0x80);
-	out_le32(0xe000a040, 0x80);
-	out_le32(0xe000a040, 0x00);
-	out_le32(0xe000a040, 0x80);
-
 	icache_enable();
 
 #ifdef CONFIG_FPGA
