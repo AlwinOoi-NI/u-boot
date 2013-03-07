@@ -75,8 +75,6 @@
 #undef CONFIG_SYS_PROMPT
 #define CONFIG_SYS_PROMPT	"cRIO> "
 
-#define CONFIG_DEFAULT_HOSTNAME_BASE	"cRIO-"
-
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
 
@@ -409,7 +407,6 @@
 		"setenv sgatewayip; " \
 		"setenv sipaddr; " \
 		"setenv snetmask; " \
-		"setenv hostname " CONFIG_DEFAULT_HOSTNAME_BASE "${serial#}; " \
 		"setenv mtu; " \
 		"setenv ncip 255.255.255.255; " \
 		"savesilent=$silent;setenv silent 1; " \
