@@ -24,6 +24,7 @@
 #define CONFIG_RECOVERY_FILE "myrio_recovery.cfg"
 #endif
 #endif
+#define CONFIG_DEVICE_DESC "myRIO"
 
 #ifdef CONFIG_PROTO
 /* For the proto, pretend to be the non-proto over USB */
@@ -240,7 +241,7 @@
 	"fdt_high=0x7ffffff\0" \
 	"initrd_high=0x7ff7fff\0" \
 	"TargetClass=cRIO\0" \
-	"DeviceDesc=cRIO-Zynq\0" \
+	"DeviceDesc=" CONFIG_DEVICE_DESC "\0" \
 	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
 	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
 	"USBVendorID=" CONFIG_NI_USB_VID "\0" \

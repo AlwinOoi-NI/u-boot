@@ -11,6 +11,7 @@
 #else
 #define CONFIG_FPGA_DEVICE_CODE "76F8"
 #endif
+#define CONFIG_DEVICE_DESC "cRIO-9068"
 
 #include <configs/zynq_common.h>
 
@@ -264,7 +265,7 @@
 	"fdt_high=0x17ffffff\0" \
 	"initrd_high=0x17ff7fff\0" \
 	"TargetClass=cRIO\0" \
-	"DeviceDesc=cRIO-Zynq\0" \
+	"DeviceDesc=" CONFIG_DEVICE_DESC "\0" \
 	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
 	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
 	"mtdids=" MTDIDS_DEFAULT "\0" \
