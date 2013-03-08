@@ -137,8 +137,8 @@ int board_eth_init(bd_t *bis)
 		if (i == 1)
 			miiphy_write(name, phy_addr, 21, 0x1056);
 
-		/* Override the primary phy's drive strength to maximum */
-		miiphy_write(name, phy_addr, 24, 0xBF4F);
+		/* Override the phys' drive strength */
+		miiphy_write(name, phy_addr, 24, 0xB949);
 
 		/* Page 0 */
 		miiphy_write(name, phy_addr, 22, 0);
