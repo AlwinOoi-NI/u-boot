@@ -71,7 +71,6 @@
 #else
 #define CONFIG_IDENT_STRING	"\nNational Instruments Dos Equis"
 #endif
-#define CONFIG_PANIC_HANG /* For development/debugging */
 
 #undef CONFIG_SYS_PROMPT
 #define CONFIG_SYS_PROMPT	"cRIO> "
