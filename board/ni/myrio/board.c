@@ -64,6 +64,10 @@ int board_late_init (void)
 	tmp = 0x00;
 	i2c_write(0x40, 0x03, 1, &tmp, 1);
 
+#if defined(CONFIG_MFG)
+	set_default_env("Default env required for manufacturing.\n");
+#endif
+
 	return 0;
 }
 
@@ -86,12 +90,17 @@ int board_nand_init(struct nand_chip *nand_chip)
 		return ret;
 
 	/*
+	 * Unlock the entire flash for manufacturing
+	 */
+#if defined(CONFIG_MFG)
+	off = 0;
+#else
+	off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT;
+#endif
+	/*
 	 * This is crappy (using 0 as the device), but this is what the Zynq
 	 * NAND driver does, so we do it too to make sure we get the same device
 	 */
-	/* for now, unlock all of NAND until things are a bit more stable. */
-	/* off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT; */
-	off = 0;
 	size = nand_info[0].size - off;
 
 	nand_unlock(&nand_info[0], off, size, 0);
