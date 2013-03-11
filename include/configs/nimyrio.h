@@ -21,10 +21,17 @@
 #define CONFIG_RECOVERY_FILE "myrioproto_recovery.cfg"
 #define CONFIG_DEVICE_DESC "myRIO-1900 (Prototype)"
 #else
+#ifdef CONFIG_FRC
+#define CONFIG_DEVICE_CODE "76F2"
+#define CONFIG_FPGA_DEVICE_CODE "76F2"
+#define CONFIG_RECOVERY_FILE "athena_recovery.cfg"
+#define CONFIG_DEVICE_DESC "Athena"
+#else
 #define CONFIG_DEVICE_CODE "762F"
 #define CONFIG_FPGA_DEVICE_CODE "762F"
 #define CONFIG_RECOVERY_FILE "myrio_recovery.cfg"
 #define CONFIG_DEVICE_DESC "myRIO-1900"
+#endif
 #endif
 #endif
 
