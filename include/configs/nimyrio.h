@@ -13,18 +13,20 @@
 #define CONFIG_DEVICE_CODE "76D3"
 #define CONFIG_FPGA_DEVICE_CODE "76D3"
 #define CONFIG_RECOVERY_FILE "myrioboard_recovery.cfg"
+#define CONFIG_DEVICE_DESC "myRIO-1950"
 #else
 #ifdef CONFIG_PROTO
 #define CONFIG_DEVICE_CODE "76E2"
 #define CONFIG_FPGA_DEVICE_CODE "76E2"
 #define CONFIG_RECOVERY_FILE "myrioproto_recovery.cfg"
+#define CONFIG_DEVICE_DESC "myRIO-1900 (Prototype)"
 #else
 #define CONFIG_DEVICE_CODE "762F"
 #define CONFIG_FPGA_DEVICE_CODE "762F"
 #define CONFIG_RECOVERY_FILE "myrio_recovery.cfg"
+#define CONFIG_DEVICE_DESC "myRIO-1900"
 #endif
 #endif
-#define CONFIG_DEVICE_DESC "myRIO"
 
 #ifdef CONFIG_PROTO
 /* For the proto, pretend to be the non-proto over USB */
