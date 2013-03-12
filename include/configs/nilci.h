@@ -240,7 +240,8 @@
 		"ubi create rootfs1 0x1C00000 dynamic && " \
 		"ubi create rootfs2 0x1C00000 dynamic &&" \
 		"ubi create sfp1 0x1C00000 dynamic &&" \
-		"ubi create sfp2 0x1C00000 dynamic; \0"\
+		"ubi create sfp2 0x1C00000 dynamic &&" \
+		"ubi create cal 0xA00000 dynamic; \0" \
 	"writeboot=nand erase 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
 		"nand write $loadaddr 0 " __stringify(CONFIG_ENV_OFFSET) "; " \
 		"nand read $verifyaddr 0 "  __stringify(CONFIG_ENV_OFFSET) "; " \
