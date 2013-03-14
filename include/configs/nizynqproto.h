@@ -587,19 +587,6 @@
 	REAL_BOOTCOMMAND
 
 #define CONFIG_PREBOOT \
-	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-		"echo Attepting to load serial# from old env.; " \
-		"nand read $loadaddr " __stringify(CONFIG_ENV_OFFSET_REDUND) \
-			" " __stringify(CONFIG_ENV_SIZE) " && " \
-		"env import -c $loadaddr " __stringify(CONFIG_ENV_SIZE) " && " \
-		"ser=${serial#} && " \
-		"env default -a && " \
-		"setenv serial# $ser && " \
-		"defethaddr && " \
-		"defethaddr 1 && " \
-		"run ipresetcmd && " \
-		"saveenv; " \
-	"fi; " \
 	REAL_PREBOOT
 
 #else
@@ -614,15 +601,6 @@
 
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND	\
-	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-		"echo Attepting to load serial# from old env.; " \
-		"nand read $loadaddr " __stringify(CONFIG_ENV_OFFSET_REDUND) \
-			" " __stringify(CONFIG_ENV_SIZE) " && " \
-		"env import -c $loadaddr " __stringify(CONFIG_ENV_SIZE) " && " \
-		"ser=${serial#} && " \
-		"env default -a && " \
-		"setenv serial# $ser; " \
-	"fi; " \
 	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
 		"askenv serial# 'Enter board serial number: ' 10; " \
 	"fi; " \
