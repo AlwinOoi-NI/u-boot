@@ -135,6 +135,10 @@
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NETCONSOLE
 
+#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
+#define CONFIG_CMD_DEFETHADDR
+#endif
+
 #ifdef CONFIG_MFG
 #define CONFIG_ETHADDR 00:80:2f:00:00:00
 #endif

@@ -28,8 +28,8 @@ endif
 
 LIB	= $(obj)lib$(BOARD).o
 
-COBJS-y	:= board.o \
-	   defethaddr.o \
+COBJS-y	:= board.o
+COBJS-$(CONFIG_CMD_DEFETHADDR) += defethaddr.o
 
 COBJS	:= $(sort $(COBJS-y))
 

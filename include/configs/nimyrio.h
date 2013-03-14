@@ -124,6 +124,10 @@
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NETCONSOLE
 
+#ifdef CONFIG_PROTO
+#define CONFIG_CMD_DEFETHADDR
+#endif
+
 #define CONFIG_CMD_I2C
 /* not really used */
 #define CONFIG_SYS_I2C_SPEED 400
