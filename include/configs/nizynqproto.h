@@ -25,7 +25,6 @@
 #undef CONFIG_CMD_XIMG
 #define CONFIG_FIT
 #define CONFIG_OF_BOARD_SETUP
-//#define CONFIG_FIT_VERBOSE /* enable fit_format_{error,warning}() */
 #define CONFIG_CMD_DATE		/* RTC? */
 #define CONFIG_CMD_PING		/* Might be useful for debugging */
 #define CONFIG_REGINFO		/* Again, debugging */
@@ -177,8 +176,6 @@
 		"1M(u-boot)ro," \
 		"60M(boot-config)," \
 		"-(root)"
-//#define CONFIG_MTD_DEBUG
-//#define CONFIG_MTD_DEBUG_VERBOSE 3
 
 /* UBI */
 #define CONFIG_RBTREE
