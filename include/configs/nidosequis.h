@@ -191,8 +191,8 @@
 #define MTDPARTS_DEFAULT \
 	"mtdparts=xilinx_nand:" \
 		"128k(fsbl)ro," \
-		"1M(u-boot)ro," \
-		"60M(boot-config)," \
+		"11M(u-boot)ro," \
+		"70M(boot-config)," \
 		"-(root)"
 
 /* UBI */
