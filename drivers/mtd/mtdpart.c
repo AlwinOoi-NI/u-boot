@@ -476,3 +476,31 @@ int add_mtd_partitions(struct mtd_info *master,
 
 	return 0;
 }
+
+struct mtd_info *mtd_partition_master(struct mtd_info *mtd)
+{
+	struct mtd_part *part;
+	struct mtd_info *master = NULL;
+
+	list_for_each_entry(part, &mtd_partitions, list)
+		if (&part->mtd == mtd) {
+			master = part->master;
+			break;
+		}
+
+	return master;
+}
+
+uint64_t mtd_partition_offset(struct mtd_info *mtd)
+{
+	struct mtd_part *part;
+	uint64_t offset = 0;
+
+	list_for_each_entry(part, &mtd_partitions, list)
+		if (&part->mtd == mtd) {
+			offset = part->offset;
+			break;
+		}
+
+	return offset;
+}

@@ -53,6 +53,9 @@ struct mtd_partition {
 int add_mtd_partitions(struct mtd_info *, const struct mtd_partition *, int);
 int del_mtd_partitions(struct mtd_info *);
 
+struct mtd_info *mtd_partition_master(struct mtd_info *);
+uint64_t mtd_partition_offset(struct mtd_info *);
+
 #if 0
 /*
  * Functions dealing with the various ways of partitioning the space
