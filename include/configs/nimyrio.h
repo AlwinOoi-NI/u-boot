@@ -12,7 +12,7 @@
 #ifdef CONFIG_BOARD_ONLY
 #define CONFIG_DEVICE_CODE "76D3"
 #define CONFIG_FPGA_DEVICE_CODE "76D3"
-#define CONFIG_RECOVERY_FILE "myrioboard_recovery.cfg"
+#define CONFIG_RECOVERY_FILE "myrioboardonly_recovery.cfg"
 #define CONFIG_DEVICE_DESC "myRIO-1950"
 #else
 #ifdef CONFIG_PROTO
