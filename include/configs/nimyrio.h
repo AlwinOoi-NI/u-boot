@@ -547,7 +547,8 @@
 		"fi && " \
 		"ubi create bootfs " __stringify(CONFIG_BOOTFS_VOLUME_SIZE) " dynamic && " \
 		"ubi create config - dynamic && " \
-		"if ubi part root; " \
+		"if ubi part root && " \
+			"ubi read $verifyaddr rootfs 1; " \
 		"then " \
 			"ubi remove rootfs; " \
 		"else " \
