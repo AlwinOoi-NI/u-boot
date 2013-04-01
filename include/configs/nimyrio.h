@@ -19,7 +19,7 @@
 #define CONFIG_DEVICE_CODE "76E2"
 #define CONFIG_FPGA_DEVICE_CODE "76E2"
 #define CONFIG_RECOVERY_FILE "myrioproto_recovery.cfg"
-#define CONFIG_DEVICE_DESC "myRIO-1900 (Prototype)"
+#define CONFIG_DEVICE_DESC "myRIO-1900-proto"
 #else
 #ifdef CONFIG_FRC
 #define CONFIG_DEVICE_CODE "76F2"
