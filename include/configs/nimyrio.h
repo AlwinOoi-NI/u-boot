@@ -457,12 +457,12 @@
 	"readsoftdip=if ubifsmount ubi:config && " \
 		"ubifsload $loadaddr ni-rt.ini && " \
 		"ini systemsettings; then " \
-			"setenv safemode.enabled ${safemode.enabled:-true}; " \
+			"setenv safemode.enabled ${safemode.enabled:-false}; " \
 			"setenv ipreset.enabled ${ipreset.enabled:-false}; " \
 			"setenv consoleout.enabled ${consoleout.enabled:-false}; " \
 			"setenv nofpgaapp.enabled ${nofpgaapp.enabled:-false}; " \
 		"else " \
-			"setenv safemode.enabled true; " \
+			"setenv safemode.enabled false; " \
 			"setenv ipreset.enabled false; " \
 			"setenv consoleout.enabled false; " \
 			"setenv nofpgaapp.enabled false; " \
