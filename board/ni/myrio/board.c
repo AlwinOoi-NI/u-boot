@@ -45,7 +45,11 @@ Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 
 struct serial_device *default_serial_console(void)
 {
+#ifdef CONFIG_PROTO
 	return &zynq_serial0_device;
+#else
+	return &null_serial_device;
+#endif
 }
 
 int board_init(void)

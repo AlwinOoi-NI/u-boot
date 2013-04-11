@@ -111,9 +111,15 @@
 
 /* HW to use */
 #define CONFIG_SERIAL_MULTI
+#ifdef CONFIG_PROTO
 #define CONFIG_ZYNQ_UART0
 #define CONFIG_CONSOLE_LINUX_DEV "ttyPS0"
 #define CONFIG_CONSOLE_UBOOT_DEV "zynquart0"
+#else
+#undef CONFIG_ZYNQ_SERIAL
+#define CONFIG_CONSOLE_LINUX_DEV "ttyS0"
+#define CONFIG_CONSOLE_UBOOT_DEV "eserial0"
+#endif
 #define CONFIG_SYS_NS16550
 #define CONFIG_SYS_NS16550_SERIAL
 #define CONFIG_SYS_NS16550_CLK 58824000
@@ -599,7 +605,6 @@
 	"run readcplddip; " \
 	"run readbootmode; " \
 	"run evaldip; " \
-	"run consoleoutcmd; " \
 	"if test -n \\\\\"$isforcedrecoverymode\\\\\"; then " \
 		"if test -n \\\\\"$isconsoleout\\\\\"; then " \
 			"setenv silent; " \
@@ -608,6 +613,7 @@
 		"run recoverycmd; " \
 	"else " \
 		"run fpgaloadcmd; " \
+		"run consoleoutcmd; " \
 		"if test -n \\\\\"$isipreset\\\\\"; then " \
 			"run ipresetcmd; " \
 		"fi; " \
