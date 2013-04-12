@@ -12,24 +12,20 @@
 #ifdef CONFIG_BOARD_ONLY
 #define CONFIG_DEVICE_CODE "76D3"
 #define CONFIG_FPGA_DEVICE_CODE "76D3"
-#define CONFIG_RECOVERY_FILE "myrioboardonly_recovery.cfg"
 #define CONFIG_DEVICE_DESC "myRIO-1950"
 #else
 #ifdef CONFIG_PROTO
 #define CONFIG_DEVICE_CODE "76E2"
 #define CONFIG_FPGA_DEVICE_CODE "76E2"
-#define CONFIG_RECOVERY_FILE "myrioproto_recovery.cfg"
 #define CONFIG_DEVICE_DESC "myRIO-1900-proto"
 #else
 #ifdef CONFIG_FRC
 #define CONFIG_DEVICE_CODE "76F2"
 #define CONFIG_FPGA_DEVICE_CODE "76F2"
-#define CONFIG_RECOVERY_FILE "athena_recovery.cfg"
 #define CONFIG_DEVICE_DESC "Athena"
 #else
 #define CONFIG_DEVICE_CODE "762F"
 #define CONFIG_FPGA_DEVICE_CODE "762F"
-#define CONFIG_RECOVERY_FILE "myrio_recovery.cfg"
 #define CONFIG_DEVICE_DESC "myRIO-1900"
 #endif
 #endif
@@ -351,7 +347,7 @@
 			"run ipresetcmd; " \
 		"fi;" \
 		"if usb start && " \
-			"fatload usb 0 $loadaddr " CONFIG_RECOVERY_FILE " && " \
+			"fatload usb 0 $loadaddr recovery.cfg && " \
 			"iminfo && " \
 			"fdt addr $loadaddr && " \
 			"fdt get value recoverType /images/recover type && " \

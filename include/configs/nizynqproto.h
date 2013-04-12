@@ -324,7 +324,7 @@
 			"run ipresetcmd; " \
 		"fi;" \
 		"if usb start && " \
-			"fatload usb 0 $loadaddr nizynqproto_recovery.cfg && " \
+			"fatload usb 0 $loadaddr recovery.cfg && " \
 			"iminfo && " \
 			"fdt addr $loadaddr && " \
 			"fdt get value recoverType /images/recover type && " \
