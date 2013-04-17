@@ -218,7 +218,9 @@
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET	0x7fa
 
 /* Secure Digital */
+#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
 #define CONFIG_MMC
+#endif
 
 #ifdef CONFIG_MMC
 #define CONFIG_GENERIC_MMC
