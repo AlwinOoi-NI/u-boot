@@ -354,9 +354,9 @@
 			"savebootdelay=$bootdelay && " \
 			"setenv bootdelay 0 && " \
 			"run setlederrorstatus && " \
-			"run ipconfigcmd && " \
-			"run nc && " \
-			"setenv silent && " \
+			"run ipconfigcmd; " \
+			"run nc; " \
+			"setenv silent; " \
 			"while sleep 1; do " \
 				"echo \\\"${DeviceCode:-<not-set>}, " \
 					"${serial#:-<not-set>}, " \
