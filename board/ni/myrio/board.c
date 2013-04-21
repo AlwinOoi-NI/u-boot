@@ -6,6 +6,7 @@
 #include <asm/arch/nand.h>
 #include <asm/arch/sdhci.h>
 #include <asm/io.h>
+#include <environment.h>
 #include <i2c.h>
 #include <jffs2/load_kernel.h>
 #include <miiphy.h>
@@ -74,18 +75,19 @@ int board_late_init (void)
 	int eth1addr_missing;
 #endif
 #ifdef CONFIG_CMD_NAND
-	struct mtd_device *dev;
-	u8 part_num;
-	struct part_info *part;
 	loff_t off;
 	loff_t size;
 
+#if defined(CONFIG_MFG)
 	/*
 	 * Unlock the entire flash for manufacturing
 	 */
-#if defined(CONFIG_MFG)
 	off = 0;
 #else
+	struct mtd_device *dev;
+	u8 part_num;
+	struct part_info *part;
+
 	if (mtdparts_init() || find_dev_and_part("u-boot", &dev, &part_num, &part))
 		off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT;
 	else

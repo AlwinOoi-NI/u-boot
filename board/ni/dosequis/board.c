@@ -83,9 +83,6 @@ int board_late_init (void)
 	int eth1addr_missing;
 #endif
 #ifdef CONFIG_CMD_NAND
-	struct mtd_device *dev;
-	u8 part_num;
-	struct part_info *part;
 	loff_t off;
 	loff_t size;
 
@@ -95,6 +92,10 @@ int board_late_init (void)
 #if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
 	off = 0;
 #else
+	struct mtd_device *dev;
+	u8 part_num;
+	struct part_info *part;
+
 	if (mtdparts_init() || find_dev_and_part("u-boot", &dev, &part_num, &part))
 		off = CONFIG_MTD_UBOOT_OFFSET + CONFIG_BOARD_SIZE_LIMIT;
 	else
