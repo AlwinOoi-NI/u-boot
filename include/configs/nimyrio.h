@@ -352,7 +352,7 @@
 			"setenv bootcmd \\\\\"$recoverybootcmd\\\\\" && " \
 			"setenv .flags $flags && " \
 			"savebootdelay=$bootdelay && " \
-			"setenv bootdelay 0 && " \
+			"setenv bootdelay -2 && " \
 			"run setlederrorstatus && " \
 			"run ipconfigcmd; " \
 			"run nc; " \
