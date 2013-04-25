@@ -23,11 +23,6 @@
 #include <ubi_uboot.h>
 #include "ubi.h"
 
-#ifdef CONFIG_MTD_UBI_BEB_RESERVE_ONFI
-#include <linux/mtd/nand.h>
-#include <linux/mtd/partitions.h>
-#endif
-
 /**
  * calc_data_len - calculate how much real data is stored in a buffer.
  * @ubi: UBI device description object
@@ -104,62 +99,6 @@ int ubi_check_volume(struct ubi_device *ubi, int vol_id)
  */
 void ubi_calculate_reserved(struct ubi_device *ubi)
 {
-#ifdef CONFIG_MTD_UBI_BEB_RESERVE_ONFI
-
-#ifndef CONFIG_SYS_NAND_ONFI_DETECTION
-#error CONFIG_MTD_UBI_BEB_RESERVE_ONFI requires CONFIG_SYS_NAND_ONFI_DETECTION
-#endif
-	struct mtd_info *master;
-	struct nand_chip *nand;
-	unsigned int erasesize_shift;
-	uint32_t part_start_block;
-	uint32_t part_end_block;
-	uint32_t part_start_lun;
-	uint32_t part_end_lun;
-
-	/* If the MTD is not NAND flash. */
-	if (ubi->mtd->type != MTD_NANDFLASH)
-		goto ubi_calculate_reserved_fallback;
-
-	/* If the erase size is not a power of two. Note that this is only
-	   necessary to avoid 64-bit division, which isn't supported on ARM. */
-	if (!is_power_of_2(ubi->mtd->erasesize))
-		goto ubi_calculate_reserved_fallback;
-
-	erasesize_shift = ffs(ubi->mtd->erasesize) - 1;
-
-	master = mtd_partition_master(ubi->mtd);
-
-	/* If the MTD is not an MTD partition, not sure if this is possible. */
-	if (!master)
-		goto ubi_calculate_reserved_fallback;
-
-	nand = master->priv;
-
-	/* If the MTD doesn't have an underlying NAND device, or if it doesn't
-	   support ONFI. */
-	if (!nand || !nand->onfi_version)
-		goto ubi_calculate_reserved_fallback;
-
-	/* Get the start and end of the partition in erase blocks. */
-	part_start_block = mtd_partition_offset(ubi->mtd)
-			   >> erasesize_shift;
-	part_end_block = (ubi->mtd->size >> erasesize_shift)
-			 + part_start_block - 1;
-
-	/* Get the start and end LUNs of the partition. */
-	part_start_lun = part_start_block / nand->onfi_params.blocks_per_lun;
-	part_end_lun = part_end_block / nand->onfi_params.blocks_per_lun;
-
-	/* Look up the bad blocks per unit and multiply by the number of units
-	   that the partition spans. */
-	ubi->beb_rsvd_level = nand->onfi_params.bb_per_lun *
-			      (part_end_lun - part_start_lun + 1);
-	return;
-
-ubi_calculate_reserved_fallback:
-	/* Not NAND or no ONFI, fall through. */
-#endif
 	ubi->beb_rsvd_level = ubi->good_peb_count/100;
 	ubi->beb_rsvd_level *= CONFIG_MTD_UBI_BEB_RESERVE;
 	if (ubi->beb_rsvd_level < MIN_RESEVED_PEBS)
