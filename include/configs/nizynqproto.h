@@ -15,6 +15,8 @@
 #define CONFIG_DEVICE_CODE "7659"
 #define CONFIG_FPGA_DEVICE_CODE "7659"
 
+#define CONFIG_CPU_FREQ_HZ 666660000
+
 #include <configs/zynq_common.h>
 
 #undef CONFIG_ZYNQ_XIL_LQSPI
