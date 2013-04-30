@@ -171,8 +171,8 @@ static void zynq_i2c_debug_status(void)
 static u32 zynq_i2c_wait(u32 mask)
 {
 	int timeout, int_status;
-	for (timeout = 0; timeout < 3; timeout++) {
-		udelay(5000);
+	for (timeout = 0; timeout < 100; timeout++) {
+		udelay(100);
 		int_status = Xin_le32(&zynq_i2c->interrupt_status);
 		if (int_status & mask)
 			break;
