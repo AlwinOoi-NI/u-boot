@@ -45,8 +45,6 @@ Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 
 int board_init(void)
 {
-	icache_enable();
-
 #ifdef CONFIG_FPGA
 	fpga_init();
 	fpga_add(fpga_xilinx, &fpga);

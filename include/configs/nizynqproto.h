@@ -565,7 +565,6 @@
 
 #define REAL_PREBOOT \
 	"setenv silent 1; " \
-	"dcache on; " \
 	"ubi part boot-config; " \
 	"run readsoftdip; " \
 	"run readcplddip; " \
