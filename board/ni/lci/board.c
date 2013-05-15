@@ -53,11 +53,9 @@ int board_init(void)
 	/* temporary hack to take USB out of reset til the is fixed
 	   in Linux */
 
-	out_le32(0xe000a204, 0x80);
-	out_le32(0xe000a208, 0x80);
-	out_le32(0xe000a040, 0x80);
-	out_le32(0xe000a040, 0x00);
-	out_le32(0xe000a040, 0x80);
+	out_le32(0xE000A244, 0x80000);
+	out_le32(0xE000A248, 0x80000);
+	out_le32(0xE000A044, 0x80000);
 
 	icache_enable();
 
@@ -129,13 +127,6 @@ int board_nand_init(struct nand_chip *nand_chip)
 	loff_t off;
 	loff_t size;
 	int ret;
-
-	/*
-	 * Deassert NAND write protect
-	 */
-	out_le32(0xE000A244, 0x80000);
-	out_le32(0xE000A248, 0x80000);
-	out_le32(0xE000A044, 0x80000);
 
 	ret = zynq_nand_init(nand_chip);
 	if (ret)
