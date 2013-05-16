@@ -71,7 +71,9 @@ int board_init(void)
 int board_late_init (void)
 {
 	u8 tmp;
-#if !defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
+	uchar enetaddr[6];
+#else
 	int serial_missing;
 	int ethaddr_missing;
 	int eth1addr_missing;
@@ -84,6 +86,9 @@ int board_late_init (void)
 
 #if defined(CONFIG_MFG)
 	set_default_env("Default env required for manufacturing.\n");
+
+	eth_random_enetaddr(enetaddr);
+	eth_setenv_enetaddr("ethaddr", enetaddr);
 #endif
 
 #if !defined(CONFIG_MFG)

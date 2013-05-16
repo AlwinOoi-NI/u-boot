@@ -140,6 +140,9 @@
 #ifdef CONFIG_PROTO
 #define CONFIG_CMD_DEFETHADDR
 #endif
+#ifdef CONFIG_MFG
+#define CONFIG_RANDOM_MACADDR
+#endif
 
 #define CONFIG_CMD_I2C
 /* not really used */
@@ -615,17 +618,16 @@
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"ipaddr=192.168.1.180\0" \
-	"netmask=255.255.255.0\0" \
-	"gatewayip=192.168.1.185\0" \
 	"serverip=192.168.1.185\0" \
 	REAL_EXTRA_ENV_SETTINGS
 
 #undef CONFIG_BOOTCOMMAND
 
 #define CONFIG_PREBOOT \
+	"dcache off; " \
 	"usb start; " \
 	"usb reset; " \
+	"dhcp; " \
 	"run nc; " \
 	"setenv silent;"
 
