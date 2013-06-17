@@ -128,6 +128,15 @@ int board_late_init (void)
 	return 0;
 }
 
+#ifdef CONFIG_CMD_NET
+int board_eth_init(bd_t *bis)
+{
+#ifdef CONFIG_ZYNQ_GEM
+	return zynq_gem_initialize(bis);
+#endif
+}
+#endif
+
 #ifdef CONFIG_CMD_MMC
 int board_mmc_init(bd_t *bd)
 {
