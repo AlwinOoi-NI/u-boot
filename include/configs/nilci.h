@@ -152,7 +152,7 @@
 	"mtdparts=xilinx_nand:" \
 		"128k(fsbl)ro," \
 		"512k(u-boot)ro," \
-		"30M(boot-config)," \
+		"40M(boot-config)," \
 		"-(root)"
 //#define CONFIG_MTD_DEBUG
 //#define CONFIG_MTD_DEBUG_VERBOSE 3
@@ -233,7 +233,7 @@
 		"ubi part boot-config && " \
 		"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
 		"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
-		"ubi create bootfs 0x1600000 dynamic && " \
+		"ubi create bootfs 0x1C00000 dynamic && " \
 		"ubi create config - dynamic && " \
 		"nand erase.part root && " \
 		"ubi part root && " \
