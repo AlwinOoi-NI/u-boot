@@ -295,59 +295,62 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	LCI_ENV_SETTINGS \
 	"realbootcmd="LCI_BOOTCOMMAND"\0" \
-	"realpreboot="LCI_PREBOOT"\0"
+	"realpreboot="LCI_PREBOOT"\0" \
+	"bringup=" \
+		"env default -f -a;" \
+		"setenv silent;" \
+		"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
+			"setenv serial# DEADBEEF; " \
+		"fi; " \
+		"if test -n \\\\\"${serial\\\\#}\\\\\" && " \
+		"setenv bootcmd \"$realbootcmd\" && " \
+		"setenv realbootcmd && " \
+		"setenv preboot \"$realpreboot\" && " \
+		"setenv realpreboot && " \
+		"mw.l 0x40101010 1 && " \
+		"usb start &&" \
+		"usb reset &&" \
+		"setenv ipaddr 192.168.1.2 && " \
+		"setenv netmask 255.255.255.0 && " \
+		"setenv serverip 192.168.1.1 && " \
+		"echo '*******' && " \
+		"echo '*******  Installing BOOT_NAND.BIN...' && " \
+		"echo '*******' && " \
+		"tftpboot BOOT.BIN && " \
+		"run writeboot && " \
+		"echo '*******' && " \
+		"echo '*******  Partitioning NAND flash...' && " \
+		"echo '*******' && " \
+		"run writepartitions && " \
+		"saveenv && " \
+		"echo '*******' && " \
+		"echo '*******  Installing bootfs.ubifs...' && " \
+		"echo '*******' && " \
+		"ubi part boot-config && " \
+		"tftpboot bootfs.ubifs && " \
+		"ubi write $loadaddr bootfs $filesize && " \
+		"echo '*******' && " \
+		"echo '*******  Installing root.squashfs...' && " \
+		"echo '*******' && " \
+		"ubi part root && " \
+		"tftpboot root.squashfs && " \
+		"ubi write $loadaddr rootfs1 $filesize && " \
+		"echo '*******' && " \
+		"echo '*******  Installing sfp.iso...' && " \
+		"echo '*******' && " \
+		"tftpboot sfp.iso && " \
+		"ubi write $loadaddr sfp1 $filesize && " \
+		"echo '*******' && " \
+		"echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
+		"else " \
+			"echo '*******' && " \
+			"echo '*******  Auto-bringup failed!  Contact Nathan Sullivan.'; " \
+		"fi;"
 
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND	\
        "env default -f -a;" \
-       "setenv silent;" \
-       "if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-               "setenv serial# DEADBEEF; " \
-       "fi; " \
-       "if test -n \\\\\"${serial\\\\#}\\\\\" && " \
-       "setenv bootcmd \"$realbootcmd\" && " \
-       "setenv realbootcmd && " \
-       "setenv preboot \"$realpreboot\" && " \
-       "setenv realpreboot && " \
-       "mw.l 0x40101010 1 && " \
-       "usb start &&" \
-       "usb reset &&" \
-       "setenv ipaddr 192.168.1.2 && " \
-       "setenv netmask 255.255.255.0 && " \
-       "setenv serverip 192.168.1.1 && " \
-       "echo '*******' && " \
-       "echo '*******  Installing BOOT_NAND.BIN...' && " \
-       "echo '*******' && " \
-       "tftpboot BOOT.BIN && " \
-       "run writeboot && " \
-       "echo '*******' && " \
-       "echo '*******  Partitioning NAND flash...' && " \
-       "echo '*******' && " \
-       "run writepartitions && " \
-       "saveenv && " \
-       "echo '*******' && " \
-       "echo '*******  Installing bootfs.ubifs...' && " \
-       "echo '*******' && " \
-       "ubi part boot-config && " \
-       "tftpboot bootfs.ubifs && " \
-       "ubi write $loadaddr bootfs $filesize && " \
-       "echo '*******' && " \
-       "echo '*******  Installing root.squashfs...' && " \
-       "echo '*******' && " \
-       "ubi part root && " \
-       "tftpboot root.squashfs && " \
-       "ubi write $loadaddr rootfs1 $filesize && " \
-       "echo '*******' && " \
-       "echo '*******  Installing sfp.iso...' && " \
-       "echo '*******' && " \
-       "tftpboot sfp.iso && " \
-       "ubi write $loadaddr sfp1 $filesize && " \
-       "echo '*******' && " \
-       "echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
-       "else " \
-               "echo '*******' && " \
-               "echo '*******  Auto-bringup failed!  Contact Nathan Sullivan.'; " \
-        "fi;"
+       "setenv silent;"
 
 #endif
 
