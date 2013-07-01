@@ -291,6 +291,9 @@
 
 #define CONFIG_CMD_ASKENV
 
+/* don't mark the BBT bad, so MFG can check it for real */
+#define CONFIG_NAND_BBT_NO_MARK
+
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	LCI_ENV_SETTINGS \
