@@ -326,7 +326,7 @@
 		"echo '*******  Partitioning NAND flash...' && " \
 		"echo '*******' && " \
 		"run writepartitions && " \
-		"saveenv && " \
+		"saveenv && saveenv &&" \
 		"echo '*******' && " \
 		"echo '*******  Installing bootfs.ubifs...' && " \
 		"echo '*******' && " \
