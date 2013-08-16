@@ -51,7 +51,12 @@
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
+#ifdef CONFIG_BRINGUP
+#define CONFIG_IDENT_STRING	"\nNational Instruments LCI Manufacturing"
+#else
 #define CONFIG_IDENT_STRING	"\nNational Instruments LCI"
+#endif
+
 #define CONFIG_PANIC_HANG /* For development/debugging */
 
 #undef CONFIG_SYS_PROMPT
