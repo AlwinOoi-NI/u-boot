@@ -19,10 +19,10 @@
 #define CONFIG_FPGA_DEVICE_CODE "76E2"
 #define CONFIG_DEVICE_DESC "myRIO-1900-proto"
 #else
-#ifdef CONFIG_FRC
+#ifdef CONFIG_ROBORIO
 #define CONFIG_DEVICE_CODE "76F2"
 #define CONFIG_FPGA_DEVICE_CODE "76F2"
-#define CONFIG_DEVICE_DESC "Athena"
+#define CONFIG_DEVICE_DESC "roboRIO"
 #else
 #define CONFIG_DEVICE_CODE "762F"
 #define CONFIG_FPGA_DEVICE_CODE "762F"
@@ -118,7 +118,7 @@
 #define CONFIG_CONSOLE_LINUX_DEV "ttyS0"
 #define CONFIG_CONSOLE_UBOOT_DEV "eserial0"
 #endif
-#ifdef CONFIG_FRC
+#ifdef CONFIG_ROBORIO
 #define CONFIG_ZYNQ_UART0
 #define CONFIG_ZYNQ_SERIAL
 #endif
@@ -130,7 +130,7 @@
 #define CONFIG_SYS_NS16550_COM2 0x80000010
 #define CONFIG_CONS_INDEX 1 /* not actually used */
 
-#ifdef CONFIG_FRC
+#ifdef CONFIG_ROBORIO
 /* Use GEM0 */
 #define CONFIG_NET_MULTI
 #define CONFIG_ZYNQ_GEM
@@ -143,7 +143,7 @@
 
 #define CONFIG_CMD_MII
 #define CONFIG_MII
-#endif /* CONFIG_FRC */
+#endif /* CONFIG_ROBORIO */
 
 #define CONFIG_CMD_DHCP
 #define CONFIG_CMD_LINK_LOCAL

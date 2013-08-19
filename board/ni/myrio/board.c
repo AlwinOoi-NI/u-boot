@@ -42,7 +42,7 @@ u32 XIo_In32(u32 InAddress)
 }
 
 #ifdef CONFIG_FPGA
-#if defined(CONFIG_PROTO) || defined(CONFIG_FRC)
+#if defined(CONFIG_PROTO) || defined(CONFIG_ROBORIO)
 Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 #else
 Xilinx_desc fpga = XILINX_XC7Z010_DESC(0);
