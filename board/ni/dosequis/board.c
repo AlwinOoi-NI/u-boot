@@ -147,6 +147,10 @@ int board_late_init (void)
 #ifdef CONFIG_CMD_NET
 int board_eth_init(bd_t *bis)
 {
+#if defined (CONFIG_SOL)
+	return  zynq_gem_initialize(bis);
+#else
+
 	int retval;
 	int phy_addr;
 	const char *miiname;
@@ -215,6 +219,7 @@ int board_eth_init(bd_t *bis)
 	}
 
 	return retval;
+#endif
 }
 #endif
 
