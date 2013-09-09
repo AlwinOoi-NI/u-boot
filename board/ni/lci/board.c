@@ -128,6 +128,13 @@ int board_nand_init(struct nand_chip *nand_chip)
 	loff_t size;
 	int ret;
 
+	/*
+	 * Deassert NAND write protect
+	 */
+	out_le32(0xE000A244, 0x10000);
+	out_le32(0xE000A248, 0x10000);
+	out_le32(0xE000A044, 0x10000);
+
 	ret = zynq_nand_init(nand_chip);
 	if (ret)
 		return ret;
