@@ -6,7 +6,7 @@
  */
 #define CONFIG_NIDOSEQUIS /* Board */
 #if defined (CONFIG_SOL)
-#if defined (CONFIG_SOL8BETTER) /* SOL 8 slot better */
+#if defined (CONFIG_CRIO9067) /* SOL 8 slot better */
 #define CONFIG_DEVICE_CODE "7744"
 #define CONFIG_FPGA_DEVICE_CODE "7744"
 #define CONFIG_DEVICE_DESC "cRIO-9067"
@@ -139,7 +139,7 @@
 /* Use both GEM interfaces */
 #define CONFIG_NET_MULTI
 #define CONFIG_ZYNQ_GEM
-#if defined (CONFIG_SOL8GOOD)
+#if defined (CONFIG_CRIO9066)
 #define CONFIG_ZYNQ_GEM_COUNT		1
 #else
 #define CONFIG_ZYNQ_GEM_COUNT		2
@@ -156,7 +156,7 @@
 #endif
 
 /* GEM1 on EMIO */
-#if !defined (CONFIG_SOL8GOOD)
+#if !defined (CONFIG_CRIO9066)
 #define CONFIG_ZYNQ_GEM1_EMIO
 #define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
 #define CONFIG_ZYNQ_GEM1_CREATE_MII	0
@@ -225,7 +225,7 @@
 /*
  * Physical Memory map
  */
-#if defined (CONFIG_SOL8GOOD)
+#if defined (CONFIG_CRIO9066)
 #define PHYS_SDRAM_1_SIZE (256 * 1024 * 1024)
 #else
 #define PHYS_SDRAM_1_SIZE (512 * 1024 * 1024)
@@ -270,7 +270,7 @@
 #define CONFIG_CMD_UBIFS
 
 #define CONFIG_MTD_UBOOT_OFFSET		0x20000
-#if defined (CONFIG_SOL8GOOD)
+#if defined (CONFIG_CRIO9066)
 #define CONFIG_BOARD_SIZE_LIMIT		0x80000 /* 512MB */
 #else
 #define CONFIG_BOARD_SIZE_LIMIT		0x100000 /* 1GB */
@@ -300,7 +300,7 @@
 #endif
 
 #undef CONFIG_SYS_LOAD_ADDR
-#if defined (CONFIG_SOL8GOOD)
+#if defined (CONFIG_CRIO9066)
 #define CONFIG_SYS_LOAD_ADDR 0x4000000
 #else 
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
@@ -352,7 +352,7 @@
 	READONLY_MFG_ENV_VARS \
 	NET_TYPE_ENV_VARS
 
-#if defined (CONFIG_SOL8GOOD)
+#if defined (CONFIG_CRIO9066)
 #define REAL_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
@@ -679,7 +679,7 @@
 		"nand read $verifyaddr u-boot; " \
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
-#elif defined (CONFIG_SOL8BETTER)
+#elif defined (CONFIG_CRIO9067)
 #define REAL_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
