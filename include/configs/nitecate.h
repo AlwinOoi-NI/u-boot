@@ -1,17 +1,20 @@
-#ifndef __CONFIG_NIDOSEQUIS_H
-#define __CONFIG_NIDOSEQUIS_H
+/*
+ * See zynq_common.h for Zynq common configs
+ */
+
+#ifndef __CONFIG_NITECATE_H
+#define __CONFIG_NITECATE_H
 
 /*
  * High Level Configuration Options
  */
-#define CONFIG_NIDOSEQUIS /* Board */
-#define CONFIG_DEVICE_CODE "76D6"
-#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
-#define CONFIG_FPGA_DEVICE_CODE "76D6"
-#else
-#define CONFIG_FPGA_DEVICE_CODE "76F8"
-#endif
-#define CONFIG_DEVICE_DESC "cRIO-9068"
+#define CONFIG_NITECATE /* Board */
+#define CONFIG_DEVICE_CODE "775E"
+#define CONFIG_FPGA_DEVICE_CODE "775E"
+#define CONFIG_DEVICE_DESC "Tecate"
+
+#define CONFIG_NI_USB_PID "0x775E"
+#define CONFIG_NI_USB_VID "0x3923"
 
 #define CONFIG_CPU_FREQ_HZ 666666666
 
@@ -31,18 +34,12 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
-#ifdef CONFIG_BRINGUP
-#undef CONFIG_BOOTDELAY
-/* -1 to Disable autoboot, -2 to force boot */
-#define CONFIG_BOOTDELAY	0
-#else
 #undef CONFIG_BOOTDELAY
 /* -1 to Disable autoboot, -2 to force boot */
 #define CONFIG_BOOTDELAY	-2
 #define CONFIG_SILENT_CONSOLE
 #define CONFIG_SILENT_U_BOOT_ONLY
 #define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
-#endif
 #define CONFIG_SYS_DEVICE_NULLDEV
 #define CONFIG_BAUDRATE_UPDATE_ON_RELOC
 
@@ -54,9 +51,6 @@
 
 #define CONFIG_CMD_UNZIP
 #define CONFIG_CMD_SETEXPR
-#ifdef CONFIG_BRINGUP
-#define CONFIG_CMD_ASKENV
-#endif
 #define CONFIG_CRC32_VERIFY
 #define CONFIG_CMD_MD5SUM
 #define CONFIG_MD5SUM_VERIFY
@@ -68,13 +62,13 @@
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
 #ifdef CONFIG_MFG
-#define CONFIG_IDENT_STRING	"\nNational Instruments Dos Equis Manufacturing"
+#define CONFIG_IDENT_STRING	"\nNational Instruments Tecate Manufacturing"
 #else
-#define CONFIG_IDENT_STRING	"\nNational Instruments Dos Equis"
+#define CONFIG_IDENT_STRING	"\nNational Instruments Tecate"
 #endif
 
 #undef CONFIG_SYS_PROMPT
-#define CONFIG_SYS_PROMPT	"cRIO> "
+#define CONFIG_SYS_PROMPT	"Tecate> "
 
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
@@ -97,6 +91,8 @@
 /* HW to use */
 #define CONFIG_SERIAL_MULTI
 #undef CONFIG_ZYNQ_SERIAL
+#define CONFIG_CONSOLE_LINUX_DEV "ttyS0"
+#define CONFIG_CONSOLE_UBOOT_DEV "eserial0"
 #define CONFIG_SYS_NS16550
 #define CONFIG_SYS_NS16550_SERIAL
 #define CONFIG_SYS_NS16550_CLK 58824000
@@ -111,16 +107,22 @@
 #define CONFIG_ZYNQ_GEM
 #define CONFIG_ZYNQ_GEM_COUNT		2
 
-/* GEM0 on MIO */
+/* GEM0 on EMIO */
+#define CONFIG_ZYNQ_GEM0_EMIO
 #define CONFIG_ZYNQ_GEM0_BASE_ADDR	XPSS_GEM0_BASEADDR
+#define CONFIG_ZYNQ_GEM0_CREATE_MII	1
+#define CONFIG_ZYNQ_GEM0_MII_GEM	0
 #define CONFIG_ZYNQ_GEM0_PHY_ADDR	0
+#define CONFIG_ZYNQ_GEM0_FPGA_CLK_REG	XPSS_SLCR_FPGA0_CLK_CTRL
 
 /* GEM1 on EMIO */
 #define CONFIG_ZYNQ_GEM1_EMIO
 #define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
-#define CONFIG_ZYNQ_GEM1_CREATE_MII	0
+#define CONFIG_ZYNQ_GEM1_CREATE_MII	1
 #define CONFIG_ZYNQ_GEM1_MII_GEM	0
-#define CONFIG_ZYNQ_GEM1_PHY_ADDR	1
+#define CONFIG_ZYNQ_GEM1_PHY_ADDR	0
+/* Run both GEM off the same clock, since we shouldn't need to change this
+ * clock with the PHY configuration for this board. */
 #define CONFIG_ZYNQ_GEM1_FPGA_CLK_REG	XPSS_SLCR_FPGA0_CLK_CTRL
 
 #define CONFIG_CMD_MII
@@ -136,10 +138,6 @@
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NETCONSOLE
 
-#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
-#define CONFIG_CMD_DEFETHADDR
-#endif
-
 #ifdef CONFIG_MFG
 #define CONFIG_ETHADDR 00:80:2f:00:00:00
 #endif
@@ -153,8 +151,8 @@
 #define CONFIG_ZYNQ_I2C
 #define CONFIG_ZYNQ_I2C_CTLR_0
 #define CONFIG_ZYNQ_I2C_MIO_RESET
-#define CONFIG_ZYNQ_I2C_SCL_MIO 50
-#define CONFIG_ZYNQ_I2C_SDA_MIO 51
+#define CONFIG_ZYNQ_I2C_SCL_MIO 26
+#define CONFIG_ZYNQ_I2C_SDA_MIO 27
 #undef CONFIG_RTC_XPSSRTC
 #define CONFIG_RTC_DS3231
 #define CONFIG_SYS_I2C_RTC_ADDR 0x68
@@ -174,7 +172,13 @@
 #define CONFIG_USB_EHCI_ZYNQ
 #define CONFIG_USB_EHCI_TXFIFO_THRESH 8
 #define CONFIG_EHCI_IS_TDI
-#define CONFIG_USB_BASE_ADDR XPSS_USB0_BASEADDR
+/* Pick a USB port to use by defining or undefining this. */
+#define TECATE_USE_ORANGE_USB_PORT
+#ifdef TECATE_USE_ORANGE_USB_PORT
+#define CONFIG_USB_BASE_ADDR XPSS_USB1_BASEADDR /* orange, int 44 */
+#else
+#define CONFIG_USB_BASE_ADDR XPSS_USB0_BASEADDR /* micro, int 21 */
+#endif
 
 /*
  * Physical Memory map
@@ -229,10 +233,7 @@
 #define CONFIG_BACKUP_ETHADDR_OFFSET	0x7f4
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET	0x7fa
 
-/* Secure Digital */
-#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
 #define CONFIG_MMC
-#endif
 
 #ifdef CONFIG_MMC
 #define CONFIG_GENERIC_MMC
@@ -245,6 +246,8 @@
 #define CONFIG_DOS_PARTITION
 #endif
 
+#define CONFIG_DEFAULT_NVS "begin-base64 444 /lib/firmware/ti-connectivity/wl1271-nvs.bin.gz`H4sICK4CAAAAA3dsMTI3MS1udnMuYmluAGPMDWEAAsZCMIUAjDMZv0OZzP+/`/2PAA57/YWVn5+Tm5RcWkZBWUmXQZzBksGBwYvBkCGCIYohhiGdIYIhg8Mdn`xIgGf//9+w+kGCGACA1MwthEVzEDzWD6DzSKiZUBbB4DJ4uEAAfD9/fP74ME`+O1R+QwM6HwgePONgUfixx8GDoEPPxi4RCj0GgiUMzYwyMorqalrSskrqaqq`i8nKKaioBuABjExAwCAqKiooKsonp0sFNwwdAACjiUGVkAMAAA==`====`"
+
 #undef CONFIG_SYS_LOAD_ADDR
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
@@ -252,7 +255,9 @@
 #define READONLY_DEFAULT_ENV_FLAGS \
 	"consolecmd:so,ncoutport:do,ncinport:do,nc:so,sc:so," \
 	"fdt_high:xo,initrd_high:xo,TargetClass:so,DeviceDesc:so," \
-	"DeviceCode:xo,FPGADeviceCode:xo,loadaddr:xo,verifyaddr:xo," \
+	"DeviceCode:xo,FPGADeviceCode:xo," \
+	"loadaddr:xo,verifyaddr:xo," \
+	"USBVendorID:xo,USBProductID:xo,USBProduct:so,USBDevice:xo," \
 	"backuppage:xo,backupserialoffset:xo,backupethaddroffset:xo," \
 	"backupeth1addroffset:xo," \
 	"boot_safemode:so,boot_runmode:so,consoleoutcmd:so," \
@@ -265,7 +270,8 @@
 	"bootcmd:so,preboot:so,mtdids:so,mtdparts:so,"
 
 #define READONLY_MFG_ENV_VARS \
-	"serial#:xo,ethaddr:mc,eth1addr:mc,"
+	"serial#:xo,ethaddr:mc,eth1addr:mc,wirelessRegionFactory:so," \
+	"wl12xxnvs:so,"
 
 #define NET_TYPE_ENV_VARS \
 	"ipaddr:i,sipaddr:i,netmask:i,snetmask:i,gatewayip:i,sgatewayip:i," \
@@ -279,18 +285,24 @@
 #define REAL_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
-	"consolecmd=setenv console ttyS0,$baudrate\0" \
+	"consolecmd=setenv console " CONFIG_CONSOLE_LINUX_DEV ",$baudrate\0" \
 	"ncoutport=7865\0" \
 	"ncinport=8473\0" \
 	"ncip=255.255.255.255\0" \
 	"nc=setenv stdout nc;setenv stdin nc\0" \
-	"sc=setenv stdout serial;setenv stdin serial\0" \
+	"sc=setenv stdout " CONFIG_CONSOLE_UBOOT_DEV ";" \
+		"setenv stderr " CONFIG_CONSOLE_UBOOT_DEV ";" \
+		"setenv stdin " CONFIG_CONSOLE_UBOOT_DEV ";\0" \
 	"fdt_high=0x17ffffff\0" \
 	"initrd_high=0x17ff7fff\0" \
 	"TargetClass=cRIO\0" \
 	"DeviceDesc=" CONFIG_DEVICE_DESC "\0" \
 	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
 	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
+	"USBVendorID=" CONFIG_NI_USB_VID "\0" \
+	"USBProductID=" CONFIG_NI_USB_PID "\0" \
+	"USBProduct=Tecate\0" \
+	"USBDevice=0x" CONFIG_DEVICE_CODE "\0" \
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
@@ -298,6 +310,8 @@
 	"backupserialoffset=" __stringify(CONFIG_BACKUP_SERIAL_OFFSET) "\0" \
 	"backupethaddroffset=" __stringify(CONFIG_BACKUP_ETHADDR_OFFSET) "\0" \
 	"backupeth1addroffset=" __stringify(CONFIG_BACKUP_ETH1ADDR_OFFSET) "\0" \
+	"wirelessRegionFactory=840\0" \
+	"wl12xxnvs=" CONFIG_DEFAULT_NVS "\0" \
 	"sdboot=echo Copying Safemode from SD to RAM...; " \
 		"mmcinfo; " \
 		"fatload mmc 0 $loadaddr linux_safemode.itb; " \
@@ -331,11 +345,12 @@
 			"else " \
 				"setenv consoleparam console=$console quiet; " \
 			"fi; " \
-			"setenv stderr eserial0; " \
-			"setenv stdin eserial0; " \
-			"setenv stdout eserial0; " \
+			"run sc; " \
 		"else " \
 			"setenv consoleparam console= quiet; " \
+			"setenv stderr nulldev; " \
+			"setenv stdin nulldev; " \
+			"setenv stdout nulldev; " \
 			"setenv bootdelay -2; " \
 		"fi;\0" \
 	"recoverybootcmd=" \
@@ -379,6 +394,7 @@
 			"savebootdelay=$bootdelay && " \
 			"setenv bootdelay -2 && " \
 			"run setlederrorstatus && " \
+			"usb reset && " \
 			"run ipconfigcmd; " \
 			"run nc; " \
 			"setenv silent; " \
@@ -556,10 +572,14 @@
 		"serial_save=${serial#} && " \
 		"ethaddr_save=$ethaddr && " \
 		"eth1addr_save=$eth1addr && " \
+		"wirelessRegionFactory_save=$wirelessRegionFactory && " \
+		"wl12xxnvs_save=$wl12xxnvs && " \
 		"env default -a && " \
 		"env set serial# $serial_save && " \
 		"env set ethaddr $ethaddr_save && " \
-		"env set eth1addr $eth1addr_save;\0" \
+		"env set eth1addr $eth1addr_save && " \
+		"env set wirelessRegionFactory $wirelessRegionFactory_save && " \
+		"env set wl12xxnvs $wl12xxnvs_save;\0" \
 	"writepartitions=" \
 		"if ubi part boot-config && " \
 			"ubi read $verifyaddr u-boot-env1 1 && " \
@@ -627,58 +647,8 @@
 		"fi; " \
 	"fi;"
 
-#ifdef CONFIG_BRINGUP
 
-#undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	REAL_EXTRA_ENV_SETTINGS \
-	"realbootcmd=" \
-	REAL_BOOTCOMMAND "\0" \
-	"realpreboot=" \
-	REAL_PREBOOT "\0"
-
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND	\
-	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-		"askenv serial# 'Enter board serial number: ' 10; " \
-	"fi; " \
-	"if test -n \\\\\"${serial\\\\#}\\\\\" && " \
-	"defethaddr && " \
-	"defethaddr 1 && " \
-	"run ipresetcmd && " \
-	"flags=${.flags} && " \
-	"setenv .flags bootcmd,preboot && " \
-	"setenv bootcmd \\\\\"$realbootcmd\\\\\" && " \
-	"setenv realbootcmd && " \
-	"setenv preboot \\\\\"$realpreboot\\\\\" && " \
-	"setenv realpreboot && " \
-	"setenv .flags $flags && " \
-	"mmcinfo && " \
-	"echo '*******' && " \
-	"echo '*******  Installing BOOT_NAND.BIN...' && " \
-	"echo '*******' && " \
-	"fatload mmc 0 $loadaddr BOOT_NAND.BIN && " \
-	"run writeboot && " \
-	"echo '*******' && " \
-	"echo '*******  Partitioning NAND flash...' && " \
-	"echo '*******' && " \
-	"nand erase.part boot-config && " \
-	"run writepartitions && " \
-	"saveenv && saveenv && " \
-	"echo '*******' && " \
-	"echo '*******  Installing dosequis_bootfs.ubifs...' && " \
-	"echo '*******' && " \
-	"fatload mmc 0 $loadaddr dosequis_bootfs.ubifs && " \
-	"ubi part boot-config && " \
-	"ubi write $loadaddr bootfs $filesize && " \
-	"echo '*******' && " \
-	"echo '*******  Set bootmode jumpers to (off)(off)(on) NAND boot mode and reboot.'; then " \
-	"else " \
-		"echo '*******' && " \
-		"echo '*******  Auto-bringup failed!  Contact Joe Hershberger.'; " \
-	"fi;"
-
-#elif defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
@@ -692,10 +662,9 @@
 
 #define CONFIG_PREBOOT \
 	"dcache off; " \
-	"run nc; " \
 	"setenv silent;"
 
-#else /* !CONFIG_MFG && !CONFIG_BRINGUP */
+#else /* !CONFIG_MFG */
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
@@ -710,4 +679,4 @@
 
 #endif
 
-#endif /* __CONFIG_NIDOSEQUIS_H */
+#endif /* __CONFIG_NITECATE_H */

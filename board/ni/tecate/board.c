@@ -13,7 +13,6 @@
 #include <netdev.h>
 #include <serial.h>
 #include <zynqpl.h>
-#include <usb/ulpi.h>
 
 #define BOOT_MODE_REG     (XPSS_SYS_CTRL_BASEADDR + 0x25C)
 #define BOOT_MODES_MASK    0x0000000F
@@ -48,7 +47,7 @@ Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 
 struct serial_device *default_serial_console(void)
 {
-#ifdef CONFIG_BRINGUP
+#ifdef CONFIG_MFG
 	return &eserial1_device;
 #else
 	return &null_serial_device;
@@ -68,49 +67,20 @@ int board_init(void)
 int board_late_init (void)
 {
 	u8 tmp;
-#ifdef CONFIG_REV_A
-	struct ulpi_viewport usb_phy;
-	struct ulpi_regs *ulpi = (struct ulpi_regs *)0;
-#endif
-#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
-	char serial[11] = "";
-#endif
-#if !defined(CONFIG_BRINGUP) && !defined(CONFIG_MFG)
+#if !defined(CONFIG_MFG)
 	int serial_missing;
 	int ethaddr_missing;
 	int eth1addr_missing;
 #endif
 	/*
-	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
-	 * out of reset
+	 * Take usb phy out of reset
 	 */
 	tmp = 0x00;
 	i2c_write(0x40, 0x03, 1, &tmp, 1);
 
-#ifdef CONFIG_REV_A
-	/* Wait for the TI USB PHY to come out of reset. */
-	udelay(1000);
-
-	/* ULPI_VIEWPORT register */
-	usb_phy.viewport_addr = CONFIG_USB_BASE_ADDR + XPSS_USB_ULPI_VIEWPORT;
-	usb_phy.port_num = 0;
-
-	/* The TI PHY on DosEquis and myRIO behaves slightly differently than
-	   the SMSC PHY we used previously. We must set the DrvVbusExternal bit
-	   in the OTG Control register, otherwise the PHY will never turn on
-	   power to the USB port. */
-	ulpi_write(&usb_phy, &ulpi->otg_ctrl_set, ULPI_OTG_DRVVBUS_EXT);
-#endif
-
-#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
-	if (getenv("serial#") != NULL)
-		strcpy(serial, getenv("serial#"));
-	set_default_env("Default env required for auto-bringup.\n");
-	if (strlen(serial) != 0)
-		setenv("serial#", serial);
-#endif
-
-#if !defined(CONFIG_BRINGUP) && !defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
+	set_default_env("Default env required for manufacturing.\n");
+#else
 	serial_missing = getenv("serial#") == NULL;
 	ethaddr_missing = getenv("ethaddr") == NULL;
 	eth1addr_missing = getenv("eth1addr") == NULL;
@@ -129,14 +99,24 @@ int board_late_init (void)
 				CONFIG_BACKUP_SERIAL_OFFSET)]);
 			setenv("serial#", string);
 		}
-		if (ethaddr_missing && !nand_read_status)
-			eth_setenv_enetaddr("ethaddr", &nand_buffer[
-                            getenv_ulong("backupethaddroffset", 16,
-				CONFIG_BACKUP_ETHADDR_OFFSET)]);
-		if (eth1addr_missing && !nand_read_status)
-			eth_setenv_enetaddr("eth1addr", &nand_buffer[
-                            getenv_ulong("backupeth1addroffset", 16,
-				CONFIG_BACKUP_ETH1ADDR_OFFSET)]);
+		if (ethaddr_missing && !nand_read_status) {
+			int offset = getenv_ulong("backupethaddroffset", 16,
+                                CONFIG_BACKUP_ETHADDR_OFFSET);
+
+			if (memcmp(&nand_buffer[offset],
+			    "\xff\xff\xff\xff\xff\xff", 6)) {
+				eth_setenv_enetaddr("ethaddr", &nand_buffer[offset]);
+			}
+		}
+		if (eth1addr_missing && !nand_read_status) {
+			int offset = getenv_ulong("backupeth1addroffset", 16,
+                                CONFIG_BACKUP_ETH1ADDR_OFFSET);
+
+			if (memcmp(&nand_buffer[offset],
+			    "\xff\xff\xff\xff\xff\xff", 6)) {
+				eth_setenv_enetaddr("eth1addr", &nand_buffer[offset]);
+			}
+		}
 		saveenv();
 	}
 #endif
@@ -147,81 +127,14 @@ int board_late_init (void)
 #ifdef CONFIG_CMD_NET
 int board_eth_init(bd_t *bis)
 {
-	int retval;
-	int phy_addr;
-	const char *miiname;
-	char gemname[10];
-	int i;
-	u16 regval;
-
-	retval = zynq_gem_initialize(bis);
-
-	/* The PHYs for zynq_gem0 and zynq_gem1 are both connected to the
-	   MDIO interface of zynq_gem0. */
-	miiname = "zynq_gem0";
-
-	/* DosEquis has a Marvell Gigabit PHY on gem0 and gem1 */
-	for (i = 0; i < CONFIG_ZYNQ_GEM_COUNT; i++) {
-		sprintf(gemname, "zynq_gem%d", i);
-
-		phy_addr = zynq_gem_get_phyaddr(gemname);
-
-		/* Page 2 */
-		miiphy_write(miiname, phy_addr, 22, 2);
-
-		/* Disable the unused 125 MHz clock from the phy */
-		miiphy_write(miiname, phy_addr, 16, 0x444E);
-
-		/* Remove the delay on the RXClk for the secondary PHY */
-		if (i == 1)
-			miiphy_write(miiname, phy_addr, 21, 0x1056);
-
-		/* Override the phys' drive strength */
-		miiphy_write(miiname, phy_addr, 24, 0xB949);
-
-		/* Page 0 */
-		miiphy_write(miiname, phy_addr, 22, 0);
-
-		/* Copper specific control register 1 */
-		miiphy_read(miiname, phy_addr, 16, &regval);
-		regval |= (7 << 12); /* max number of gigabit attempts */
-		regval |= (1 << 11); /* enable downshift */
-		miiphy_write(miiname, phy_addr, 16, regval);
-
-		/* Soft-reset the secondary phy so RXClk change takes effect */
-		if (i == 1)
-			miiphy_write(miiname, phy_addr, 0, 0x9140);
-
-		/* Page 0xFF */
-		miiphy_write(miiname, phy_addr, 22, 0xFF);
-
-		/* Errata settings */
-		miiphy_write(miiname, phy_addr, 17, 0x214b);
-		miiphy_write(miiname, phy_addr, 16, 0x2144);
-		miiphy_write(miiname, phy_addr, 17, 0x0c28);
-		miiphy_write(miiname, phy_addr, 16, 0x2146);
-		miiphy_write(miiname, phy_addr, 17, 0xb233);
-		miiphy_write(miiname, phy_addr, 16, 0x214d);
-		miiphy_write(miiname, phy_addr, 17, 0xcc0c);
-		miiphy_write(miiname, phy_addr, 16, 0x2159);
-
-		/* Page 0xFB */
-		miiphy_write(miiname, phy_addr, 22, 0xFB);
-
-		miiphy_write(miiname, phy_addr, 7, 0xc00d);
-
-		/* Page 0 */
-		miiphy_write(miiname, phy_addr, 22, 0);
-	}
-
-	return retval;
+	return zynq_gem_initialize(bis);
 }
 #endif
 
 #ifdef CONFIG_CMD_MMC
 int board_mmc_init(bd_t *bd)
 {
-	return zynq_sdhci_init(XPSS_SDIO0_BASEADDR, 100000000, 0, SDHCI_QUIRK_NO_CD);
+	return zynq_sdhci_init(XPSS_SDIO0_BASEADDR, 100000000, 0, 0);
 }
 #endif
 
