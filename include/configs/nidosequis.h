@@ -761,19 +761,12 @@
 
 #undef CONFIG_BOOTCOMMAND
 
-#if defined (CONFIG_SOL)
 #define CONFIG_PREBOOT \
 	"dcache off; " \
 	"usb start; " \
 	"usb reset; " \
 	"run nc; " \
 	"setenv silent;"
-#else
-#define CONFIG_PREBOOT \
-	"dcache off; " \
-	"run nc; " \
-	"setenv silent;"
-#endif
 
 #else /* !CONFIG_MFG && !CONFIG_BRINGUP */
 
