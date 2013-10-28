@@ -159,6 +159,9 @@
 #ifdef CONFIG_PROTO
 #define CONFIG_CMD_DEFETHADDR
 #endif
+#ifdef CONFIG_MFG
+#define CONFIG_RANDOM_MACADDR
+#endif
 
 #define CONFIG_CMD_I2C
 /* not really used */
