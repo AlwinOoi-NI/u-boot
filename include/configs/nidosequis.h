@@ -27,6 +27,13 @@
 #if defined (CONFIG_SOL)
 #define CONFIG_NI_USB_PID "0x770D"
 #define CONFIG_NI_USB_VID "0x3923" 
+#define CONFIG_GADGET_VARS \
+	"USBVendorID=" CONFIG_NI_USB_VID "\0" \
+	"USBProductID=" CONFIG_NI_USB_PID "\0" \
+	"USBProduct=NI cRIO\0" \
+	"USBDevice=0x" CONFIG_DEVICE_CODE "\0"
+#else
+#define CONFIG_GADGET_VARS
 #endif
 
 #define CONFIG_CPU_FREQ_HZ 666666666
@@ -358,10 +365,7 @@
 	"DeviceDesc=" CONFIG_DEVICE_DESC "\0" \
 	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
 	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
-	"USBVendorID=" CONFIG_NI_USB_VID "\0" \
-	"USBProductID=" CONFIG_NI_USB_PID "\0" \
-	"USBProduct=NI cRIO\0" \
-	"USBDevice=0x" CONFIG_DEVICE_CODE "\0" \
+	CONFIG_GADGET_VARS \
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=" VERIFY_ADDR "\0" \
