@@ -33,7 +33,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 env_t *env_ptr;
 
-void env_relocate_spec(void)
+void __attribute__((weak)) env_relocate_spec(void)
 {
 }
 
