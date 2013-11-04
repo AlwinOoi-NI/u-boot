@@ -213,6 +213,7 @@
 
 #if defined(CONFIG_MFG)
 #define CONFIG_NAND_BBT_NO_MARK
+#define CONFIG_ENV_FORCE_DEFAULT
 #endif
 
 /* UBI */
