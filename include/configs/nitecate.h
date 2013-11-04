@@ -68,7 +68,7 @@
 #endif
 
 #undef CONFIG_SYS_PROMPT
-#define CONFIG_SYS_PROMPT	"Tecate> "
+#define CONFIG_SYS_PROMPT	"U-Boot> "
 
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
