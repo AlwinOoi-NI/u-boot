@@ -355,7 +355,7 @@
 		"echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
 		"else " \
 			"echo '*******' && " \
-			"echo '*******  Auto-bringup failed!  Contact Nathan Sullivan.'; " \
+			"echo '*******  Auto-bringup failed!'; " \
 		"fi;"
 
 #undef CONFIG_BOOTCOMMAND
