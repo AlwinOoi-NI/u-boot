@@ -73,7 +73,7 @@
 #define CONFIG_PANIC_HANG /* For development/debugging */
 
 #undef CONFIG_SYS_PROMPT
-#define CONFIG_SYS_PROMPT	"ni-zynq> "
+#define CONFIG_SYS_PROMPT	"U-Boot> "
 
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING
