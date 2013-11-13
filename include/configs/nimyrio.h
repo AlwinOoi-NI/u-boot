@@ -80,11 +80,29 @@
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
-#ifdef CONFIG_MFG
-#define CONFIG_IDENT_STRING	"\nNational Instruments myRIO Manufacturing"
+#if defined(CONFIG_ROBORIO)
+#define CONFIG_NI_BOARD_NAME "myRIO"
 #else
-#define CONFIG_IDENT_STRING	"\nNational Instruments myRIO"
+#define CONFIG_NI_BOARD_NAME "roboRIO"
 #endif
+
+#ifdef CONFIG_MFG
+#define CONFIG_NI_BOARD_NAME_SUFFIX "Manufacturing"
+#else
+#define CONFIG_NI_BOARD_NAME_SUFFIX
+#endif
+
+#ifdef CONFIG_PROTO
+#define CONFIG_NI_BOARD_NAME_PREFIX "Prototype"
+#else
+#define CONFIG_NI_BOARD_NAME_PREFIX
+#endif
+
+#define CONFIG_IDENT_STRING \
+	"\nNational Instruments " \
+	CONFIG_NI_BOARD_NAME_PREFIX " " \
+	CONFIG_NI_BOARD_NAME \
+	" " CONFIG_NI_BOARD_NAME_SUFFIX
 
 #undef CONFIG_SYS_PROMPT
 #define CONFIG_SYS_PROMPT	"U-Boot> "
