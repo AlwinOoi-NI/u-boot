@@ -28,7 +28,7 @@
 #endif
 
 /* Pretend to be the packaged over USB */
-#if defined (CONFIG_SOL) && !defined (CONFIG_ENET)
+#if defined (CONFIG_SOL) && !defined (CONFIG_ENETEXP)
 #define CONFIG_NI_USB_PID "0x770D"
 #define CONFIG_NI_USB_VID "0x3923" 
 #define CONFIG_GADGET_VARS \
@@ -160,7 +160,7 @@
 /* Use both GEM interfaces */
 #define CONFIG_NET_MULTI
 #define CONFIG_ZYNQ_GEM
-#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENET)
+#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
 #define CONFIG_ZYNQ_GEM_COUNT		1
 #else
 #define CONFIG_ZYNQ_GEM_COUNT		2
@@ -180,7 +180,7 @@
 #endif
 
 /* GEM1 on EMIO */
-#if !defined (CONFIG_CRIO9066) && !defined (CONFIG_ENET)
+#if !defined (CONFIG_CRIO9066) && !defined (CONFIG_ENETEXP)
 #define CONFIG_ZYNQ_GEM1_EMIO
 #define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
 #define CONFIG_ZYNQ_GEM1_CREATE_MII	0
@@ -255,7 +255,7 @@
 /*
  * Physical Memory map
  */
-#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENET)
+#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
 #define PHYS_SDRAM_1_SIZE (256 * 1024 * 1024)
 #else
 #define PHYS_SDRAM_1_SIZE (512 * 1024 * 1024)
@@ -300,7 +300,7 @@
 #define CONFIG_CMD_UBIFS
 
 #define CONFIG_MTD_UBOOT_OFFSET		0x20000
-#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENET)
+#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
 #define CONFIG_BOARD_SIZE_LIMIT		0x80000 /* 512MB */
 #else
 #define CONFIG_BOARD_SIZE_LIMIT		0x100000 /* 1GB */
@@ -330,14 +330,14 @@
 #endif
 
 #undef CONFIG_SYS_LOAD_ADDR
-#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENET)
+#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
 #define CONFIG_SYS_LOAD_ADDR 0x4000000
 #else 
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #endif
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
-#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENET)
+#if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
 #define FDT_HIGH "0x7FFFFFF"
 #define INITRD_HIGH "0x7FF7FFF"
 #define VERIFY_ADDR "0x8000000"
