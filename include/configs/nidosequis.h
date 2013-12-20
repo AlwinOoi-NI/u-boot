@@ -28,7 +28,7 @@
 #endif
 
 /* Pretend to be the packaged over USB */
-#if defined (CONFIG_SOL) && !defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL)
 #define CONFIG_NI_USB_PID "0x770D"
 #define CONFIG_NI_USB_VID "0x3923" 
 #define CONFIG_GADGET_VARS \
