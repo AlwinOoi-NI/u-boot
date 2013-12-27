@@ -318,6 +318,7 @@
 		"setenv realbootcmd && " \
 		"setenv preboot \"$realpreboot\" && " \
 		"setenv realpreboot && " \
+		"mw.l 0x40120050 2 && " \
 		"mw.l 0x40101010 1 && " \
 		"usb start &&" \
 		"usb reset &&" \
