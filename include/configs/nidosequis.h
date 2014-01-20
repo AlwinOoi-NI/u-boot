@@ -146,6 +146,9 @@
 /* HW to use */
 #define CONFIG_SERIAL_MULTI
 #undef CONFIG_ZYNQ_SERIAL
+#if defined (CONFIG_ENETEXP)
+#define CONFIG_SYS_DEVICE_NULLDEV
+#else
 #define CONFIG_SYS_NS16550
 #define CONFIG_SYS_NS16550_SERIAL
 #define CONFIG_SYS_NS16550_CLK 58824000
@@ -156,6 +159,7 @@
 #define CONFIG_SYS_NS16550_COM3 0x80000020
 #endif
 #define CONFIG_CONS_INDEX 1 /* not actually used */
+#endif
 
 /* Use both GEM interfaces */
 #define CONFIG_NET_MULTI
