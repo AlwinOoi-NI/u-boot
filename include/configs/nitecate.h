@@ -251,9 +251,17 @@
 
 #define CONFIG_BACKUP_PAGE		0xB1F800
 #define CONFIG_BACKUP_SERIAL_OFFSET	0x7e4
+
+/* Primary MAC Address */
 #define CONFIG_BACKUP_ETHADDR_OFFSET	0x7e8
+
+/* Secondary MAC Address */
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET	0x7ee
+
+/* USB (Gadget) Ethernet MAC Address */
 #define CONFIG_BACKUP_ETH2ADDR_OFFSET	0x7f4
+
+/* WiFi MAC Address */
 #define CONFIG_BACKUP_ETH3ADDR_OFFSET	0x7fa
 
 #define CONFIG_MMC
