@@ -79,6 +79,7 @@ int board_late_init (void)
 	int serial_missing;
 	int ethaddr_missing;
 	int eth1addr_missing;
+	int usbgadgetethaddr_missing;
 #endif
 	/*
 	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
@@ -114,7 +115,8 @@ int board_late_init (void)
 	serial_missing = getenv("serial#") == NULL;
 	ethaddr_missing = getenv("ethaddr") == NULL;
 	eth1addr_missing = getenv("eth1addr") == NULL;
-	if (serial_missing || ethaddr_missing || eth1addr_missing) {
+	usbgadgetethaddr_missing = getenv("usbgadgetethaddr") == NULL;
+	if (serial_missing || ethaddr_missing || eth1addr_missing || usbgadgetethaddr_missing) {
 		u8 nand_buffer[nand_info[0].writesize];
 		int nand_read_status;
 		char string[18];
@@ -137,6 +139,10 @@ int board_late_init (void)
 			eth_setenv_enetaddr("eth1addr", &nand_buffer[
                             getenv_ulong("backupeth1addroffset", 16,
 				CONFIG_BACKUP_ETH1ADDR_OFFSET)]);
+                if (usbgadgetethaddr_missing && !nand_read_status)
+                        eth_setenv_enetaddr("usbgadgetethaddr", &nand_buffer[
+                            getenv_ulong("backupusbgadgetethaddroffset", 16,
+                                CONFIG_BACKUP_USBGADGETETHADDR_OFFSET)]);
 		saveenv();
 	}
 #endif
