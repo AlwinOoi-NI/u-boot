@@ -137,7 +137,7 @@
 #define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
 #define CONFIG_ZYNQ_GEM1_CREATE_MII	1
 #define CONFIG_ZYNQ_GEM1_MII_GEM	0
-#define CONFIG_ZYNQ_GEM1_PHY_ADDR	0
+#define CONFIG_ZYNQ_GEM1_PHY_ADDR	1
 /* Run both GEM off the same clock, since we shouldn't need to change this
  * clock with the PHY configuration for this board. */
 #define CONFIG_ZYNQ_GEM1_FPGA_CLK_REG	XPSS_SLCR_FPGA0_CLK_CTRL
