@@ -135,14 +135,18 @@ int board_late_init (void)
 			eth_setenv_enetaddr("ethaddr", &nand_buffer[
                             getenv_ulong("backupethaddroffset", 16,
 				CONFIG_BACKUP_ETHADDR_OFFSET)]);
+#if !defined(CONFIG_CRIO9066) && !defined(CONFIG_ENETEXP)
 		if (eth1addr_missing && !nand_read_status)
 			eth_setenv_enetaddr("eth1addr", &nand_buffer[
                             getenv_ulong("backupeth1addroffset", 16,
 				CONFIG_BACKUP_ETH1ADDR_OFFSET)]);
-                if (usbgadgetethaddr_missing && !nand_read_status)
-                        eth_setenv_enetaddr("usbgadgetethaddr", &nand_buffer[
+#endif
+#if defined(CONFIG_SOL)
+		if (usbgadgetethaddr_missing && !nand_read_status)
+			eth_setenv_enetaddr("usbgadgetethaddr", &nand_buffer[
                             getenv_ulong("backupusbgadgetethaddroffset", 16,
-                                CONFIG_BACKUP_USBGADGETETHADDR_OFFSET)]);
+				CONFIG_BACKUP_USBGADGETETHADDR_OFFSET)]);
+#endif
 		saveenv();
 	}
 #endif
