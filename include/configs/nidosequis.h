@@ -317,7 +317,6 @@
 #define CONFIG_BACKUP_SERIAL_OFFSET		0x7f0
 #define CONFIG_BACKUP_ETHADDR_OFFSET		0x7f4
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET		0x7fa
-#define CONFIG_USBGADGETETHADDR
 
 /* Secure Digital */
 #if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
@@ -400,7 +399,6 @@
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=" VERIFY_ADDR "\0" \
-	"usbgadgetethaddr=" __stringify(CONFIG_USBGADGETETHADDR) "\0" \
 	"backuppage=" __stringify(CONFIG_BACKUP_PAGE) "\0" \
 	"backupserialoffset=" __stringify(CONFIG_BACKUP_SERIAL_OFFSET) "\0" \
 	"backupethaddroffset=" __stringify(CONFIG_BACKUP_ETHADDR_OFFSET) "\0" \
