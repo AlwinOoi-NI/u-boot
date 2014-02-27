@@ -11,7 +11,7 @@
 #define CONFIG_NITECATE /* Board */
 #define CONFIG_DEVICE_CODE "775E"
 #define CONFIG_FPGA_DEVICE_CODE "775E"
-#define CONFIG_DEVICE_DESC "NI_9651"
+#define CONFIG_DEVICE_DESC "sbRIO-9651"
 
 #define CONFIG_NI_USB_PID "0x770D"
 #define CONFIG_NI_USB_VID "0x3923"
@@ -62,7 +62,7 @@
 
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
-#define CONFIG_NI_BOARD_NAME "Tecate"
+#define CONFIG_NI_BOARD_NAME "sbRIO-9651"
 
 #ifdef CONFIG_MFG
 #define CONFIG_NI_BOARD_NAME_SUFFIX "Manufacturing"
@@ -335,7 +335,7 @@
 	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
 	"USBVendorID=" CONFIG_NI_USB_VID "\0" \
 	"USBProductID=" CONFIG_NI_USB_PID "\0" \
-	"USBProduct=Tecate\0" \
+	"USBProduct=sbRIO-9651\0" \
 	"USBDevice=0x" CONFIG_DEVICE_CODE "\0" \
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
