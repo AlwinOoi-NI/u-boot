@@ -66,11 +66,9 @@
 #undef CONFIG_BOOTDELAY
 /* -1 to Disable autoboot, -2 to force boot */
 #define CONFIG_BOOTDELAY	-2
-#if !defined (CONFIG_SOL)
 #define CONFIG_SILENT_CONSOLE
 #define CONFIG_SILENT_U_BOOT_ONLY
 #define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
-#endif
 #endif
 #define CONFIG_SYS_DEVICE_NULLDEV
 #define CONFIG_BAUDRATE_UPDATE_ON_RELOC
