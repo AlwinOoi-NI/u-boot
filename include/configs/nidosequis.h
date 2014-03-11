@@ -720,6 +720,7 @@
 
 #define REAL_PREBOOT \
 	"setenv silent 1; " \
+	"nand lock tight; " \
 	"ubi part boot-config; " \
 	"run readsoftdip; " \
 	"run readcplddip; " \
