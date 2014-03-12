@@ -81,9 +81,9 @@
 #define CONFIG_TIMESTAMP	/* print image timestamp on bootm, etc */
 
 #if defined(CONFIG_ROBORIO)
-#define CONFIG_NI_BOARD_NAME "myRIO"
-#else
 #define CONFIG_NI_BOARD_NAME "roboRIO"
+#else
+#define CONFIG_NI_BOARD_NAME "myRIO"
 #endif
 
 #ifdef CONFIG_MFG
