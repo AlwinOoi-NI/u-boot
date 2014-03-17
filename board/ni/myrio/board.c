@@ -140,6 +140,8 @@ int board_eth_init(bd_t *bis)
 {
 #ifdef CONFIG_ZYNQ_GEM
 	return zynq_gem_initialize(bis);
+#else
+	return 0;
 #endif
 }
 #endif
