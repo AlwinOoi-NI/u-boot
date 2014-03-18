@@ -208,7 +208,7 @@
 	"verifyaddr=0x10000000\0" \
 	"DeviceCode=0x76F6\0" \
 	"TargetClass=VirtualBench\0" \
-	"DeviceDesc=VB-8012\0" \
+	"DeviceDesc=NI VB-8012\0" \
 	"fpgaloadcmd=if ubifsload $loadaddr $imagefile; " \
 		"then " \
 			"configfpga=1; " \
