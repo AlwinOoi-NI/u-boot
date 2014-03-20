@@ -193,12 +193,15 @@
 #define CONFIG_USB_EHCI_ZYNQ
 #define CONFIG_USB_EHCI_TXFIFO_THRESH 8
 #define CONFIG_EHCI_IS_TDI
-/* Pick a USB port to use by defining or undefining this. */
-#define TECATE_USE_ORANGE_USB_PORT
-#ifdef TECATE_USE_ORANGE_USB_PORT
-#define CONFIG_USB_BASE_ADDR XPSS_USB1_BASEADDR /* orange, int 44 */
+/* If CONFIG_XPSS_USB0_HOST is defined, USB0 will be used as the host port in
+ * U-Boot. If CONFIG_XPSS_USB0_HOST is not defined, USB1 will be used as the
+ * host port in U-Boot. USB1 should be the host port in U-Boot for the shipping
+ * U-Boot. We use USB0 with U-Boot to test that the USB0 port works on Tecate
+ * boards at manufacturing time. */
+#ifdef CONFIG_XPSS_USB0_HOST
+#define CONFIG_USB_BASE_ADDR XPSS_USB0_BASEADDR /* int 21 */
 #else
-#define CONFIG_USB_BASE_ADDR XPSS_USB0_BASEADDR /* micro, int 21 */
+#define CONFIG_USB_BASE_ADDR XPSS_USB1_BASEADDR /* int 44 */
 #endif
 #define XPSS_USB0_OTGCSR 0xE00021A4
 
