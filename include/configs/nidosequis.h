@@ -16,7 +16,7 @@
 #elif defined (CONFIG_NI9149) /* SOL 8 slot ethernet */
 #define CONFIG_DEVICE_CODE "774E"
 #define CONFIG_FPGA_DEVICE_CODE "774E"
-#define CONFIG_DEVICE_DESC "NI-9149"
+#define CONFIG_DEVICE_DESC "NI 9149"
 #else
 #define CONFIG_DEVICE_CODE "76D6"
 #if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
