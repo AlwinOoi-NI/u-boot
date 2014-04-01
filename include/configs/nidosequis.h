@@ -9,14 +9,17 @@
 #define CONFIG_DEVICE_CODE "7744"
 #define CONFIG_FPGA_DEVICE_CODE "7744"
 #define CONFIG_DEVICE_DESC "cRIO-9067"
+#define CONFIG_TARGET_CLASS "cRIO"
 #elif defined (CONFIG_CRIO9066) /* SOL 8 slot good */
 #define CONFIG_DEVICE_CODE "7743"
 #define CONFIG_FPGA_DEVICE_CODE "7743"
 #define CONFIG_DEVICE_DESC "cRIO-9066"
+#define CONFIG_TARGET_CLASS "cRIO"
 #elif defined (CONFIG_NI9149) /* SOL 8 slot ethernet */
 #define CONFIG_DEVICE_CODE "774E"
 #define CONFIG_FPGA_DEVICE_CODE "774E"
 #define CONFIG_DEVICE_DESC "NI 9149"
+#define CONFIG_TARGET_CLASS "Ethernet RIO"
 #else
 #define CONFIG_DEVICE_CODE "76D6"
 #if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
@@ -25,12 +28,13 @@
 #define CONFIG_FPGA_DEVICE_CODE "76F8"
 #endif
 #define CONFIG_DEVICE_DESC "cRIO-9068"
+#define CONFIG_TARGET_CLASS "cRIO"
 #endif
 
 /* Pretend to be the packaged over USB */
 #if defined (CONFIG_SOL)
 #define CONFIG_NI_USB_PID "0x770D"
-#define CONFIG_NI_USB_VID "0x3923" 
+#define CONFIG_NI_USB_VID "0x3923"
 #define CONFIG_GADGET_VARS \
 	"USBVendorID=" CONFIG_NI_USB_VID "\0" \
 	"USBProductID=" CONFIG_NI_USB_PID "\0" \
@@ -339,7 +343,7 @@
 #undef CONFIG_SYS_LOAD_ADDR
 #if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
 #define CONFIG_SYS_LOAD_ADDR 0x4000000
-#else 
+#else
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #endif
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
@@ -393,7 +397,7 @@
 	"sc=setenv stdout serial;setenv stdin serial\0" \
 	"fdt_high=" FDT_HIGH "\0" \
 	"initrd_high=" INITRD_HIGH "\0" \
-	"TargetClass=cRIO\0" \
+	"TargetClass=" CONFIG_TARGET_CLASS "\0" \
 	"DeviceDesc=" CONFIG_DEVICE_DESC "\0" \
 	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
 	"FPGADeviceCode=0x" CONFIG_FPGA_DEVICE_CODE "\0" \
