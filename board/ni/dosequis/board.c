@@ -48,11 +48,7 @@ Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 
 struct serial_device *default_serial_console(void)
 {
-#ifdef CONFIG_BRINGUP
-	return &eserial1_device;
-#else
 	return &null_serial_device;
-#endif
 }
 
 int board_init(void)
@@ -68,14 +64,10 @@ int board_init(void)
 int board_late_init (void)
 {
 	u8 tmp;
-#ifdef CONFIG_REV_A
-	struct ulpi_viewport usb_phy;
-	struct ulpi_regs *ulpi = (struct ulpi_regs *)0;
-#endif
-#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
 	char serial[11] = "";
 #endif
-#if !defined(CONFIG_BRINGUP) && !defined(CONFIG_MFG)
+#if !defined(CONFIG_MFG)
 	int serial_missing = 0;
 	int ethaddr_missing = 0;
 	int eth1addr_missing = 0;
@@ -88,22 +80,7 @@ int board_late_init (void)
 	tmp = 0x00;
 	i2c_write(0x40, 0x03, 1, &tmp, 1);
 
-#ifdef CONFIG_REV_A
-	/* Wait for the TI USB PHY to come out of reset. */
-	udelay(1000);
-
-	/* ULPI_VIEWPORT register */
-	usb_phy.viewport_addr = CONFIG_USB_BASE_ADDR + XPSS_USB_ULPI_VIEWPORT;
-	usb_phy.port_num = 0;
-
-	/* The TI PHY on DosEquis and myRIO behaves slightly differently than
-	   the SMSC PHY we used previously. We must set the DrvVbusExternal bit
-	   in the OTG Control register, otherwise the PHY will never turn on
-	   power to the USB port. */
-	ulpi_write(&usb_phy, &ulpi->otg_ctrl_set, ULPI_OTG_DRVVBUS_EXT);
-#endif
-
-#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
 	if (getenv("serial#") != NULL)
 		strcpy(serial, getenv("serial#"));
 	set_default_env("Default env required for auto-bringup.\n");
@@ -111,7 +88,7 @@ int board_late_init (void)
 		setenv("serial#", serial);
 #endif
 
-#if !defined(CONFIG_BRINGUP) && !defined(CONFIG_MFG)
+#if !defined(CONFIG_MFG)
 	serial_missing = getenv("serial#") == NULL;
 	ethaddr_missing = getenv("ethaddr") == NULL;
 #if !defined(CONFIG_CRIO9066) && !defined(CONFIG_ENETEXP)
@@ -280,7 +257,7 @@ void board_nand_init()
 	struct mtd_info *mtd = &nand_info[0];
 	loff_t off;
 	loff_t size;
-#if !defined(CONFIG_BRINGUP) && !defined(CONFIG_MFG)
+#if !defined(CONFIG_MFG)
 	struct mtd_device *dev;
 	u8 part_num;
 	struct part_info *part;
@@ -295,7 +272,7 @@ void board_nand_init()
 	/*
 	 * Unlock the entire flash for manufacturing
 	 */
-#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
 	off = 0;
 #else
 	if (mtdparts_init() || find_dev_and_part("u-boot", &dev, &part_num, &part))

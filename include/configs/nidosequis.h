@@ -22,11 +22,7 @@
 #define CONFIG_TARGET_CLASS "Ethernet RIO"
 #else
 #define CONFIG_DEVICE_CODE "76D6"
-#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
-#define CONFIG_FPGA_DEVICE_CODE "76D6"
-#else
 #define CONFIG_FPGA_DEVICE_CODE "76F8"
-#endif
 #define CONFIG_DEVICE_DESC "cRIO-9068"
 #define CONFIG_TARGET_CLASS "cRIO"
 #endif
@@ -62,18 +58,12 @@
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
 /* check for input to stop even if delay is 0 */
 #define CONFIG_ZERO_BOOTDELAY_CHECK
-#ifdef CONFIG_BRINGUP
-#undef CONFIG_BOOTDELAY
-/* -1 to Disable autoboot, -2 to force boot */
-#define CONFIG_BOOTDELAY	0
-#else
 #undef CONFIG_BOOTDELAY
 /* -1 to Disable autoboot, -2 to force boot */
 #define CONFIG_BOOTDELAY	-2
 #define CONFIG_SILENT_CONSOLE
 #define CONFIG_SILENT_U_BOOT_ONLY
 #define CONFIG_SILENT_CONSOLE_UPDATE_ON_SET
-#endif
 #define CONFIG_SYS_DEVICE_NULLDEV
 #define CONFIG_BAUDRATE_UPDATE_ON_RELOC
 
@@ -85,9 +75,6 @@
 
 #define CONFIG_CMD_UNZIP
 #define CONFIG_CMD_SETEXPR
-#ifdef CONFIG_BRINGUP
-#define CONFIG_CMD_ASKENV
-#endif
 #define CONFIG_CRC32_VERIFY
 #define CONFIG_CMD_MD5SUM
 #define CONFIG_MD5SUM_VERIFY
@@ -112,11 +99,7 @@
 #define CONFIG_NI_BOARD_NAME_SUFFIX
 #endif
 
-#ifdef CONFIG_PROTO
-#define CONFIG_NI_BOARD_NAME_PREFIX " Prototype"
-#else
 #define CONFIG_NI_BOARD_NAME_PREFIX
-#endif
 
 #define CONFIG_IDENT_STRING \
 	"\nNational Instruments" \
@@ -217,10 +200,6 @@
 #define CONFIG_BOOTP_HOSTNAME
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NETCONSOLE
-
-#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
-#define CONFIG_CMD_DEFETHADDR
-#endif
 
 #ifdef CONFIG_MFG
 #define CONFIG_ETHADDR 00:80:2f:00:00:00
@@ -323,22 +302,6 @@
 #define CONFIG_BACKUP_SERIAL_OFFSET		0x7f0
 #define CONFIG_BACKUP_ETHADDR_OFFSET		0x7f4
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET		0x7fa
-
-/* Secure Digital */
-#if defined(CONFIG_REV_A) || defined(CONFIG_BRINGUP)
-#define CONFIG_MMC
-#endif
-
-#ifdef CONFIG_MMC
-#define CONFIG_GENERIC_MMC
-#define CONFIG_SDHCI
-#define CONFIG_MMC_SDMA
-#define CONFIG_ZYNQ_SDHCI
-#define CONFIG_CMD_MMC
-#define CONFIG_CMD_FAT
-#define CONFIG_CMD_EXT2
-#define CONFIG_DOS_PARTITION
-#endif
 
 #undef CONFIG_SYS_LOAD_ADDR
 #if defined (CONFIG_CRIO9066) || defined (CONFIG_ENETEXP)
@@ -742,58 +705,7 @@
 		"fi; " \
 	"fi;"
 
-#ifdef CONFIG_BRINGUP
-
-#undef CONFIG_EXTRA_ENV_SETTINGS
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	REAL_EXTRA_ENV_SETTINGS \
-	"realbootcmd=" \
-	REAL_BOOTCOMMAND "\0" \
-	"realpreboot=" \
-	REAL_PREBOOT "\0"
-
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND	\
-	"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
-		"askenv serial# 'Enter board serial number: ' 10; " \
-	"fi; " \
-	"if test -n \\\\\"${serial\\\\#}\\\\\" && " \
-	"defethaddr && " \
-	"defethaddr 1 && " \
-	"run ipresetcmd && " \
-	"flags=${.flags} && " \
-	"setenv .flags bootcmd,preboot && " \
-	"setenv bootcmd \\\\\"$realbootcmd\\\\\" && " \
-	"setenv realbootcmd && " \
-	"setenv preboot \\\\\"$realpreboot\\\\\" && " \
-	"setenv realpreboot && " \
-	"setenv .flags $flags && " \
-	"mmcinfo && " \
-	"echo '*******' && " \
-	"echo '*******  Installing BOOT_NAND.BIN...' && " \
-	"echo '*******' && " \
-	"fatload mmc 0 $loadaddr BOOT_NAND.BIN && " \
-	"run writeboot && " \
-	"echo '*******' && " \
-	"echo '*******  Partitioning NAND flash...' && " \
-	"echo '*******' && " \
-	"nand erase.part boot-config && " \
-	"run writepartitions && " \
-	"saveenv && saveenv && " \
-	"echo '*******' && " \
-	"echo '*******  Installing dosequis_bootfs.ubifs...' && " \
-	"echo '*******' && " \
-	"fatload mmc 0 $loadaddr dosequis_bootfs.ubifs && " \
-	"ubi part boot-config && " \
-	"ubi write $loadaddr bootfs $filesize && " \
-	"echo '*******' && " \
-	"echo '*******  Set bootmode jumpers to (off)(off)(on) NAND boot mode and reboot.'; then " \
-	"else " \
-		"echo '*******' && " \
-		"echo '*******  Auto-bringup failed!  Contact Joe Hershberger.'; " \
-	"fi;"
-
-#elif defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
@@ -812,7 +724,7 @@
 	"run nc; " \
 	"setenv silent;"
 
-#else /* !CONFIG_MFG && !CONFIG_BRINGUP */
+#else /* !CONFIG_MFG */
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
