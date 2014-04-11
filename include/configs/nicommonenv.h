@@ -265,7 +265,6 @@
 	"readbootmode=i2c read 0x40 0x1F 1 $loadaddr; " \
 		"setexpr.b bootmodeval *$loadaddr \\\\& 0x3; " \
 		"if test $bootmodeval -eq 1; then " \
-			"issafemode=1; " \
 			"bootmode=safemode; " \
 		"else " \
 			"bootmode=runmode; " \
@@ -394,7 +393,7 @@
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
 #define REAL_BOOTCOMMAND \
-	"if test $bootmode = safemode -o $bootmode = install; then " \
+	"if test $bootmode = safemode; then " \
 		"run boot_safemode; " \
 	"else " \
 		"run boot_runmode; "\
