@@ -42,7 +42,7 @@ u32 XIo_In32(u32 InAddress)
 }
 
 #ifdef CONFIG_FPGA
-#if defined(CONFIG_PROTO) || defined(CONFIG_ROBORIO)
+#if defined(CONFIG_ROBORIO)
 Xilinx_desc fpga = XILINX_XC7Z020_DESC(0);
 #else
 Xilinx_desc fpga = XILINX_XC7Z010_DESC(0);
@@ -51,11 +51,7 @@ Xilinx_desc fpga = XILINX_XC7Z010_DESC(0);
 
 struct serial_device *default_serial_console(void)
 {
-#ifdef CONFIG_PROTO
-	return &zynq_serial0_device;
-#else
 	return &null_serial_device;
-#endif
 }
 
 int board_init(void)
@@ -197,7 +193,7 @@ void board_nand_init()
 	struct mtd_info *mtd = &nand_info[0];
 	loff_t off;
 	loff_t size;
-#if !defined(CONFIG_BRINGUP) && !defined(CONFIG_MFG)
+#if !defined(CONFIG_MFG)
 	struct mtd_device *dev;
 	u8 part_num;
 	struct part_info *part;
@@ -212,7 +208,7 @@ void board_nand_init()
 	/*
 	 * Unlock the entire flash for manufacturing
 	 */
-#if defined(CONFIG_BRINGUP) || defined(CONFIG_MFG)
+#if defined(CONFIG_MFG)
 	off = 0;
 #else
 	if (mtdparts_init() || find_dev_and_part("u-boot", &dev, &part_num, &part))

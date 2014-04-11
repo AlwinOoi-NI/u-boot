@@ -14,11 +14,6 @@
 #define CONFIG_FPGA_DEVICE_CODE "76D3"
 #define CONFIG_DEVICE_DESC "myRIO-1950"
 #else
-#ifdef CONFIG_PROTO
-#define CONFIG_DEVICE_CODE "76E2"
-#define CONFIG_FPGA_DEVICE_CODE "76E2"
-#define CONFIG_DEVICE_DESC "myRIO-1900-proto"
-#else
 #ifdef CONFIG_ROBORIO
 #define CONFIG_DEVICE_CODE "76F2"
 #define CONFIG_FPGA_DEVICE_CODE "77A9"
@@ -27,7 +22,6 @@
 #define CONFIG_DEVICE_CODE "762F"
 #define CONFIG_FPGA_DEVICE_CODE "762F"
 #define CONFIG_DEVICE_DESC "myRIO-1900"
-#endif
 #endif
 #endif
 #define CONFIG_TARGET_CLASS "cRIO"
@@ -93,11 +87,7 @@
 #define CONFIG_NI_BOARD_NAME_SUFFIX
 #endif
 
-#ifdef CONFIG_PROTO
-#define CONFIG_NI_BOARD_NAME_PREFIX " Prototype"
-#else
 #define CONFIG_NI_BOARD_NAME_PREFIX
-#endif
 
 #define CONFIG_IDENT_STRING \
 	"\nNational Instruments" \
@@ -128,15 +118,9 @@
 
 /* HW to use */
 #define CONFIG_SERIAL_MULTI
-#ifdef CONFIG_PROTO
-#define CONFIG_ZYNQ_UART0
-#define CONFIG_CONSOLE_LINUX_DEV "ttyPS0"
-#define CONFIG_CONSOLE_UBOOT_DEV "zynquart0"
-#else
 #undef CONFIG_ZYNQ_SERIAL
 #define CONFIG_CONSOLE_LINUX_DEV "ttyS0"
 #define CONFIG_CONSOLE_UBOOT_DEV "eserial0"
-#endif
 #ifdef CONFIG_ROBORIO
 #define CONFIG_ZYNQ_UART0
 #define CONFIG_ZYNQ_SERIAL
@@ -178,9 +162,6 @@
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NETCONSOLE
 
-#ifdef CONFIG_PROTO
-#define CONFIG_CMD_DEFETHADDR
-#endif
 #ifdef CONFIG_MFG
 #define CONFIG_RANDOM_MACADDR
 #endif
