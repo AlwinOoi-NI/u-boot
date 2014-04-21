@@ -85,6 +85,8 @@
 #define CONFIG_NI_BOARD_NAME "cRIO-9066"
 #elif defined(CONFIG_CRIO9067)
 #define CONFIG_NI_BOARD_NAME "cRIO-9067"
+#elif defined(CONFIG_NI9149)
+#define CONFIG_NI_BOARD_NAME "NI 9149"
 #else
 #define CONFIG_NI_BOARD_NAME "Dos Equis"
 #endif
