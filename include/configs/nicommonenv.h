@@ -354,7 +354,7 @@
 		WIFIETHADDR_RESTORE \
 		ETHADDR_RESTORE \
 		WL12XXNVS_RESTORE \
-		"true;\0" \
+		"setenv .flags;\0" \
 	"writepartitions=" \
 		"if ubi part boot-config && " \
 			"ubi read $verifyaddr u-boot-env1 1 && " \

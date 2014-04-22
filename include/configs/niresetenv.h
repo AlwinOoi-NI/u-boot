@@ -11,6 +11,6 @@
  * target type and use these macros to form the resetenv command. */
 
 #define ENV_SAVE(var) #var "_save=$" #var " && "
-#define ENV_RESTORE(var) "env set " #var " $" #var "_save && "
+#define ENV_RESTORE(var) "env set .flags " #var " && env set " #var " $" #var "_save && "
 
 #endif /* __CONFIG_NI_RESET_ENV_H */
