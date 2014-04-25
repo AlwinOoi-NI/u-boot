@@ -328,7 +328,8 @@
 	"set_usb0_host_device_mode=" \
 		"if itest.l $usb0_otgsc_id == 0; then " \
 			"fdt addr $loadaddr && " \
-			"fdt get addr fdtaddr /images/fdt data && " \
+			"fdt get addr fdtaddr /images/fdt_" \
+				CONFIG_DEVICE_CODE " data && " \
 			"fdt addr $fdtaddr && " \
 			"fdt set /amba@0/usb@e0002000 dr_mode host; " \
 		"fi;\0" \
