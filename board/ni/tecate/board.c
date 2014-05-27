@@ -187,7 +187,7 @@ int board_eth_init(bd_t *bis)
 #ifdef CONFIG_CMD_MMC
 int board_mmc_init(bd_t *bd)
 {
-	return zynq_sdhci_init(XPSS_SDIO0_BASEADDR, 100000000, 0, 0);
+	return zynq_sdhci_init(XPSS_SDIO0_BASEADDR, 50000000, 0, 0);
 }
 #endif
 
