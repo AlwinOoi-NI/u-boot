@@ -160,7 +160,7 @@
 #undef CONFIG_ZYNQ_SERIAL
 #define CONFIG_CONSOLE_LINUX_DEV "ttyS0"
 #define CONFIG_CONSOLE_UBOOT_DEV "eserial0"
-#if defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL_ENETEXP)
 #define CONFIG_SYS_DEVICE_NULLDEV
 #else
 #define CONFIG_SYS_NS16550
@@ -178,7 +178,7 @@
 /* Use both GEM interfaces */
 #define CONFIG_NET_MULTI
 #define CONFIG_ZYNQ_GEM
-#if defined (CONFIG_GOOD) || defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL_GOOD) || defined (CONFIG_SOL_ENETEXP)
 #define CONFIG_ZYNQ_GEM_COUNT		1
 #else
 #define CONFIG_ZYNQ_GEM_COUNT		2
@@ -198,7 +198,7 @@
 #endif
 
 /* GEM1 on EMIO */
-#if !defined (CONFIG_GOOD) && !defined (CONFIG_ENETEXP)
+#if !defined (CONFIG_SOL_GOOD) && !defined (CONFIG_SOL_ENETEXP)
 #define CONFIG_ZYNQ_GEM1_EMIO
 #define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
 #define CONFIG_ZYNQ_GEM1_CREATE_MII	0
@@ -277,7 +277,7 @@
 /*
  * Physical Memory map
  */
-#if defined (CONFIG_GOOD) || defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL_GOOD) || defined (CONFIG_SOL_ENETEXP)
 #define PHYS_SDRAM_1_SIZE (256 * 1024 * 1024)
 #else
 #define PHYS_SDRAM_1_SIZE (512 * 1024 * 1024)
@@ -322,7 +322,7 @@
 #define CONFIG_CMD_UBIFS
 
 #define CONFIG_MTD_UBOOT_OFFSET			0x20000
-#if defined (CONFIG_GOOD) || defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL_GOOD) || defined (CONFIG_SOL_ENETEXP)
 #define CONFIG_BOARD_SIZE_LIMIT			0x80000 /* 512MB */
 #else
 #define CONFIG_BOARD_SIZE_LIMIT			0x100000 /* 1GB */
@@ -339,14 +339,14 @@
 #define CONFIG_DEFAULT_NVS
 
 #undef CONFIG_SYS_LOAD_ADDR
-#if defined (CONFIG_GOOD) || defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL_GOOD) || defined (CONFIG_SOL_ENETEXP)
 #define CONFIG_SYS_LOAD_ADDR 0x4000000
 #else
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #endif
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
-#if defined (CONFIG_GOOD) || defined (CONFIG_ENETEXP)
+#if defined (CONFIG_SOL_GOOD) || defined (CONFIG_SOL_ENETEXP)
 #define FDT_HIGH "0x7FFFFFF"
 #define INITRD_HIGH "0x7FF7FFF"
 #define VERIFY_ADDR "0x8000000"
@@ -378,7 +378,7 @@
 #define WIFIETHADDR_SAVE
 #define WIFIETHADDR_RESTORE
 
-#if defined(CONFIG_GOOD) || defined(CONFIG_ENETEXP)
+#if defined(CONFIG_SOL_GOOD) || defined(CONFIG_SOL_ENETEXP)
 /* cRIO-9063, cRIO-9066, NI 9147 and NI 9149 use ethaddr for wired Ethernet. */
 #define ETHADDR_SAVE ENV_SAVE(ethaddr)
 #define ETHADDR_RESTORE ENV_RESTORE(ethaddr)
@@ -428,7 +428,7 @@
 #define CONFIG_BOOTCOMMAND \
 	REAL_BOOTCOMMAND
 
-#ifdef CONFIG_ENETEXP
+#ifdef CONFIG_SOL_ENETEXP
 #define CONFIG_PREBOOT \
 	REAL_PREBOOT_FEEBLE_RECOVERY
 #else
