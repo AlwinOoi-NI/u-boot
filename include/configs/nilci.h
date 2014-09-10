@@ -195,6 +195,15 @@
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
+#ifdef CONFIG_VB8034
+#define DEVICE_CODE "0x77DE"
+#define DEVICE_DESC "NI VB-8034"
+#else
+#define DEVICE_CODE "0x76F6"
+#define DEVICE_DESC "NI VB-8012"
+#endif
+
+
 #define LCI_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
@@ -206,9 +215,9 @@
 	"mtdids=" MTDIDS_DEFAULT "\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"verifyaddr=0x10000000\0" \
-	"DeviceCode=0x76F6\0" \
+	"DeviceCode=" DEVICE_CODE "\0" \
 	"TargetClass=VirtualBench\0" \
-	"DeviceDesc=NI VB-8012\0" \
+	"DeviceDesc=" DEVICE_DESC "\0" \
 	"fpgaloadcmd=if ubifsload $loadaddr $imagefile; " \
 		"then " \
 			"configfpga=1; " \
