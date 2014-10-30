@@ -5,7 +5,12 @@
  * High Level Configuration Options
  */
 #define CONFIG_NIDOSEQUIS /* Board */
-#if defined (CONFIG_CRIO9067) /* Sol 8 slot better */
+#if defined (CONFIG_CRIO9068)
+#define CONFIG_DEVICE_CODE "76D6"
+#define CONFIG_FPGA_DEVICE_CODE "76F8"
+#define CONFIG_DEVICE_DESC "cRIO-9068"
+#define CONFIG_TARGET_CLASS "cRIO"
+#elif defined (CONFIG_CRIO9067) /* Sol 8 slot better */
 #define CONFIG_DEVICE_CODE "7744"
 #define CONFIG_FPGA_DEVICE_CODE "7744"
 #define CONFIG_DEVICE_DESC "cRIO-9067"
@@ -58,10 +63,7 @@
 #define CONFIG_DEVICE_DESC "sbRIO_6907"
 #define CONFIG_TARGET_CLASS "cRIO"
 #else
-#define CONFIG_DEVICE_CODE "76D6"
-#define CONFIG_FPGA_DEVICE_CODE "76F8"
-#define CONFIG_DEVICE_DESC "cRIO-9068"
-#define CONFIG_TARGET_CLASS "cRIO"
+#error "Unrecognized CONFIG_DEVICE_CODE"
 #endif
 #ifndef CONFIG_PREFIXED_DEVICE_DESC
 #define CONFIG_PREFIXED_DEVICE_DESC "NI " CONFIG_DEVICE_DESC
@@ -127,6 +129,8 @@
 #define CONFIG_NI_BOARD_NAME "cRIO-9066"
 #elif defined(CONFIG_CRIO9067)
 #define CONFIG_NI_BOARD_NAME "cRIO-9067"
+#elif defined(CONFIG_CRIO9068)
+#define CONFIG_NI_BOARD_NAME "Dos Equis"
 #elif defined(CONFIG_NI9147)
 #define CONFIG_NI_BOARD_NAME "NI 9147"
 #elif defined(CONFIG_NI9149)
@@ -138,7 +142,7 @@
 #elif defined(CONFIG_SBRIO9607)
 #define CONFIG_NI_BOARD_NAME "sbRIO-9607"
 #else
-#define CONFIG_NI_BOARD_NAME "Dos Equis"
+#error "CONFIG_NI_BOARD_NAME not defined for this target"
 #endif
 
 #ifdef CONFIG_MFG
@@ -221,9 +225,9 @@
 #endif
 
 /* GEM1 on EMIO */
-#if !defined (CONFIG_SOL_GOOD) && \
-	!defined (CONFIG_SOL_ENETEXP) && \
-	!(defined(CONFIG_SBRIO) && !defined (CONFIG_RMC))
+#if defined (CONFIG_CRIO9068) || \
+	defined (CONFIG_SOL_BETTER) || \
+	(defined (CONFIG_SBRIO) && defined (CONFIG_RMC))
 #define CONFIG_ZYNQ_GEM1_EMIO
 #define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
 #define CONFIG_ZYNQ_GEM1_CREATE_MII	0
