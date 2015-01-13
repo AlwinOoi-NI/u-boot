@@ -278,7 +278,28 @@
 		"source $loadaddr:bootscript;" \
 	"fi; " \
 	"echo 'Boot failed!' "
-
+/* For VB8034, drive PHY reset high and enable GPIO output. */
+#ifdef CONFIG_VB8034
+#define LCI_PREBOOT \
+	"dcache on; " \
+	"mw.l 0xE000A248 0xF0000; "\
+	"mw.l 0xE000A244 0xF0000; "\
+	"mw.l 0xE000A044 0xF0000; "\
+	"ubi part boot-config; ubifsmount ubi:bootfs; " \
+	"if ubifsload $loadaddr image_1_active; " \
+	"then " \
+		"imagefile=lci1.itb; " \
+		"rootdev=mtdblock9; " \
+		"altimagefile=lci0.itb; " \
+		"altrootdev=mtdblock8; " \
+	"else " \
+		"imagefile=lci0.itb; " \
+                "rootdev=mtdblock8; " \
+                "altimagefile=lci1.itb; " \
+                "altrootdev=mtdblock9; " \
+	"fi; " \
+	"run fpgaloadcmd"
+#else
 #define LCI_PREBOOT \
 	"dcache on; " \
 	"ubi part boot-config; ubifsmount ubi:bootfs; " \
@@ -295,6 +316,7 @@
                 "altrootdev=mtdblock9; " \
 	"fi; " \
 	"run fpgaloadcmd"
+#endif
 
 #ifndef CONFIG_BRINGUP
 
@@ -312,6 +334,67 @@
 #define CONFIG_NAND_BBT_NO_MARK
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
+/* For VB-8034, drive PHY reset high, set GPIO enable and set the direction.
+* Unlock the nand for VB8034 in preboot only. */
+#ifdef CONFIG_VB8034
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	LCI_ENV_SETTINGS \
+	"realbootcmd="LCI_BOOTCOMMAND"\0" \
+	"realpreboot="LCI_PREBOOT"\0" \
+	"bringup=" \
+		"dcache off &&" \
+		"env default -f -a;" \
+		"setenv silent;" \
+		"if test -z \\\\\"${serial\\\\#}\\\\\"; then " \
+			"setenv serial# DEADBEEF; " \
+		"fi; " \
+		"if test -n \\\\\"${serial\\\\#}\\\\\" && " \
+		"setenv bootcmd \"$realbootcmd\" && " \
+		"setenv realbootcmd && " \
+		"setenv preboot \"$realpreboot\" && " \
+		"setenv realpreboot && " \
+		"mw.l 0xE000A248 0xF0000 && "\
+		"mw.l 0xE000A244 0xF0000 && "\
+		"mw.l 0xE000A044 0xF0000 && "\
+		"nand unlock && " \
+		"setenv ethaddr 00:0B:AD:BA:AD:DB && "\
+		"setenv ipaddr 192.168.1.2 && " \
+		"setenv netmask 255.255.255.0 && " \
+		"setenv serverip 192.168.1.1 && " \
+		"echo '*******' && " \
+		"echo '*******  Installing BOOT_NAND.BIN...' && " \
+		"echo '*******' && " \
+		"tftpboot BOOT.BIN && " \
+		"run writeboot && " \
+		"echo '*******' && " \
+		"echo '*******  Partitioning NAND flash...' && " \
+		"echo '*******' && " \
+		"run writepartitions && " \
+		"saveenv && saveenv &&" \
+		"echo '*******' && " \
+		"echo '*******  Installing bootfs.ubifs...' && " \
+		"echo '*******' && " \
+		"ubi part boot-config && " \
+		"tftpboot bootfs.ubifs && " \
+		"ubi write $loadaddr bootfs $filesize && " \
+		"echo '*******' && " \
+		"echo '*******  Installing root.squashfs...' && " \
+		"echo '*******' && " \
+		"ubi part root && " \
+		"tftpboot root.squashfs && " \
+		"ubi write $loadaddr rootfs1 $filesize && " \
+		"echo '*******' && " \
+		"echo '*******  Installing sfp.iso...' && " \
+		"echo '*******' && " \
+		"tftpboot sfp.iso && " \
+		"ubi write $loadaddr sfp1 $filesize && " \
+		"echo '*******' && " \
+		"echo '*******  Set bootmode DIP switches to (on)(on)(off)(on) NAND boot mode and reboot.'; then " \
+		"else " \
+			"echo '*******' && " \
+			"echo '*******  Auto-bringup failed!'; " \
+		"fi;"
+#else
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	LCI_ENV_SETTINGS \
 	"realbootcmd="LCI_BOOTCOMMAND"\0" \
@@ -367,6 +450,7 @@
 			"echo '*******' && " \
 			"echo '*******  Auto-bringup failed!'; " \
 		"fi;"
+#endif
 
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND	\
