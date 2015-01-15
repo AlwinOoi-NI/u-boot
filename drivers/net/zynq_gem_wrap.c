@@ -431,7 +431,20 @@ int Xgmac_init(struct eth_device *dev, bd_t *bis)
 	else				/* 2.5 MHz */
 		Out32(slcr_gem_tx_clk,
 			((1 << 20) | (48 << 8) | (3 << 4) | (1 << 0)));
-#else
+#endif
+/* Divisor is different for VB-8034 since the clock fequency has changed*/
+#ifdef CONFIG_VB8034
+	if (link_speed == 1000)		/* 125MHz */
+		Out32(slcr_gem_tx_clk,
+			((1 << 20) | (8 << 8) | (0 << 4) | (1 << 0)));
+	else if (link_speed == 100)	/* 25 MHz */
+		Out32(slcr_gem_tx_clk,
+			((5 << 20) | (8 << 8) | (0 << 4) | (1 << 0)));
+	else				/* 2.5 MHz */
+		Out32(slcr_gem_tx_clk,
+			((50 << 20) | (8 << 8) | (0 << 4) | (1 << 0)));
+#endif
+#ifdef CONFIG_VB8012
 	/* Assumes IO PLL clock is 1000 MHz */
 	if (link_speed == 1000)		/* 125MHz */
 		Out32(slcr_gem_tx_clk,
