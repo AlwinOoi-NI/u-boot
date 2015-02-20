@@ -273,18 +273,30 @@
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
+#ifdef CONFIG_VB8034
+/* For VB8034, deassert ethernet phy reset right before booting.
+   This gives the power rails time to stabilize */
+#define LCI_BOOTCOMMAND \
+	"if test -n \\\\\"$configfpga\\\\\"; then " \
+		"mw.l 0xE000A044 0xF0000; "\
+		"source $loadaddr:bootscript;" \
+	"fi; " \
+	"echo 'Boot failed!' "
+#else
 #define LCI_BOOTCOMMAND \
 	"if test -n \\\\\"$configfpga\\\\\"; then " \
 		"source $loadaddr:bootscript;" \
 	"fi; " \
 	"echo 'Boot failed!' "
+#endif
+
 /* For VB8034, drive PHY reset high and enable GPIO output. */
 #ifdef CONFIG_VB8034
 #define LCI_PREBOOT \
 	"dcache on; " \
 	"mw.l 0xE000A248 0xF0000; "\
 	"mw.l 0xE000A244 0xF0000; "\
-	"mw.l 0xE000A044 0xF0000; "\
+	"mw.l 0xE000A044 0xD0000; "\
 	"ubi part boot-config; ubifsmount ubi:bootfs; " \
 	"if ubifsload $loadaddr image_1_active; " \
 	"then " \
