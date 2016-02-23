@@ -49,4 +49,6 @@ int display_get_info(int type, struct display_info *di);
 int display_draw_bitmap(ulong bitmap, int x, int y);
 void display_clear(void);
 
+int ubi_volume_read(char *volume, char *buf, size_t size);
+
 #endif /* _API_PRIVATE_H_ */
