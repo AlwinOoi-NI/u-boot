@@ -1,5 +1,5 @@
-#ifndef __CONFIG_NICRIOZYNQ_H
-#define __CONFIG_NICRIOZYNQ_H
+#ifndef __CONFIG_NIECAT_H
+#define __CONFIG_NIECAT_H
 
 /*
  * High Level Configuration Options
@@ -16,10 +16,8 @@
 #define CONFIG_PREFIXED_DEVICE_DESC "NI " CONFIG_DEVICE_DESC
 #endif
 
-#if defined (CONFIG_GEN2) || defined (CONFIG_SBRIO)
 #define CONFIG_NI_USB_PID "0x770D"
 #define CONFIG_NI_USB_VID "0x3923"
-#endif
 
 #define CONFIG_CPU_FREQ_HZ 666666666
 
@@ -33,7 +31,6 @@
 #undef CONFIG_CMD_XIMG
 #define CONFIG_FIT
 #define CONFIG_OF_BOARD_SETUP
-#define CONFIG_CMD_DATE		/* RTC? */
 #define CONFIG_CMD_PING		/* Might be useful for debugging */
 #define CONFIG_REGINFO		/* Again, debugging */
 #undef CONFIG_CMD_SETGETDCR	/* README says 4xx only */
@@ -109,72 +106,12 @@
 
 /* HW to use */
 #define CONFIG_SERIAL_MULTI
-#undef CONFIG_ZYNQ_SERIAL
-#define CONFIG_CONSOLE_LINUX_DEV "ttyS0"
-#define CONFIG_CONSOLE_UBOOT_DEV "eserial0"
-#if defined (CONFIG_ENETEXP)
+#define CONFIG_ZYNQ_SERIAL
+#define CONFIG_ZYNQ_UART0
+#define CONFIG_CONSOLE_LINUX_DEV "ttyPS0"
+#define CONFIG_CONSOLE_UBOOT_DEV "zynquart0"
 #define CONFIG_SYS_DEVICE_NULLDEV
-#else
-#define CONFIG_SYS_NS16550
-#define CONFIG_SYS_NS16550_SERIAL
-#define CONFIG_SYS_NS16550_CLK 58824000
-#define CONFIG_SYS_NS16550_REG_SIZE 1
-#define CONFIG_SYS_NS16550_COM1 0x80000000
-#if !defined (CONFIG_GEN2) && !defined(CONFIG_SBRIO9607)
-#define CONFIG_SYS_NS16550_COM2 0x80000010
-#define CONFIG_SYS_NS16550_COM3 0x80000020
-#endif
-#define CONFIG_CONS_INDEX 1 /* not actually used */
-#endif
 
-/* Use both GEM interfaces */
-#define CONFIG_NET_MULTI
-#define CONFIG_ZYNQ_GEM
-#if defined (CONFIG_MEM_256) \
-	|| defined (CONFIG_ENETEXP) \
-	|| (defined(CONFIG_SBRIO) && !defined (CONFIG_RMC))
-#define CONFIG_ZYNQ_GEM_COUNT		1
-#else
-#define CONFIG_ZYNQ_GEM_COUNT		2
-#endif
-
-/* GEM0 on MIO */
-#define CONFIG_ZYNQ_GEM0_BASE_ADDR	XPSS_GEM0_BASEADDR
-#define CONFIG_ZYNQ_GEM0_PHY_ADDR	0
-
-#if defined (CONFIG_GEN2) || defined (CONFIG_SBRIO)
-/* GEM0 on EMIO */
-#define CONFIG_ZYNQ_GEM0_EMIO
-#define CONFIG_ZYNQ_GEM0_FPGA_CLK_REG	XPSS_SLCR_FPGA0_CLK_CTRL
-#define CONFIG_ZYNQ_GEM0_LINK_SPEED_1000_GPIO 54
-#define CONFIG_ZYNQ_GEM0_LINK_SPEED_1000_GPIO_ON 0
-#define CONFIG_ZYNQ_GEM0_LINK_SPEED_1000_GPIO_OFF 1
-#endif
-
-/* GEM1 on EMIO */
-#if defined (CONFIG_CRIO9068) || \
-	defined (CONFIG_MEM_512) || \
-	(defined (CONFIG_SBRIO) && defined (CONFIG_RMC))
-#define CONFIG_ZYNQ_GEM1_EMIO
-#define CONFIG_ZYNQ_GEM1_BASE_ADDR	XPSS_GEM1_BASEADDR
-#define CONFIG_ZYNQ_GEM1_CREATE_MII	0
-#define CONFIG_ZYNQ_GEM1_MII_GEM	0
-#define CONFIG_ZYNQ_GEM1_PHY_ADDR	1
-#if defined (CONFIG_GEN2) || defined (CONFIG_SBRIO)
-#define CONFIG_ZYNQ_GEM1_FPGA_CLK_REG	XPSS_SLCR_FPGA2_CLK_CTRL
-#define CONFIG_ZYNQ_GEM1_LINK_SPEED_1000_GPIO 55
-#define CONFIG_ZYNQ_GEM1_LINK_SPEED_1000_GPIO_ON 0
-#define CONFIG_ZYNQ_GEM1_LINK_SPEED_1000_GPIO_OFF 1
-#else
-#define CONFIG_ZYNQ_GEM1_FPGA_CLK_REG	XPSS_SLCR_FPGA0_CLK_CTRL
-#define CONFIG_ZYNQ_GEM1_LINK_SPEED_1000_GPIO 54
-#define CONFIG_ZYNQ_GEM1_LINK_SPEED_1000_GPIO_ON 0
-#define CONFIG_ZYNQ_GEM1_LINK_SPEED_1000_GPIO_OFF 1
-#endif
-#endif
-
-#define CONFIG_CMD_MII
-#define CONFIG_MII
 #define CONFIG_CMD_DHCP
 #define CONFIG_CMD_LINK_LOCAL
 #define CONFIG_MENU
@@ -190,10 +127,6 @@
 #define CONFIG_PXE_PLATFORM_DEFAULT	"default-" CONFIG_TARGET_CLASS, \
 					"default-" CONFIG_DEVICE_CODE
 
-#ifdef CONFIG_MFG
-#define CONFIG_ETHADDR 00:80:2f:00:00:00
-#endif
-
 #define CONFIG_ZYNQ_GPIO
 
 #define CONFIG_CMD_I2C
@@ -203,19 +136,9 @@
 #define CONFIG_ZYNQ_I2C
 #define CONFIG_ZYNQ_I2C_CTLR_0
 #define CONFIG_ZYNQ_I2C_MIO_RESET
-#if defined (CONFIG_GEN2)
 #define CONFIG_ZYNQ_I2C_SCL_MIO 18
 #define CONFIG_ZYNQ_I2C_SDA_MIO 19
-#elif  defined (CONFIG_SBRIO)
-#define CONFIG_ZYNQ_I2C_SCL_MIO 26
-#define CONFIG_ZYNQ_I2C_SDA_MIO 27
-#else
-#define CONFIG_ZYNQ_I2C_SCL_MIO 50
-#define CONFIG_ZYNQ_I2C_SDA_MIO 51
-#endif
 #undef CONFIG_RTC_XPSSRTC
-#define CONFIG_RTC_DS3231
-#define CONFIG_SYS_I2C_RTC_ADDR 0x68
 
 /* USB Host support */
 #define CONFIG_CMD_USB
@@ -232,25 +155,12 @@
 #define CONFIG_USB_EHCI_ZYNQ
 #define CONFIG_USB_EHCI_TXFIFO_THRESH 8
 #define CONFIG_EHCI_IS_TDI
-#if defined (CONFIG_MFG) && \
-	(defined (CONFIG_GEN2) || \
-	(defined (CONFIG_SBRIO) && defined (CONFIG_RMC)))
 #define CONFIG_USB_BASE_ADDR XPSS_USB1_BASEADDR
-#else
-#define CONFIG_USB_BASE_ADDR XPSS_USB0_BASEADDR
-#endif
-#if defined(CONFIG_SBRIO) && defined(CONFIG_RMC)
-#define CONFIG_OTG_USB_BASE_ADDR XPSS_USB1_BASEADDR
-#endif
 
 /*
  * Physical Memory map
  */
-#if defined (CONFIG_MEM_256) || defined (CONFIG_ENETEXP)
 #define PHYS_SDRAM_1_SIZE (256 * 1024 * 1024)
-#else
-#define PHYS_SDRAM_1_SIZE (512 * 1024 * 1024)
-#endif
 #define CONFIG_SYS_ALT_MEMTEST
 #define CONFIG_SYS_MEMTEST_SCRATCH 0xFFFFF000
 #define CONFIG_CMD_CACHE
@@ -291,89 +201,50 @@
 #define CONFIG_CMD_UBIFS
 
 #define CONFIG_MTD_UBOOT_OFFSET			0x20000
-#if defined (CONFIG_MEM_256) || defined (CONFIG_ENETEXP)
 #define CONFIG_BOARD_SIZE_LIMIT			0x80000 /* 512MB */
-#else
-#define CONFIG_BOARD_SIZE_LIMIT			0x100000 /* 1GB */
-#endif
 #define CONFIG_BOOT_BIN_SIZE_LIMIT		0x120000
 #define CONFIG_BOOTFS_VOLUME_SIZE		0x3600000
 
 #define CONFIG_BACKUP_PAGE			0xB1F800
 #define CONFIG_BACKUP_USBGADGETETHADDR_OFFSET	0x7ea
 #define CONFIG_BACKUP_SERIAL_OFFSET		0x7f0
-#define CONFIG_BACKUP_ETHADDR_OFFSET		0x7f4
+#define CONFIG_BACKUP_ETHADDR_OFFSET		0x7f4 /* Don't really use but
+							 keep it to ensure
+							 consistency across
+							 different products */
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET		0x7fa
 
-#if defined (CONFIG_SBRIO)
-#define CONFIG_MMC
-
-#define CONFIG_GENERIC_MMC
-#define CONFIG_SDHCI
-#define CONFIG_MMC_SDMA
-#define CONFIG_ZYNQ_SDHCI
-#define CONFIG_CMD_MMC
 #define CONFIG_CMD_FAT
 #define CONFIG_CMD_EXT2
 #define CONFIG_DOS_PARTITION
-#endif
-
 #define CONFIG_DEFAULT_NVS
 
 #undef CONFIG_SYS_LOAD_ADDR
-#if defined (CONFIG_MEM_256) || defined (CONFIG_ENETEXP)
 #define CONFIG_SYS_LOAD_ADDR 0x4000000
-#else
-#define CONFIG_SYS_LOAD_ADDR 0x8000000
-#endif
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
-#if defined (CONFIG_MEM_256) || defined (CONFIG_ENETEXP)
 #define FDT_HIGH "0x7FFFFFF"
 #define INITRD_HIGH "0x7FF7FFF"
 #define VERIFY_ADDR "0x8000000"
-#else
-#define FDT_HIGH "0x17FFFFFF"
-#define INITRD_HIGH "0x17FF7FFF"
-#define VERIFY_ADDR "0x10000000"
-#endif
 
 /* This address is 32k before the load address of the initrd */
 #define FDT_ADDR "0x7FF8000"
 
 #include "niresetenv.h"
 
-#if defined (CONFIG_GEN2) || (defined (CONFIG_SBRIO) && defined(CONFIG_RMC))
-
-/* GEN2 cRIO-906x, sbRIO-96x7 with RMC use usbgadgetethaddr for the USB
- * Gadget Ethernet MAC. */
+/* usbgadgetethaddr for the USB Gadget Ethernet MAC. */
 #define USBGADGETETHADDR_SAVE ENV_SAVE(usbgadgetethaddr)
 #define USBGADGETETHADDR_RESTORE ENV_RESTORE(usbgadgetethaddr)
 
-#else
-
-#define USBGADGETETHADDR_SAVE
-#define USBGADGETETHADDR_RESTORE
-
-#endif
-
-/* cRIO doesn't have WiFi. */
+/* EtherCAT doesn't has WiFi. */
 #define WIFIETHADDR_SAVE
 #define WIFIETHADDR_RESTORE
 
-#if defined(CONFIG_MEM_256) || \
-	defined(CONFIG_ENETEXP) || \
-	(defined(CONFIG_SBRIO) && !defined(CONFIG_RMC))
-/* cRIO-9063, cRIO-9066, NI 9147 and NI 9149 use ethaddr for wired Ethernet. */
-#define ETHADDR_SAVE ENV_SAVE(ethaddr)
-#define ETHADDR_RESTORE ENV_RESTORE(ethaddr)
-#else
-/* cRIO-9064, cRIO-9065, cRIO-9067 and cRIO-9068 use ethaddr and eth1addr for wired Ethernet. */
-#define ETHADDR_SAVE ENV_SAVE(ethaddr) ENV_SAVE(eth1addr)
-#define ETHADDR_RESTORE ENV_RESTORE(ethaddr) ENV_RESTORE(eth1addr)
-#endif
+/* EtherCAT doesn't has Ethernet port hence no MAC to save */
+#define ETHADDR_SAVE
+#define ETHADDR_RESTORE
 
-/* cRIO does not have a wl12xx */
+/* EtherCAT does not have a wl12xx */
 #define WL12XXNVS_SAVE
 #define WL12XXNVS_RESTORE
 
@@ -388,20 +259,11 @@
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"ipaddr=192.168.1.180\0" \
-	"netmask=255.255.255.0\0" \
-	"gatewayip=192.168.1.185\0" \
-	"serverip=192.168.1.185\0" \
 	REAL_EXTRA_ENV_SETTINGS
 
 #undef CONFIG_BOOTCOMMAND
 
-#define CONFIG_PREBOOT \
-	"dcache off; " \
-	"usb start; " \
-	"usb reset; " \
-	"run nc; " \
-	"setenv silent;"
+#define CONFIG_PREBOOT
 
 #else /* !CONFIG_MFG */
 
