@@ -617,6 +617,26 @@ static int API_ubi_readvol(va_list ap)
 	return ubi_volume_read(volume, buf, size);
 }
 
+/*
+ * pseudo signature:
+ *
+ * int API_ubi_writevol(const char *vol, char *buffer, int buffer_size)
+ */
+static int API_ubi_writevol(va_list ap)
+{
+	char *volume;
+	char *buf;
+	size_t size;
+
+	if ((volume = (char *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((buf = (char *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	size = (size_t)va_arg(ap, u_int32_t);
+
+	return ubi_volume_write(volume, buf, size);
+}
+
 static cfp_t calls_table[API_MAXCALL] = { NULL, };
 
 /*
@@ -684,6 +704,7 @@ void api_init(void)
 	calls_table[API_DISPLAY_DRAW_BITMAP] = &API_display_draw_bitmap;
 	calls_table[API_DISPLAY_CLEAR] = &API_display_clear;
 	calls_table[API_UBI_READVOL] = &API_ubi_readvol;
+	calls_table[API_UBI_WRITEVOL] = &API_ubi_writevol;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);
