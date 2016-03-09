@@ -27,6 +27,8 @@
 
 #define CONFIG_SYS_NO_FLASH
 
+#define CONFIG_API
+
 #include <config_cmd_default.h>
 #undef CONFIG_CMD_XIMG
 #define CONFIG_FIT
