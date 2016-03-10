@@ -115,6 +115,37 @@
 #define USB_HOST_DEVICE_COMMANDS
 #endif /* CONFIG_OTG_USB_BASE_ADDR */
 
+#if defined(WRITE_PARTITIONS_COMMANDS_OVERRIDE)
+#define WRITE_PARTITIONS_COMMANDS WRITE_PARTITIONS_COMMANDS_OVERRIDE
+#else
+#define WRITE_PARTITIONS_COMMANDS \
+	"writepartitions=" \
+		"if ubi part boot-config && " \
+			"ubi read $verifyaddr u-boot-env1 1 && " \
+			"ubi read $verifyaddr u-boot-env2 1; " \
+		"then " \
+			"ubi remove bootfs && " \
+			"ubi remove config; " \
+		"else " \
+			"nand erase.part boot-config && " \
+			"ubi part boot-config && " \
+			"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
+			"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic; " \
+		"fi && " \
+		"ubi create bootfs " __stringify(CONFIG_BOOTFS_VOLUME_SIZE) " dynamic && " \
+		"ubi create config - dynamic && " \
+		"if ubi part root && " \
+			"ubi read $verifyaddr rootfs 1; " \
+		"then " \
+			"ubi remove rootfs; " \
+		"else " \
+			"nand erase.part root && " \
+			"ubi part root; " \
+		"fi && " \
+		"ubi create rootfs - dynamic;\0" \
+
+#endif
+
 #define REAL_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
@@ -403,30 +434,7 @@
 		ETHADDR_RESTORE \
 		WL12XXNVS_RESTORE \
 		"setenv .flags;\0" \
-	"writepartitions=" \
-		"if ubi part boot-config && " \
-			"ubi read $verifyaddr u-boot-env1 1 && " \
-			"ubi read $verifyaddr u-boot-env2 1; " \
-		"then " \
-			"ubi remove bootfs && " \
-			"ubi remove config; " \
-		"else " \
-			"nand erase.part boot-config && " \
-			"ubi part boot-config && " \
-			"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
-			"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic; " \
-		"fi && " \
-		"ubi create bootfs " __stringify(CONFIG_BOOTFS_VOLUME_SIZE) " dynamic && " \
-		"ubi create config - dynamic && " \
-		"if ubi part root && " \
-			"ubi read $verifyaddr rootfs 1; " \
-		"then " \
-			"ubi remove rootfs; " \
-		"else " \
-			"nand erase.part root && " \
-			"ubi part root; " \
-		"fi && " \
-		"ubi create rootfs - dynamic;\0" \
+	WRITE_PARTITIONS_COMMANDS \
 	"writeboot=nand erase 0 " __stringify(CONFIG_BOOT_BIN_SIZE_LIMIT) "; " \
 		"nand write $loadaddr 0 " __stringify(CONFIG_BOOT_BIN_SIZE_LIMIT) "; " \
 		"nand read $verifyaddr 0 " __stringify(CONFIG_BOOT_BIN_SIZE_LIMIT) "; " \
