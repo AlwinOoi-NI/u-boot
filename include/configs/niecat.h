@@ -187,7 +187,8 @@
 	"mtdparts=xilinx_nand:" \
 		"128k(fsbl)ro," \
 		"11M(u-boot)ro," \
-		"70M(boot-config)," \
+		"18M(backup)ro," \
+		"82M(boot-config)," \
 		"-(root)"
 
 #if defined(CONFIG_MFG)
@@ -215,6 +216,64 @@
 							 consistency across
 							 different products */
 #define CONFIG_BACKUP_ETH1ADDR_OFFSET		0x7fa
+
+#define CONFIG_USER_FPGA_SIZE			0x500000
+#define CONFIG_USER_FW_SIZE			0x200000
+#define CONFIG_CARTRIDGE_SIZE			0x100000
+#define CONFIG_BACKPLANE_SIZE			0x10000
+#define CONFIG_EVENT_LOG_SIZE			0x10000
+#define CONFIG_MOTION_SIZE			0x400100
+#define CONFIG_MASTER_FPGA_SIZE			CONFIG_USER_FPGA_SIZE
+#define CONFIG_MASTER_FW_SIZE			CONFIG_USER_FW_SIZE
+
+#define WRITE_PARTITIONS_COMMANDS_OVERRIDE \
+	"writepartitions=" \
+		"if ubi part boot-config && " \
+			"ubi read $verifyaddr u-boot-env1 1 && " \
+			"ubi read $verifyaddr u-boot-env2 1; " \
+		"then " \
+			"ubi remove user-fpga && " \
+			"ubi remove user-fw && " \
+			"ubi remove cartridge && " \
+			"ubi remove event-log && " \
+			"ubi remove motion && " \
+			"ubi remove bootfs && " \
+			"ubi remove config; " \
+		"else " \
+			"nand erase.part boot-config && " \
+			"ubi part boot-config && " \
+			"ubi create u-boot-env1 " __stringify(CONFIG_ENV_SIZE) " dynamic && " \
+			"ubi create u-boot-env2 " __stringify(CONFIG_ENV_SIZE) " dynamic; " \
+		"fi && " \
+		"ubi create user-fpga "	__stringify(CONFIG_USER_FPGA_SIZE) " dynamic && " \
+		"ubi create user-fw "	__stringify(CONFIG_USER_FW_SIZE) " dynamic && " \
+		"ubi create cartridge "	__stringify(CONFIG_CARTRIDGE_SIZE) " dynamic && " \
+		"ubi create backplane "	__stringify(CONFIG_BACKPLANE_SIZE) " dynamic && " \
+		"ubi create event-log "	__stringify(CONFIG_EVENT_LOG_SIZE) " dynamic && " \
+		"ubi create motion "	__stringify(CONFIG_MOTION_SIZE) " dynamic && " \
+		"ubi create bootfs "	__stringify(CONFIG_BOOTFS_VOLUME_SIZE) " dynamic && " \
+		"ubi create config - dynamic && " \
+		"if ubi part backup && " \
+			"ubi read $verifyaddr master-fpga 1 && " \
+			"ubi read $verifyaddr master-fw 1; "\
+		"then " \
+			"ubi remove master-fpga && " \
+			"ubi remove master-fw; " \
+		"else " \
+			"nand erase.part backup && " \
+			"ubi part backup; " \
+		"fi && " \
+		"ubi create master-fpga " __stringify(CONFIG_MASTER_FPGA_SIZE) " dynamic && " \
+		"ubi create master-fw " __stringify(CONFIG_MASTER_FW_SIZE) " dynamic && " \
+		"if ubi part root && " \
+			"ubi read $verifyaddr rootfs 1; " \
+		"then " \
+			"ubi remove rootfs; " \
+		"else " \
+			"nand erase.part root && " \
+			"ubi part root; " \
+		"fi && " \
+		"ubi create rootfs - dynamic;\0" \
 
 #define CONFIG_CMD_FAT
 #define CONFIG_CMD_EXT2
