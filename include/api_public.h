@@ -97,6 +97,7 @@ enum {
 	/* NI defined API */
 	API_UBI_READVOL,
 	API_UBI_WRITEVOL,
+	API_FPGA_LOAD,
 
 	API_MAXCALL
 };

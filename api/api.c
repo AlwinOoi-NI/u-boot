@@ -637,6 +637,30 @@ static int API_ubi_writevol(va_list ap)
 	return ubi_volume_write(volume, buf, size);
 }
 
+/*
+ * pseudo signature:
+ *
+ * int API_fpga_load(const void *buf, size_t bsize)
+ */
+static int API_fpga_load(va_list ap)
+{
+	int devnum;
+	const void *buf;
+	size_t bsize;
+	char *devstr = getenv ("fpga");
+
+	if (!devstr)
+		return API_ENODEV;
+	if ((buf = (const void *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((bsize = (size_t)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+
+	devnum = (int) simple_strtoul (devstr, NULL, 16);
+
+	return fpga_load(devnum, buf, bsize);
+}
+
 static cfp_t calls_table[API_MAXCALL] = { NULL, };
 
 /*
@@ -705,6 +729,7 @@ void api_init(void)
 	calls_table[API_DISPLAY_CLEAR] = &API_display_clear;
 	calls_table[API_UBI_READVOL] = &API_ubi_readvol;
 	calls_table[API_UBI_WRITEVOL] = &API_ubi_writevol;
+	calls_table[API_FPGA_LOAD] = &API_fpga_load;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);
