@@ -314,6 +314,7 @@ int Xgmac_init(struct eth_device *dev, bd_t *bis)
 	int eth_phy_reset;
 	int eth_phy_renegotiate;
 	int ret;
+	int phy_id;
 
 	if (EmacPssInstancePtr->Initialized && EmacPssInstancePtr->IsStarted)
 		return 1;
@@ -352,8 +353,10 @@ int Xgmac_init(struct eth_device *dev, bd_t *bis)
 
 	tmp = phy_rd(EmacPssInstancePtr, MII_PHYSID1);
 	printf("Phy ID: %04X", tmp);
+	phy_id = tmp << 16;
 	tmp = phy_rd(EmacPssInstancePtr, MII_PHYSID2);
 	printf("%04X\n", tmp);
+	phy_id |= tmp;
 
 	/*
 	 * Allow the user to skip PHY reset.
@@ -408,7 +411,25 @@ int Xgmac_init(struct eth_device *dev, bd_t *bis)
 
 	/* Re-auto-negotiate with the settings with recently set. */
 	if (eth_phy_renegotiate)
+	{
 		ret = phy_renegotiate(EmacPssInstancePtr);
+
+		/*
+		 * Micrel workaround - if idle error count maxes out (0xFF)
+		 * after autonegotiation, reset the PHY and try again. In that
+		 * state, TX/RX don't work even though it's negotiated and up.
+		 */
+		if(phy_id == 0x221622) {
+			printf("Activating Micrel PHY workaround...\n");
+			while (ret >= 0) {
+				tmp = phy_rd(EmacPssInstancePtr, MII_STAT1000);
+				if((tmp & 0xFF) == 0xFF)
+					ret = phy_renegotiate(EmacPssInstancePtr);
+				else
+					break;
+			}
+		}
+	}
 
 	/* Fail this function if auto-negotiation failed. */
 	if (ret < 0)
