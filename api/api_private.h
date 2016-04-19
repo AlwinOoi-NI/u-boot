@@ -50,6 +50,7 @@ int display_draw_bitmap(ulong bitmap, int x, int y);
 void display_clear(void);
 
 void env_save(void);
+void env_perm_set(const char *name, const char *value);
 
 int ubi_volume_read(char *volume, char *buf, size_t size);
 int ubi_volume_write(char *volume, char *buf, size_t size);

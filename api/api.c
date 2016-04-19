@@ -518,6 +518,30 @@ static int API_env_save(va_list ap)
 /*
  * pseudo signature:
  *
+ * int API_env_perm_set(const char *name, const char *value)
+ *
+ * name: ptr to name of env var
+ *
+ * value: ptr to value to be set
+ */
+static int API_env_perm_set(va_list ap)
+{
+	char *name, *value;
+
+	if ((name = (char *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((value = (char *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+
+	setenv(name, value);
+	saveenv();
+
+	return 0;
+}
+
+/*
+ * pseudo signature:
+ *
  * int API_env_enum(const char *last, char **next)
  *
  * last: ptr to name of env var found in last iteration
@@ -743,6 +767,7 @@ void api_init(void)
 	calls_table[API_UBI_WRITEVOL] = &API_ubi_writevol;
 	calls_table[API_FPGA_LOAD] = &API_fpga_load;
 	calls_table[API_ENV_SAVE] = &API_env_save;
+	calls_table[API_ENV_PERM_SET] = &API_env_perm_set;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);
