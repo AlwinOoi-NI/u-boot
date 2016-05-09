@@ -714,6 +714,24 @@ static int API_fpga_load(va_list ap)
 	return fpga_load(devnum, buf, bsize);
 }
 
+/*
+ * pseudo signature:
+ *
+ * int run_command(const char *cmd, int flag)
+ */
+static int API_execute_command(va_list ap)
+{
+	const char *cmd;
+	int flag = 0;
+
+	if ((cmd = (const char *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+
+	flag = (int32_t)va_arg(ap, int32_t);
+
+	return run_command(cmd, flag);
+}
+
 static cfp_t calls_table[API_MAXCALL] = { NULL, };
 
 /*
@@ -786,6 +804,7 @@ void api_init(void)
 	calls_table[API_ENV_SAVE] = &API_env_save;
 	calls_table[API_ENV_PERM_SET] = &API_env_perm_set;
 	calls_table[API_UBI_PART] = &API_ubi_part;
+	calls_table[API_EXE_CMD] = &API_execute_command;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);

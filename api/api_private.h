@@ -58,4 +58,6 @@ int ubi_volume_write(char *volume, char *buf, size_t size);
 
 int fpga_load(int devnum, const void *buf, size_t bsize);
 
+int run_command(const char *cmd, int flag);
+
 #endif /* _API_PRIVATE_H_ */
