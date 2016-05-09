@@ -226,6 +226,12 @@
 #define CONFIG_MASTER_FPGA_SIZE			CONFIG_USER_FPGA_SIZE
 #define CONFIG_MASTER_FW_SIZE			CONFIG_USER_FW_SIZE
 
+#define CONFIG_ECAT_FW_LOADADDR		0x8000
+
+#define READONLY_DEFAULT_ENV_FLAGS_APPEND \
+	"ecatfpgaloadcmd:so,ecatfwloadaddr:xo,boot_ecatmastermode:so," \
+	"boot_ecatusermode:so,"
+
 #define WRITE_PARTITIONS_COMMANDS_OVERRIDE \
 	"writepartitions=" \
 		"if ubi part boot-config && " \
@@ -275,6 +281,111 @@
 		"fi && " \
 		"ubi create rootfs - dynamic;\0" \
 
+#define CONFIG_ECATFPGALOADCMD \
+	"if test -n \\\\\"$isnofpgaapp\\\\\" -o " \
+		"-n \\\\\"$isforcedrecoverymode\\\\\"; "\
+	"then " \
+		"loaddefaultbit=1; " \
+	"else " \
+		"if  ubi part boot-config && " \
+			"ubi read.cap $loadaddr user-fpga; " \
+		"then " \
+			"if fpga load 0 $loadaddr $filesize; then " \
+				"fpgasuccess=1; " \
+				"bootmode=usermode; " \
+			"else " \
+				"echo $fpga_err..(user) ; " \
+				"loaddefaultbit=1; " \
+			"fi; " \
+		"else " \
+			"loaddefaultbit=1; " \
+		"fi; " \
+	"fi; " \
+	"if test -n \\\\\"$loaddefaultbit\\\\\"; then " \
+		"if ubi part backup && " \
+			"ubi read.cap $loadaddr master-fpga; " \
+		"then " \
+			"configfpga=1; " \
+		"fi; " \
+	"fi; " \
+	"if test -n \\\\\"$configfpga\\\\\"; then " \
+		"if fpga load 0 $loadaddr $filesize; then " \
+			"fpgasuccess=1; " \
+			"bootmode=mastermode; " \
+		"fi; " \
+	"fi; " \
+	"if test -z \\\\\"$fpgasuccess\\\\\"; then " \
+		"echo $fpga_err; " \
+		"run recoverycmd; " \
+		"run recoverybootcmd;" \
+	"fi; " \
+	"setenv fpga 0;" \
+	"run markhardbootcomplete;"
+
+#define REAL_BOOTCOMMAND_OVERRIDE \
+	"if test $bootmode = mastermode; then " \
+		"run boot_ecatmastermode; " \
+	"elif test $bootmode = usermode; then " \
+		"run boot_ecatusermode; " \
+	"elif test $bootmode = safemode; then " \
+		"run boot_safemode; " \
+	"elif test \\\\\"${ispxeboot}\\\\\" = 1; then " \
+		"run boot_pxe; " \
+	"elif test $bootmode = runmode; then " \
+		"run boot_runmode; " \
+	"else " \
+		"echo Bootmode Error !; " \
+	"fi"
+
+#define REAL_PREBOOT_OVERRIDE \
+	"setenv silent 1; " \
+	"nand lock tight; " \
+	"ubi part boot-config; " \
+	"run readsoftdip; " \
+	"run readcplddip; " \
+	"run readbootmode; " \
+	"run read_usb_otgsc_id;" \
+	"run evaldip; " \
+	"if test -n \\\\\"$isforcedrecoverymode\\\\\"; then " \
+		"if test -n \\\\\"$isconsoleout\\\\\"; then " \
+			"setenv silent; " \
+		"fi; " \
+		"forcedrecovery=1; " \
+		"run recoverycmd; " \
+	"else " \
+		"if test -n \\\\\"$bootecatmode\\\\\"; then " \
+			"run ecatfpgaloadcmd; " \
+		"else " \
+			"run fpgaloadcmd; " \
+		"fi; " \
+		"run consoleoutcmd; " \
+		"if test -n \\\\\"$isipreset\\\\\"; then " \
+			"run ipresetcmd; " \
+		"fi; " \
+	"fi;"
+
+#define REAL_EXTRA_ENV_SETTINGS_APPEND \
+	"boot_ecatmastermode=" \
+		"if ubi part backup && " \
+		"ubi read.cap $ecatfwloadaddr master-fw; then " \
+			"setenv verify n; " \
+			"go $ecatfwloadaddr; " \
+		"else " \
+			"echo $safemode_err; " \
+			"run recoverycmd; " \
+			"run recoverybootcmd;" \
+		"fi;\0" \
+	"boot_ecatusermode=" \
+		"if ubi part boot-config && " \
+		"ubi read.cap $ecatfwloadaddr user-fw; then " \
+			"setenv verify n; " \
+			"go $ecatfwloadaddr; " \
+		"else " \
+			"run boot_ecatmastermode;" \
+		"fi;\0" \
+	"ecatfpgaloadcmd=" CONFIG_ECATFPGALOADCMD "\0" \
+	"ecatfwloadaddr=" __stringify(CONFIG_ECAT_FW_LOADADDR) "\0" \
+
 #define CONFIG_CMD_FAT
 #define CONFIG_CMD_EXT2
 #define CONFIG_DOS_PARTITION
@@ -311,16 +422,30 @@
 
 #include "nicommonenv.h"
 
+#if defined(READONLY_DEFAULT_ENV_FLAGS_APPEND)
+#define CONFIG_ENV_FLAGS_LIST_STATIC \
+	READONLY_DEFAULT_ENV_FLAGS_APPEND \
+	READONLY_DEFAULT_ENV_FLAGS \
+	READONLY_MFG_ENV_VARS \
+	NET_TYPE_ENV_VARS
+#else
 #define CONFIG_ENV_FLAGS_LIST_STATIC \
 	READONLY_DEFAULT_ENV_FLAGS \
 	READONLY_MFG_ENV_VARS \
 	NET_TYPE_ENV_VARS
+#endif
 
 #if defined(CONFIG_MFG)
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
+#if defined(REAL_EXTRA_ENV_SETTINGS_APPEND)
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	REAL_EXTRA_ENV_SETTINGS_APPEND \
+	REAL_EXTRA_ENV_SETTINGS
+#else
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	REAL_EXTRA_ENV_SETTINGS
+#endif
 
 #undef CONFIG_BOOTCOMMAND
 
@@ -329,8 +454,14 @@
 #else /* !CONFIG_MFG */
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
+#if defined(REAL_EXTRA_ENV_SETTINGS_APPEND)
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	REAL_EXTRA_ENV_SETTINGS_APPEND \
+	REAL_EXTRA_ENV_SETTINGS
+#else
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	REAL_EXTRA_ENV_SETTINGS
+#endif
 
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \

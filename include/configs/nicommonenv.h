@@ -449,6 +449,9 @@
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
+#if defined(REAL_BOOTCOMMAND_OVERRIDE)
+#define REAL_BOOTCOMMAND REAL_BOOTCOMMAND_OVERRIDE
+#else
 #define REAL_BOOTCOMMAND \
 	"if test $bootmode = safemode; then " \
 		"run boot_safemode; " \
@@ -457,7 +460,11 @@
 	"else " \
 		"run boot_runmode; "\
 	"fi"
+#endif
 
+#if defined(REAL_PREBOOT_OVERRIDE)
+#define REAL_PREBOOT REAL_PREBOOT_OVERRIDE
+#else
 #define REAL_PREBOOT \
 	"setenv silent 1; " \
 	"nand lock tight; " \
@@ -480,6 +487,7 @@
 			"run ipresetcmd; " \
 		"fi; " \
 	"fi;"
+#endif
 
 #define REAL_PREBOOT_FEEBLE_RECOVERY \
 	"setenv silent 1; " \
