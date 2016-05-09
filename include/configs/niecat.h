@@ -358,7 +358,7 @@
 		"else " \
 			"run fpgaloadcmd; " \
 		"fi; " \
-		"run consoleoutcmd; " \
+		"run ecatconsoleoutcmd; " \
 		"if test -n \\\\\"$isipreset\\\\\"; then " \
 			"run ipresetcmd; " \
 		"fi; " \
@@ -383,6 +383,12 @@
 		"else " \
 			"run boot_ecatmastermode;" \
 		"fi;\0" \
+	"ecatconsoleoutcmd=" \
+		"if test \\\\\"$bootdelay\\\\\" -gt 0 -o " \
+		"\\\\\"$ecatconsoleout\\\\\" -gt 0; then " \
+			"setenv silent; " \
+		"fi; " \
+		"run sc; \0" \
 	"ecatfpgaloadcmd=" CONFIG_ECATFPGALOADCMD "\0" \
 	"ecatfwloadaddr=" __stringify(CONFIG_ECAT_FW_LOADADDR) "\0" \
 
