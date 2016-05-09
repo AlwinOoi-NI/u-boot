@@ -636,6 +636,23 @@ static int API_display_clear(va_list ap)
 /*
  * pseudo signature:
  *
+ * int API_ubi_part(char *part_name, const char *vid_header_offset)
+ */
+static int API_ubi_part(va_list ap)
+{
+	char *partition_name;
+	char *vid_header_offset = NULL;
+
+	if ((partition_name = (char *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	vid_header_offset = (char *)va_arg(ap, u_int32_t);
+
+	return ubi_part(partition_name, vid_header_offset);
+}
+
+/*
+ * pseudo signature:
+ *
  * int API_ubi_readvol(const char *vol, char *buffer, int buffer_size)
  */
 static int API_ubi_readvol(va_list ap)
@@ -768,6 +785,7 @@ void api_init(void)
 	calls_table[API_FPGA_LOAD] = &API_fpga_load;
 	calls_table[API_ENV_SAVE] = &API_env_save;
 	calls_table[API_ENV_PERM_SET] = &API_env_perm_set;
+	calls_table[API_UBI_PART] = &API_ubi_part;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);
