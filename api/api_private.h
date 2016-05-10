@@ -60,4 +60,7 @@ int fpga_load(int devnum, const void *buf, size_t bsize);
 
 int run_command(const char *cmd, int flag);
 
+int i2c_read(u8 dev, uint addr, int alen, u8 *data, int length);
+int i2c_write(u8 dev, uint addr, int alen, u8 *data, int length);
+
 #endif /* _API_PRIVATE_H_ */

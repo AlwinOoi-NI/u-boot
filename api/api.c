@@ -458,6 +458,86 @@ static int API_dev_read(va_list ap)
 	return 0;
 }
 
+/*
+ * pseudo signature:
+ *
+ * int i2c_read(u8 dev, uint addr, int alen, u8 *data, int length)
+ *
+ * dev:		i2c device address
+ *
+ * addr:	i2c device memory address
+ *
+ * alen:	i2c device memory address length
+			- 8 bits = 1
+			- 16 bits = 2
+ *
+ * data:	ptr to buffer where to put the read data
+ *
+ * length:	length to be read
+ *
+ */
+ static int API_i2c_read(va_list ap)
+{
+	uint8_t dev;
+	uint8_t *data;
+	uint32_t addr;
+	int alen;
+	int length;
+
+	if ((dev = (uint8_t)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((addr = (uint32_t)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((alen = (int)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((data = (uint8_t *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((length = (int)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+
+	return i2c_read(dev, addr, alen, data, length);
+}
+
+/*
+/*
+ * pseudo signature:
+ *
+ * int i2c_write(u8 dev, uint addr, int alen, u8 *data, int length)
+ *
+ * dev:		i2c device address
+ *
+ * addr:	i2c device memory address
+ *
+ * alen:	i2c device memory address length
+			- 8 bits = 1
+			- 16 bits = 2
+ *
+ * data:	ptr to buffer where to put the write data
+ *
+ * length:	length to be write
+ *
+ */
+ static int API_i2c_write(va_list ap)
+{
+	uint8_t dev;
+	uint8_t *data;
+	uint32_t addr;
+	int alen;
+	int length;
+
+	if ((dev = (uint8_t)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((addr = (uint32_t)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((alen = (int)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((data = (uint8_t *)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+	if ((length = (int)va_arg(ap, u_int32_t)) == NULL)
+		return API_EINVAL;
+
+	return i2c_write(dev, addr, alen, data, length);
+}
 
 /*
  * pseudo signature:
@@ -805,6 +885,8 @@ void api_init(void)
 	calls_table[API_ENV_PERM_SET] = &API_env_perm_set;
 	calls_table[API_UBI_PART] = &API_ubi_part;
 	calls_table[API_EXE_CMD] = &API_execute_command;
+	calls_table[API_I2C_READ] = &API_i2c_read;
+	calls_table[API_I2C_WRITE] = &API_i2c_write;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);
