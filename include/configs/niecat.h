@@ -292,7 +292,7 @@
 		"then " \
 			"if fpga load 0 $loadaddr $filesize; then " \
 				"fpgasuccess=1; " \
-				"bootmode=usermode; " \
+				"bootmode=ecatmode; " \
 			"else " \
 				"echo $fpga_err..(user) ; " \
 				"loaddefaultbit=1; " \
@@ -311,7 +311,7 @@
 	"if test -n \\\\\"$configfpga\\\\\"; then " \
 		"if fpga load 0 $loadaddr $filesize; then " \
 			"fpgasuccess=1; " \
-			"bootmode=mastermode; " \
+			"bootmode=ecatmode; " \
 		"fi; " \
 	"fi; " \
 	"if test -z \\\\\"$fpgasuccess\\\\\"; then " \
@@ -323,9 +323,7 @@
 	"run markhardbootcomplete;"
 
 #define REAL_BOOTCOMMAND_OVERRIDE \
-	"if test $bootmode = mastermode; then " \
-		"run boot_ecatmastermode; " \
-	"elif test $bootmode = usermode; then " \
+	"if test $bootmode = ecatmode; then " \
 		"run boot_ecatusermode; " \
 	"elif test $bootmode = safemode; then " \
 		"run boot_safemode; " \
