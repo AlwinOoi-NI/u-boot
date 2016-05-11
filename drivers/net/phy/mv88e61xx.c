@@ -367,6 +367,9 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 		/* ports 2,3,4 not available */
 		swconfig->ports_enabled &= 0x023;
 		break;
+	case 0x3410:
+		idstr = "88E6341";
+		break;
 	default:
 		/* Could not detect switch id */
 		idstr = "88E61??";
