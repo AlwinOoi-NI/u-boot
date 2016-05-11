@@ -139,6 +139,7 @@
 #if defined(CONFIG_BLUEFIN)
 #define CONFIG_MV88E61XX_SWITCH
 #define CONFIG_RESET_PHY_R	/* call board driver's reset_phy */
+#define CONFIG_CMD_SWITCHCFG
 #endif
 
 #define CONFIG_CMD_MII
