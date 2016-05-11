@@ -349,7 +349,7 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 		return -1;
 	}
 
-	if (!(swconfig->cpuport & ((1 << 4) | (1 << 5)))) {
+	if (swconfig->cpuport == 0) {
 		swconfig->cpuport = (1 << 5);
 		printf("Invalid cpu port config, using default port5\n");
 	}
