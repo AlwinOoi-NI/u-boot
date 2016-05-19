@@ -11,6 +11,7 @@
 #include <jffs2/load_kernel.h>
 #include <miiphy.h>
 #include <netdev.h>
+#include <rtc_ds3232.h>
 #include <serial.h>
 #include <zynqpl.h>
 #include <usb/ulpi.h>
@@ -72,6 +73,11 @@ int board_late_init (void)
 	int ethaddr_missing = 0;
 	int eth1addr_missing = 0;
 	int usbgadgetethaddr_missing = 0;
+#endif
+#if defined(CONFIG_SBRIO)
+	/* Use DS3232, which require disabling of the
+	 * battery-backed 32kHz clock to conserve battery. */
+	rtc_ds3232_disable_bb32khz();
 #endif
 	/*
 	 * Take eth0 phy, eth1 phy, usb phy, usb hub, and external UART
