@@ -140,6 +140,17 @@ static int API_reset(va_list ap)
 /*
  * pseudo signature:
  *
+ * int API_dcache_flush(void)
+ */
+static int API_dcache_flush(va_list ap)
+{
+	flush_dcache_all();
+	return 0;
+}
+
+/*
+ * pseudo signature:
+ *
  * int API_get_sys_info(struct sys_info *si)
  *
  * fill out the sys_info struct containing selected parameters about the
@@ -887,6 +898,7 @@ void api_init(void)
 	calls_table[API_EXE_CMD] = &API_execute_command;
 	calls_table[API_I2C_READ] = &API_i2c_read;
 	calls_table[API_I2C_WRITE] = &API_i2c_write;
+	calls_table[API_DCACHE_FLUSH] = &API_dcache_flush;
 	calls_no = API_MAXCALL;
 
 	debugf("API initialized with %d calls\n", calls_no);
