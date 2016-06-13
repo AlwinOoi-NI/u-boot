@@ -370,8 +370,12 @@
 #endif
 
 #undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND
 
-#define CONFIG_PREBOOT
+#define CONFIG_PREBOOT \
+	"setenv silent 1; " \
+	"setenv ecatconsoleout 1;" \
+	"run ecatconsoleoutcmd; "
 
 #else /* !CONFIG_MFG */
 
