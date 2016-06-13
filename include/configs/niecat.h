@@ -187,7 +187,7 @@
 	"mtdparts=xilinx_nand:" \
 		"128k(fsbl)ro," \
 		"11M(u-boot)ro," \
-		"18M(backup)ro," \
+		"19M(backup)ro," \
 		"82M(boot-config)," \
 		"-(root)"
 
@@ -224,13 +224,13 @@
 #define CONFIG_EVENT_LOG_SIZE			0x10000
 #define CONFIG_MOTION_SIZE			0x400100
 #define CONFIG_MASTER_FPGA_SIZE			CONFIG_USER_FPGA_SIZE
+#define CONFIG_MASTER_HEAD_SIZE			0x100000
 #define CONFIG_MASTER_FW_SIZE			CONFIG_USER_FW_SIZE
 
 #define CONFIG_ECAT_FW_LOADADDR		0x8000
 
 #define READONLY_DEFAULT_ENV_FLAGS_APPEND \
-	"ecatfpgaloadcmd:so,ecatfwloadaddr:xo,boot_ecatmastermode:so," \
-	"boot_ecatusermode:so,"
+	"ecatfwloadaddr:xo,boot_ecatfw:so,"
 
 #define WRITE_PARTITIONS_COMMANDS_OVERRIDE \
 	"writepartitions=" \
@@ -261,15 +261,18 @@
 		"ubi create config - dynamic && " \
 		"if ubi part backup && " \
 			"ubi read $verifyaddr master-fpga 1 && " \
+			"ubi read $verifyaddr master-head 1 && " \
 			"ubi read $verifyaddr master-fw 1; "\
 		"then " \
 			"ubi remove master-fpga && " \
+			"ubi remove master-head && " \
 			"ubi remove master-fw; " \
 		"else " \
 			"nand erase.part backup && " \
 			"ubi part backup; " \
 		"fi && " \
 		"ubi create master-fpga " __stringify(CONFIG_MASTER_FPGA_SIZE) " dynamic && " \
+		"ubi create master-head " __stringify(CONFIG_MASTER_HEAD_SIZE) " dynamic && " \
 		"ubi create master-fw " __stringify(CONFIG_MASTER_FW_SIZE) " dynamic && " \
 		"if ubi part root && " \
 			"ubi read $verifyaddr rootfs 1; " \
@@ -281,105 +284,21 @@
 		"fi && " \
 		"ubi create rootfs - dynamic;\0" \
 
-#define CONFIG_ECATFPGALOADCMD \
-	"if test -n \\\\\"$isnofpgaapp\\\\\" -o " \
-		"-n \\\\\"$isforcedrecoverymode\\\\\"; "\
-	"then " \
-		"loaddefaultbit=1; " \
-	"else " \
-		"if  ubi part boot-config && " \
-			"ubi read.cap $loadaddr user-fpga; " \
-		"then " \
-			"if fpga load 0 $loadaddr $filesize; then " \
-				"fpgasuccess=1; " \
-				"bootmode=ecatmode; " \
-			"else " \
-				"echo $fpga_err..(user) ; " \
-				"loaddefaultbit=1; " \
-			"fi; " \
-		"else " \
-			"loaddefaultbit=1; " \
-		"fi; " \
-	"fi; " \
-	"if test -n \\\\\"$loaddefaultbit\\\\\"; then " \
-		"if ubi part backup && " \
-			"ubi read.cap $loadaddr master-fpga; " \
-		"then " \
-			"configfpga=1; " \
-		"fi; " \
-	"fi; " \
-	"if test -n \\\\\"$configfpga\\\\\"; then " \
-		"if fpga load 0 $loadaddr $filesize; then " \
-			"fpgasuccess=1; " \
-			"bootmode=ecatmode; " \
-		"fi; " \
-	"fi; " \
-	"if test -z \\\\\"$fpgasuccess\\\\\"; then " \
-		"echo $fpga_err; " \
-		"run recoverycmd; " \
-		"run recoverybootcmd;" \
-	"fi; " \
-	"setenv fpga 0;" \
-	"run markhardbootcomplete;"
-
 #define REAL_BOOTCOMMAND_OVERRIDE \
-	"if test $bootmode = ecatmode; then " \
-		"run boot_ecatusermode; " \
-	"elif test $bootmode = safemode; then " \
-		"run boot_safemode; " \
-	"elif test \\\\\"${ispxeboot}\\\\\" = 1; then " \
-		"run boot_pxe; " \
-	"elif test $bootmode = runmode; then " \
-		"run boot_runmode; " \
-	"else " \
-		"echo Bootmode Error !; " \
-	"fi"
+	"run boot_ecatfw"
 
 #define REAL_PREBOOT_OVERRIDE \
 	"setenv silent 1; " \
 	"nand lock tight; " \
-	"ubi part boot-config; " \
-	"run readsoftdip; " \
-	"run readcplddip; " \
-	"run readbootmode; " \
-	"run read_usb_otgsc_id;" \
-	"run evaldip; " \
-	"if test -n \\\\\"$isforcedrecoverymode\\\\\"; then " \
-		"if test -n \\\\\"$isconsoleout\\\\\"; then " \
-			"setenv silent; " \
-		"fi; " \
-		"forcedrecovery=1; " \
-		"run recoverycmd; " \
-	"else " \
-		"if test -n \\\\\"$bootecatmode\\\\\"; then " \
-			"run ecatfpgaloadcmd; " \
-		"else " \
-			"run fpgaloadcmd; " \
-		"fi; " \
-		"run ecatconsoleoutcmd; " \
-		"if test -n \\\\\"$isipreset\\\\\"; then " \
-			"run ipresetcmd; " \
-		"fi; " \
-	"fi;"
+	"run ecatconsoleoutcmd; "
 
 #define REAL_EXTRA_ENV_SETTINGS_APPEND \
-	"boot_ecatmastermode=" \
+	"boot_ecatfw=" \
 		"if ubi part backup && " \
-		"ubi read.cap $ecatfwloadaddr master-fw; then " \
-			"setenv verify n; " \
+		"ubi read $ecatfwloadaddr master-head; then " \
 			"go $ecatfwloadaddr; " \
 		"else " \
-			"echo $safemode_err; " \
-			"run recoverycmd; " \
-			"run recoverybootcmd;" \
-		"fi;\0" \
-	"boot_ecatusermode=" \
-		"if ubi part boot-config && " \
-		"ubi read.cap $ecatfwloadaddr user-fw; then " \
-			"setenv verify n; " \
-			"go $ecatfwloadaddr; " \
-		"else " \
-			"run boot_ecatmastermode;" \
+			"echo Error booting firmware (head); " \
 		"fi;\0" \
 	"ecatconsoleoutcmd=" \
 		"if test \\\\\"$bootdelay\\\\\" -gt 0 -o " \
@@ -387,7 +306,6 @@
 			"setenv silent; " \
 		"fi; " \
 		"run sc; \0" \
-	"ecatfpgaloadcmd=" CONFIG_ECATFPGALOADCMD "\0" \
 	"ecatfwloadaddr=" __stringify(CONFIG_ECAT_FW_LOADADDR) "\0" \
 
 #define CONFIG_CMD_FAT
