@@ -584,10 +584,10 @@ static int API_env_set(va_list ap)
 {
 	char *name, *value;
 
-	if ((name = (char *)va_arg(ap, u_int32_t)) == NULL)
+	name = (char *)va_arg(ap, u_int32_t);
+	if (name == NULL)
 		return API_EINVAL;
-	if ((value = (char *)va_arg(ap, u_int32_t)) == NULL)
-		return API_EINVAL;
+	value = (char *)va_arg(ap, u_int32_t);
 
 	setenv(name, value);
 
