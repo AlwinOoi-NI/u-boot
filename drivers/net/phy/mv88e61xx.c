@@ -220,6 +220,7 @@ static int mv88e61xx_busychk(char *name)
 static int mv88361xx_powerup(struct mv88e61xx_config *swconfig, u32 prt)
 {
 	char *name = swconfig->name;
+	u32 portaddr = prt + swconfig->port_addr_offset;
 
 	/* Write Copper Specific control reg1 (0x14) for-
 	 * Enable Phy power up
@@ -228,7 +229,7 @@ static int mv88361xx_powerup(struct mv88e61xx_config *swconfig, u32 prt)
 	 */
 	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR, MV88E61XX_PHY_DATA, 0x3360);
 	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR,
-	       MV88E61XX_PHY_CMD, (0x9410 | (prt << 5)));
+	       MV88E61XX_PHY_CMD, (0x9410 | (portaddr << 5)));
 
 	if (mv88e61xx_busychk(name))
 		return -1;
@@ -239,7 +240,7 @@ static int mv88361xx_powerup(struct mv88e61xx_config *swconfig, u32 prt)
 	 */
 	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR, MV88E61XX_PHY_DATA, 0x1140);
 	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR,
-	       MV88E61XX_PHY_CMD, (0x9400 | (prt << 5)));
+	       MV88E61XX_PHY_CMD, (0x9400 | (portaddr << 5)));
 
 	if (mv88e61xx_busychk(name))
 		return -1;
@@ -354,6 +355,8 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 		printf("Invalid cpu port config, using default port5\n");
 	}
 
+	swconfig->port_addr_offset = 0;
+
 	RD_PHY(name, MV88E61XX_PRT_OFST, MII_PHYSID2, &reg);
 	switch (reg &= 0xfff0) {
 	case 0x1610:
@@ -369,6 +372,8 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 		break;
 	case 0x3410:
 		idstr = "88E6341";
+		/* port 0..5 are SMI addresses 0x10..0x15 */
+		swconfig->port_addr_offset = 0x10;
 		break;
 	default:
 		/* Could not detect switch id */

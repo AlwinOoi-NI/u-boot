@@ -201,6 +201,7 @@ struct mv88e61xx_config {
 	enum mv88e61xx_cfg_mdip mdip;
 	u32 ports_enabled;
 	u8 cpuport;
+	u8 port_addr_offset;
 };
 
 int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig);
