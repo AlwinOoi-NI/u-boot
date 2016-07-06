@@ -441,6 +441,20 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 		       reg | (swconfig->portstate & 0x03));
 	}
 
+	/* Enable remote management */
+	if (swconfig->rmgmt == MV88E61XX_RMGMT_EN) {
+		/* Set RMU mode to port 0 */
+		RD_PHY(name, MV88E61XX_GLB1REG_DEVADR,
+		       MV88E61XX_GLOBAL_CNTL2_REG, &reg);
+		WR_PHY(name, MV88E61XX_GLB1REG_DEVADR,
+		       MV88E61XX_GLOBAL_CNTL2_REG, reg & ~0xF00);
+		/* Set port 0 frame mode to EtherType DSA */
+		RD_PHY(name, MV88E61XX_PRT_OFST,
+		       MV88E61XX_PRT_CTRL_REG, &reg);
+		WR_PHY(name, MV88E61XX_PRT_OFST,
+		       MV88E61XX_PRT_CTRL_REG, reg | 0x300);
+	}
+
 	printf("%s Initialized on %s\n", idstr, name);
 	return 0;
 }

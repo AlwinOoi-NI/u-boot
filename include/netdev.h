@@ -192,6 +192,11 @@ enum mv88e61xx_cfg_prtstt {
 	MV88E61XX_PORTSTT_FORWARDING
 };
 
+enum mv88e61xx_cfg_rmgmt {
+	MV88E61XX_RMGMT_DIS,
+	MV88E61XX_RMGMT_EN
+};
+
 struct mv88e61xx_config {
 	char *name;
 	enum mv88e61xx_cfg_vlan vlancfg;
@@ -199,6 +204,7 @@ struct mv88e61xx_config {
 	enum mv88e61xx_cfg_prtstt portstate;
 	enum mv88e61xx_cfg_ledinit led_init;
 	enum mv88e61xx_cfg_mdip mdip;
+	enum mv88e61xx_cfg_rmgmt rmgmt;
 	u32 ports_enabled;
 	u8 cpuport;
 	u8 port_addr_offset;
