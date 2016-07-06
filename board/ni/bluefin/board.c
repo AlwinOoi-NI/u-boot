@@ -194,6 +194,7 @@ void reset_phy(void)
 		.led_init = MV88E61XX_LED_INIT_DIS,
 		.mdip = MV88E61XX_MDIP_NOCHANGE,
 		.portstate = MV88E61XX_PORTSTT_FORWARDING,
+		.rmgmt = MV88E61XX_RMGMT_EN,
 		.cpuport = PORTINDEX(0),
 		.ports_enabled = PORTINDEX(0)|PORTINDEX(1)|PORTINDEX(2)
 	};
