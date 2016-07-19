@@ -241,6 +241,7 @@
 			"ubi remove user-fpga && " \
 			"ubi remove user-fw && " \
 			"ubi remove cartridge && " \
+			"ubi remove backplane && " \
 			"ubi remove event-log && " \
 			"ubi remove motion && " \
 			"ubi remove bootfs && " \
