@@ -13,6 +13,7 @@
 #include <serial.h>
 #include <zynqpl.h>
 #include <usb/ulpi.h>
+#include "led.h"
 
 #define BOOT_MODE_REG     (XPSS_SYS_CTRL_BASEADDR + 0x25C)
 #define BOOT_MODES_MASK    0x0000000F
@@ -52,6 +53,11 @@ struct serial_device *default_serial_console(void)
 
 int board_init(void)
 {
+	/* Status LED goes on while booting. */
+	configure_led(LED_ID_STATUS, LED_ACTION_ON);
+	/* Active LED goes off while booting. */
+	configure_led(LED_ID_ACTIVE, LED_ACTION_OFF);
+
 #ifdef CONFIG_FPGA
 	fpga_init();
 	fpga_add(fpga_xilinx, &fpga);
