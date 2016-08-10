@@ -13,6 +13,7 @@
 #include <serial.h>
 #include <zynqpl.h>
 #include <usb/ulpi.h>
+#include <asm/gpio.h>
 #include "led.h"
 
 #define BOOT_MODE_REG     (XPSS_SYS_CTRL_BASEADDR + 0x25C)
@@ -51,6 +52,52 @@ struct serial_device *default_serial_console(void)
 	return &null_serial_device;
 }
 
+#if !defined(CONFIG_MFG)
+static int reset_button_down()
+{
+	/* Reset button is active-low. */
+	return gpio_get_value(CONFIG_RESET_BUTTON_GPIO) == 0;
+}
+
+/*
+ * Check the state of the reset button. Will also wait for up to
+ * 5 seconds to determine if we should force recovery mode.
+ *
+ * Sets the "bootmode" environment variable.
+ */
+static void check_reset_button(void)
+{
+	ulong start;
+	ulong holdtime = 0;
+	ulong maxholdtime = 5 * CONFIG_SYS_HZ;
+
+	gpio_direction_input(CONFIG_RESET_BUTTON_GPIO);
+
+	start = get_timer(0);
+
+	while (reset_button_down()) {
+		holdtime = get_timer(start);
+
+		if (holdtime > maxholdtime) {
+			/* start blinking */
+			configure_led(LED_ID_STATUS, LED_ACTION_BLINK);
+			break;
+		}
+
+		udelay(100);
+	}
+
+	/* spin until user lets go of the button */
+	while (reset_button_down())
+		udelay(100);
+
+	if (holdtime > maxholdtime)
+		setenv("bootmode", "recovery");
+	else
+		setenv("bootmode", "normal");
+}
+#endif
+
 int board_init(void)
 {
 	led_init();
@@ -81,6 +128,11 @@ int board_late_init (void)
 		setenv("serial#", serial);
 	if (strlen(ethaddr) != 0)
 		setenv("ethaddr", ethaddr);
+#endif
+
+#if !defined(CONFIG_MFG)
+	/* Figure out if we should boot normally or do recovery. */
+	check_reset_button();
 #endif
 
 	return 0;
