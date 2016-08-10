@@ -301,32 +301,16 @@
 	"ncip=192.168.1.1\0" \
 	"nc=" \
 		"setenv stdout nc;" \
+		"setenv stderr nc;" \
 		"setenv stdin nc;\0" \
 	"sc=" \
 		"setenv stdout " CONFIG_CONSOLE_UBOOT_DEV ";" \
 		"setenv stderr " CONFIG_CONSOLE_UBOOT_DEV ";" \
 		"setenv stdin " CONFIG_CONSOLE_UBOOT_DEV ";\0" \
-	"recoverybootcmd=" \
-		"if test -n \\\\\"$savebootcmd\\\\\"; " \
-		"then " \
-			"flags=${.flags} && " \
-			"setenv .flags bootcmd && " \
-			"setenv bootcmd \\\\\"$savebootcmd\\\\\"; " \
-			"setenv .flags $flags; " \
-		"fi; " \
-		"if test -n \\\\\"$savebootdelay\\\\\"; " \
-		"then " \
-			"setenv bootdelay $savebootdelay; " \
-		"fi;\0" \
 	"recoverycmd=" \
-		"echo Entering recovery mode!; " \
 		"dcache off; " \
-		"flags=${.flags} && " \
-			"savebootcmd=$bootcmd && " \
-			"setenv .flags bootcmd && " \
-			"setenv bootcmd \\\\\"$recoverybootcmd\\\\\" && " \
-			"setenv .flags $flags; " \
-		"savebootdelay=$bootdelay && setenv bootdelay -2; " \
+		"setenv silent; " \
+		"setenv bootmode; " \
 		"run nc; " \
 		"while sleep 1; do " \
 			"echo \\\"${DeviceCode:-<not-set>}, " \
@@ -390,27 +374,32 @@
 		"cmp.b $loadaddr $verifyaddr " __stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
 #define REAL_PREBOOT \
+	"setenv silent 1; " \
 	"dcache on; " \
 	"ubi part boot-config; " \
 	"ubifsmount ubi:bootfs; " \
-	"run sc;" \
 	"imagefile=bootimage0.itb; rootdev=mtdblock8; " \
 	"altimagefile=bootimage1.itb; altrootdev=mtdblock9; " \
 	"if ubifsload $loadaddr image_1_active; " \
 	"then " \
 		"run switchfw; " \
-	"fi"
+	"fi;" \
 
 #define REAL_BOOTCOMMAND \
-	"if ubifsmount ubi:bootfs && ubifsload $loadaddr $imagefile && imi $loadaddr; " \
+	"if test \\\\\"$bootmode\\\\\" = \\\\\"recovery\\\\\"; " \
 	"then " \
-		"source $loadaddr:bootscript; " \
-	"elif run switchfw && ubifsload $loadaddr $imagefile && imi $loadaddr; " \
-	"then " \
-		"source $loadaddr:bootscript; " \
+		"run recoverycmd; " \
+	"else " \
+		"if ubifsmount ubi:bootfs && ubifsload $loadaddr $imagefile && imi $loadaddr; " \
+		"then " \
+			"source $loadaddr:bootscript; " \
+		"elif run switchfw && ubifsload $loadaddr $imagefile && imi $loadaddr; " \
+		"then " \
+			"source $loadaddr:bootscript; " \
+		"fi; " \
+		"echo 'Boot failed!'; " \
+		"run recoverycmd; " \
 	"fi; " \
-	"echo 'Boot failed!'; " \
-	"run recoverycmd; "
 
 #if defined(CONFIG_MFG)
 
