@@ -30,6 +30,7 @@ LIB	= $(obj)lib$(SOC).o
 
 COBJS-y	:= timer.o
 COBJS-$(CONFIG_USE_IRQ) += interrupts.o
+COBJS-$(CONFIG_ZYNQ_TTC) += ttc.o
 
 SOBJS   := lowlevel_init.o
 
