@@ -53,10 +53,7 @@ struct serial_device *default_serial_console(void)
 
 int board_init(void)
 {
-	/* Status LED goes on while booting. */
-	configure_led(LED_ID_STATUS, LED_ACTION_ON);
-	/* Active LED goes off while booting. */
-	configure_led(LED_ID_ACTIVE, LED_ACTION_OFF);
+	led_init();
 
 #ifdef CONFIG_FPGA
 	fpga_init();
