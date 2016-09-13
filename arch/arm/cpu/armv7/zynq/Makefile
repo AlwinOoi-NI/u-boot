@@ -29,6 +29,7 @@ include $(TOPDIR)/config.mk
 LIB	= $(obj)lib$(SOC).o
 
 COBJS-y	:= timer.o
+COBJS-$(CONFIG_USE_IRQ) += interrupts.o
 
 SOBJS   := lowlevel_init.o
 
