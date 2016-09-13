@@ -193,9 +193,6 @@ int gpio_direction_output(unsigned gpio, int value)
 	if (check_gpio(gpio) < 0)
 		return -1;
 
-	/* set the state of the pin */
-	gpio_set_value(gpio, value);
-
 	xgpiops_get_bank_pin(gpio, &bank_num, &bank_pin_num);
 
 	/* set the GPIO pin as output */
@@ -208,6 +205,8 @@ int gpio_direction_output(unsigned gpio, int value)
 	reg |= 1 << bank_pin_num;
 	Xout_le32(XPSS_GPIO_BASEADDR | XGPIOPS_OUTEN_OFFSET(bank_num), reg);
 
+	/* set the state of the pin */
+	gpio_set_value(gpio, value);
 	return 0;
 }
 
