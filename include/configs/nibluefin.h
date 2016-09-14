@@ -202,6 +202,14 @@
 #define CONFIG_USB_BASE_ADDR XPSS_USB0_BASEADDR /* int 21 */
 
 /*
+ * Interrupts
+ */
+#define CONFIG_USE_IRQ
+#define CONFIG_CMD_IRQ
+#define CONFIG_STACKSIZE_IRQ    (8*1024)        /* IRQ stack */
+#define CONFIG_STACKSIZE_FIQ    (4*1024)        /* FIQ stack */
+
+/*
  * Physical Memory map
  */
 #define PHYS_SDRAM_1_SIZE (256 * 1024 * 1024)
