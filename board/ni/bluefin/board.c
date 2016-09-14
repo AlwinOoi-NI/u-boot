@@ -110,6 +110,81 @@ int board_init(void)
 	return 0;
 }
 
+#if defined(CONFIG_USE_IRQ)
+
+/*
+ * This really should live in zynq_gpio, except the u-boot gpio
+ * framework doesn't really have infrastructure for interrupt-based
+ * triggering, either in the version we have this developed against
+ * (2012.10) or what is currently upstream (2016.09). In order to
+ * ease future merges, this is separate for now.
+ */
+#define GPIO_INT_MASK_1 (XPSS_GPIO_BASEADDR + 0x024C)
+#define GPIO_INT_EN_1   (XPSS_GPIO_BASEADDR + 0x0250)
+#define GPIO_INT_DIS_1  (XPSS_GPIO_BASEADDR + 0x0254)
+#define GPIO_INT_STAT_1 (XPSS_GPIO_BASEADDR + 0x0258)
+#define GPIO_INT_TYPE_1 (XPSS_GPIO_BASEADDR + 0x025C)
+#define GPIO_INT_POL_1  (XPSS_GPIO_BASEADDR + 0x0260)
+#define GPIO_INT_ANY_1  (XPSS_GPIO_BASEADDR + 0x0264)
+
+/* Everything assumes bank 1 because assumptions make code easier! */
+#if !(CONFIG_RESET_BUTTON_GPIO >= 32 && CONFIG_RESET_BUTTON_GPIO <= 63)
+	#error CONFIG_RESET_BUTTON_GPIO expected to be on MIO Bank 1
+#endif
+
+/* line index within bank register */
+#define RESET_BUTTON_LINE	(CONFIG_RESET_BUTTON_GPIO % 32)
+
+static void gpio_irq_handler(void *unused)
+{
+	u32 mask;
+
+	mask = readl(GPIO_INT_STAT_1);
+	if (mask & (1U << RESET_BUTTON_LINE)) {
+		if (gpio_get_value(CONFIG_RESET_BUTTON_GPIO) == 0) {
+			disable_interrupts();
+			reset_cpu(0);
+		}
+	}
+
+	/* acknowledge everything on bank 1 */
+	writel(mask, GPIO_INT_STAT_1);
+}
+
+static int enable_reset_button_int(void)
+{
+	u32 tmp;
+
+	irq_install_handler(XPSS_GPIO_INT_ID, gpio_irq_handler, NULL);
+
+	/* Reset button is an input. */
+	gpio_direction_input(CONFIG_RESET_BUTTON_GPIO);
+
+	/* set edge-sensitive (1) */
+	tmp = readl(GPIO_INT_TYPE_1);
+	tmp |= (1U << RESET_BUTTON_LINE);
+	writel(tmp, GPIO_INT_TYPE_1);
+
+	/* set edge sensitivity (single edge) */
+	tmp = readl(GPIO_INT_ANY_1);
+	tmp &= ~(1U << RESET_BUTTON_LINE);
+	writel(tmp, GPIO_INT_ANY_1);
+
+	/* set polarity (falling edge) */
+	tmp = readl(GPIO_INT_POL_1);
+	tmp &= ~(1U << RESET_BUTTON_LINE);
+	writel(tmp, GPIO_INT_POL_1);
+
+	/* enable interrupt */
+	tmp = readl(GPIO_INT_EN_1);
+	tmp |= (1U << RESET_BUTTON_LINE);
+	writel(tmp, GPIO_INT_EN_1);
+
+	return 0;
+}
+
+#endif /* defined(CONFIG_USE_IRQ) */
+
 int board_late_init (void)
 {
 #if defined(CONFIG_MFG)
@@ -133,6 +208,10 @@ int board_late_init (void)
 #if !defined(CONFIG_MFG)
 	/* Figure out if we should boot normally or do recovery. */
 	check_reset_button();
+#endif
+
+#if defined(CONFIG_USE_IRQ)
+	enable_reset_button_int();
 #endif
 
 	return 0;
