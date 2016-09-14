@@ -184,6 +184,8 @@
 #endif
 #undef CONFIG_RTC_XPSSRTC
 
+#define CONFIG_ZYNQ_TTC
+
 /* USB Host support */
 #define CONFIG_CMD_USB
 #define CONFIG_USB_HOST
