@@ -342,6 +342,7 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 {
 	u32 prt;
 	u16 reg;
+	u16 id;
 	char *idstr;
 	char *name = swconfig->name;
 
@@ -358,7 +359,8 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 	swconfig->port_addr_offset = 0;
 
 	RD_PHY(name, MV88E61XX_PRT_OFST, MII_PHYSID2, &reg);
-	switch (reg &= 0xfff0) {
+	id = reg & 0xfff0;
+	switch (id) {
 	case 0x1610:
 		idstr = "88E6161";
 		break;
@@ -392,14 +394,25 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 	}
 
 	if (swconfig->rgmii_delay == MV88E61XX_RGMII_DELAY_EN) {
-		/*
-		 * Enable RGMII delay on Tx and Rx for CPU port
-		 * Ref: sec 9.5 of chip datasheet-02
-		 */
-		WR_PHY(name, MV88E61XX_PRT_OFST + 5,
-		       MV88E61XX_RGMII_TIMECTRL_REG, 0x18);
-		WR_PHY(name, MV88E61XX_PRT_OFST + 4,
-		       MV88E61XX_RGMII_TIMECTRL_REG, 0xc1e7);
+		if (id == 0x3410) {
+			/*
+			 * For 88E6341, RGMII delay is in the physical
+			 * control register (0x01) on port 0.
+			 * Ref: sec 1.3.1 of chip datasheet-02
+			 */
+			WR_PHY(name, MV88E61XX_PRT_OFST,
+			       MV88E61XX_PRT_STS_REG, 0xc003);
+		} else {
+			/*
+			 * For 88E6161/6165/6123, enable RGMII delay on
+			 * Tx and Rx for CPU port
+			 * Ref: sec 9.5 of chip datasheet-02
+			 */
+			WR_PHY(name, MV88E61XX_PRT_OFST + 5,
+			       MV88E61XX_RGMII_TIMECTRL_REG, 0x18);
+			WR_PHY(name, MV88E61XX_PRT_OFST + 4,
+			       MV88E61XX_RGMII_TIMECTRL_REG, 0xc1e7);
+		}
 	}
 
 	for (prt = 0; prt < MV88E61XX_MAX_PORTS_NUM; prt++) {
