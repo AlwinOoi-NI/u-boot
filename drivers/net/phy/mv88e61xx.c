@@ -415,6 +415,13 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 		}
 	}
 
+	/*
+	 * If on 88E6341 and using CPU port 0, configure port 0 to be
+	 * an RGMII slave (no PHY).
+	 */
+	if (id == 0x3410 && swconfig->cpuport == (1 << 0))
+		WR_PHY(name, MV88E61XX_PRT_OFST, 0x0, 0x4807);
+
 	for (prt = 0; prt < MV88E61XX_MAX_PORTS_NUM; prt++) {
 		if (!((1 << prt) & swconfig->cpuport)) {
 
