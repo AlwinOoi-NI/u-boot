@@ -325,7 +325,7 @@ void reset_phy(void)
 		.name = "zynq_gem0",
 		.vlancfg = MV88E61XX_VLANCFG_DEFAULT,
 		.rgmii_delay = MV88E61XX_RGMII_DELAY_EN,
-		.led_init = MV88E61XX_LED_INIT_DIS,
+		.led_init = MV88E61XX_LED_INIT_EN6341,
 		.mdip = MV88E61XX_MDIP_NOCHANGE,
 		.portstate = MV88E61XX_PORTSTT_FORWARDING,
 		.rmgmt = MV88E61XX_RMGMT_EN,
