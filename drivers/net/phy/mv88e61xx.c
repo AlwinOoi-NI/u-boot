@@ -305,6 +305,37 @@ static int mv88361xx_led_init(struct mv88e61xx_config *swconfig, u32 prt)
 }
 
 /*
+ * LED setup for mv88e6341.
+ */
+static int mv88e6341_led_init(struct mv88e61xx_config *swconfig)
+{
+	char *name = swconfig->name;
+	u16 reg;
+	u32 prt;
+
+	if (swconfig->led_init != MV88E61XX_LED_INIT_EN6341)
+		return 0;
+
+	/* Port 0 is "global". */
+	/* Direct LEDs = 0, Skip Columns: 0b0100 */
+	WR_PHY(name, swconfig->port_addr_offset, MV88E6341_LEDCNTL_REG, 0x8004);
+
+	/* Ports 1-4 have LED controls for ports */
+	for (prt = 1; prt < 5; prt++) {
+		if ((1 << prt) & swconfig->ports_enabled) {
+			u32 portaddr = prt + swconfig->port_addr_offset;
+
+			/* LED0: 0x3 (Link/Act), LED1: 0x3 (Gig Link) */
+			WR_PHY(name, portaddr, MV88E6341_LEDCNTL_REG, 0x8033);
+			/* LED1: 0x3 (Force Off), LED3: 0x9 (100 Link)  */
+			WR_PHY(name, portaddr, MV88E6341_LEDCNTL_REG, 0x909E);
+		}
+	}
+
+	return 0;
+}
+
+/*
  * Reverse Transmit polarity for Media Dependent Interface
  * Pins (MDIP) bits in Copper Specific Control Register 3
  * (Page 0, Reg 20 for each phy (except cpu port)
@@ -421,6 +452,13 @@ int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig)
 	 */
 	if (id == 0x3410 && swconfig->cpuport == (1 << 0))
 		WR_PHY(name, MV88E61XX_PRT_OFST, 0x0, 0x4807);
+
+	/*
+	 * If on 88E6341, configure LEDs.
+	 */
+	if (swconfig->led_init == MV88E61XX_LED_INIT_EN6341) {
+		mv88e6341_led_init(swconfig);
+	}
 
 	for (prt = 0; prt < MV88E61XX_MAX_PORTS_NUM; prt++) {
 		if (!((1 << prt) & swconfig->cpuport)) {

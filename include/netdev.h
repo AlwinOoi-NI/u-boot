@@ -177,7 +177,8 @@ enum mv88e61xx_cfg_mdip {
 
 enum mv88e61xx_cfg_ledinit {
 	MV88E61XX_LED_INIT_DIS,
-	MV88E61XX_LED_INIT_EN
+	MV88E61XX_LED_INIT_EN,
+	MV88E61XX_LED_INIT_EN6341
 };
 
 enum mv88e61xx_cfg_rgmiid {
