@@ -307,9 +307,54 @@
 		"setenv stdout " CONFIG_CONSOLE_UBOOT_DEV ";" \
 		"setenv stderr " CONFIG_CONSOLE_UBOOT_DEV ";" \
 		"setenv stdin " CONFIG_CONSOLE_UBOOT_DEV ";\0" \
+	"ipresetcmd=" \
+		"echo Resetting primary Ethernet configuration; " \
+		"setenv dhcpenabled 1; " \
+		"setenv linklocalenabled 1; " \
+		"setenv sdnsip; " \
+		"setenv sgatewayip; " \
+		"setenv sipaddr; " \
+		"setenv snetmask; " \
+		"setenv mtu; " \
+		"setenv ncip 255.255.255.255; " \
+		"savesilent=$silent; " \
+		"setenv silent 1; " \
+		"saveenv; " \
+		"setenv silent $savesilent;\0" \
+	"ipconfigcmd=" \
+		"if test \\\\\"$dhcpenabled\\\\\" -ne 0 -a " \
+			"\\\\\"$bootmode\\\\\" != \\\\\"recovery\\\\\";" \
+		"then " \
+			"dhcpfail=0; " \
+			"dhcp || dhcpfail=1;" \
+		"else " \
+			"dhcpfail=-1;" \
+		"fi;" \
+		"if test \\\\\"$linklocalenabled\\\\\" -ne 0 -a " \
+			"$dhcpfail -ne 0 -o " \
+			"\\\\\"$bootmode\\\\\" = \\\\\"recovery\\\\\";" \
+		"then " \
+			"llfail=0;" \
+			"linklocal || llfail=1;" \
+		"else " \
+			"llfail=-1;" \
+		"fi;" \
+		"if test $llfail -ne 0 -a " \
+			"$dhcpfail -ne 0; " \
+		"then " \
+			"setenv ipaddr $sipaddr; " \
+			"setenv netmask $snetmask; " \
+			"setenv gatewayip $sgatewayip; " \
+		"fi;\0" \
 	"recoverycmd=" \
+		"led status blink; " \
+		"if test \\\\\"$bootmode\\\\\" = \\\\\"recovery\\\\\"; " \
+		"then " \
+			"run ipresetcmd; " \
+		"fi; " \
 		"dcache off; " \
 		"setenv silent; " \
+		"run ipconfigcmd; " \
 		"setenv bootmode; " \
 		"run nc; " \
 		"while sleep 1; do " \
