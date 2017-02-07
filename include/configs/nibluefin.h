@@ -296,6 +296,7 @@
 	"DeviceCode=0x" CONFIG_DEVICE_CODE "\0" \
 	"DeviceDesc=" CONFIG_DEVICE_DESC "\0" \
 	"TargetClass=" CONFIG_TARGET_CLASS "\0" \
+	"netretry=no\0" \
 	"ncoutport=7865\0" \
 	"ncinport=8473\0" \
 	"ncip=192.168.1.1\0" \
@@ -322,17 +323,17 @@
 		"saveenv; " \
 		"setenv silent $savesilent;\0" \
 	"ipconfigcmd=" \
-		"if test \\\\\"$dhcpenabled\\\\\" -ne 0 -a " \
-			"\\\\\"$bootmode\\\\\" != \\\\\"recovery\\\\\";" \
+		"if test \\\"$dhcpenabled\\\" -ne 0 -a " \
+			"\\\"$bootmode\\\" != \\\"recovery\\\";" \
 		"then " \
 			"dhcpfail=0; " \
 			"dhcp || dhcpfail=1;" \
 		"else " \
 			"dhcpfail=-1;" \
 		"fi;" \
-		"if test \\\\\"$linklocalenabled\\\\\" -ne 0 -a " \
+		"if test \\\"$linklocalenabled\\\" -ne 0 -a " \
 			"$dhcpfail -ne 0 -o " \
-			"\\\\\"$bootmode\\\\\" = \\\\\"recovery\\\\\";" \
+			"\\\"$bootmode\\\" = \\\"recovery\\\";" \
 		"then " \
 			"llfail=0;" \
 			"linklocal || llfail=1;" \
@@ -348,7 +349,7 @@
 		"fi;\0" \
 	"recoverycmd=" \
 		"led status blink; " \
-		"if test \\\\\"$bootmode\\\\\" = \\\\\"recovery\\\\\"; " \
+		"if test \\\"$bootmode\\\" = \\\"recovery\\\"; " \
 		"then " \
 			"run ipresetcmd; " \
 		"fi; " \
