@@ -20,6 +20,12 @@
 #define CONFIG_DEVICE_CODE "78BF"
 #define CONFIG_DEVICE_DESC "ENET-63xx"
 #define CONFIG_RESET_BUTTON_GPIO 47
+#elif defined(CONFIG_FIELDDAQ)
+#define CONFIG_DEVICE_CODE "7945"
+#define CONFIG_DEVICE_DESC "FD-116xx"
+#define CONFIG_STATUS_LED_GPIO   1
+#define CONFIG_ACTIVE_LED_GPIO   15
+#define CONFIG_RESET_BUTTON_GPIO 48	/* not populated on RTM units */
 #else
 #error "Unknown CONFIG_DEVICE_DESC"
 #endif
@@ -113,13 +119,11 @@
 
 /* HW to use */
 #define CONFIG_SERIAL_MULTI
-/* Both Bluefin and Dorito use UART1 for serial debug */
-#if defined(CONFIG_BLUEFIN) || defined(CONFIG_DORITO)
+/* All products in this class use UART1 for serial debug */
 #define CONFIG_ZYNQ_UART1
 #define CONFIG_CONSOLE_UBOOT_DEV "zynquart1"
-#endif
 
-#if defined(CONFIG_BLUEFIN)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
 /* Bluefin only has UART1 enabled, so use first serial port. */
 #define CONFIG_CONSOLE_LINUX_DEV "ttyPS0"
 #elif defined(CONFIG_DORITO)
@@ -136,7 +140,7 @@
 #define CONFIG_ZYNQ_GEM0_BASE_ADDR	XPSS_GEM0_BASEADDR
 #define CONFIG_ZYNQ_GEM0_PHY_ADDR	0
 
-#if defined(CONFIG_BLUEFIN)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
 #define CONFIG_MV88E61XX_SWITCH
 #define CONFIG_RESET_PHY_R	/* call board driver's reset_phy */
 #define CONFIG_CMD_SWITCHCFG
@@ -171,7 +175,7 @@
 
 #define CONFIG_ZYNQ_GPIO
 
-#if defined(CONFIG_BLUEFIN)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
 #define CONFIG_CMD_I2C
 /* not really used */
 #define CONFIG_SYS_I2C_SPEED 400
@@ -449,6 +453,18 @@
 
 #if defined(CONFIG_MFG)
 
+/*
+ * We need to conditionally save eth1addr if the device uses it.
+ * (ethaddr, the first one, is unconditional and handled in the env below)
+ */
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
+#define ETH1ADDR_SAVE "eth1addr_save=${eth1addr:-02:00:DE:AD:CA:FE} &&"
+#define ETH1ADDR_LOAD "env set eth1addr $eth1addr_save &&"
+#else
+#define ETH1ADDR_SAVE ""
+#define ETH1ADDR_LOAD ""
+#endif
+
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"ipaddr=192.168.1.2\0" \
@@ -466,9 +482,11 @@
 		"dcache off; " \
 		"serial_save=${serial#:-DEADBEEF} && " \
 			"ethaddr_save=${ethaddr:-02:00:DE:AD:BE:EF} && " \
+			ETH1ADDR_SAVE \
 			"env default -f -a && " \
-			"env set serial# $serial_save && " \
-			"env set ethaddr $ethaddr_save; " \
+			"env set ethaddr $ethaddr_save && " \
+			ETH1ADDR_LOAD \
+			"env set serial# $serial_save; " \
 		"setenv silent; " \
 		"if setenv bootcmd \"$realbootcmd\" && " \
 			"setenv realbootcmd && " \
