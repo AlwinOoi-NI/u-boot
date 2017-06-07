@@ -212,6 +212,10 @@ struct mv88e61xx_config {
 };
 
 int mv88e61xx_switch_initialize(struct mv88e61xx_config *swconfig);
+int mv88e61xx_phy_read(struct mv88e61xx_config *swconfig, u32 prt, int regnum,
+		       u16 *val);
+int mv88e61xx_phy_write(struct mv88e61xx_config *swconfig, u32 prt, int regnum,
+			u16 val);
 #endif /* CONFIG_MV88E61XX_SWITCH */
 
 /*

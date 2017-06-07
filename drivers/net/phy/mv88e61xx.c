@@ -214,6 +214,48 @@ static int mv88e61xx_busychk(char *name)
 	return 0;
 }
 
+/* Read the 'regnum' register of the internal phy on port 'prt' */
+int mv88e61xx_phy_read(struct mv88e61xx_config *swconfig, u32 prt, int regnum,
+		       u16 *val)
+{
+	char *name = swconfig->name;
+	u32 portaddr = prt + swconfig->port_addr_offset;
+
+	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR,
+	       MV88E61XX_PHY_CMD, (1 << MV88E61XX_BUSY_OFST |
+				   1 << MV88E61XX_MODE_OFST |
+				   2 << MV88E61XX_OP_OFST |
+				   portaddr << MV88E61XX_ADDR_OFST |
+				   regnum));
+	if (mv88e61xx_busychk(name))
+		return -1;
+
+	RD_PHY(name, MV88E61XX_GLB2REG_DEVADR, MV88E61XX_PHY_DATA, val);
+
+	return 0;
+}
+
+/* Write 'val' to the 'regnum' register of the internal phy on port 'prt' */
+int mv88e61xx_phy_write(struct mv88e61xx_config *swconfig, u32 prt, int regnum,
+			u16 val)
+{
+	char *name = swconfig->name;
+	u32 portaddr = prt + swconfig->port_addr_offset;
+
+	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR, MV88E61XX_PHY_DATA, val);
+	WR_PHY(name, MV88E61XX_GLB2REG_DEVADR,
+	       MV88E61XX_PHY_CMD, (1 << MV88E61XX_BUSY_OFST |
+				   1 << MV88E61XX_MODE_OFST |
+				   1 << MV88E61XX_OP_OFST |
+				   portaddr << MV88E61XX_ADDR_OFST |
+				   regnum));
+
+	if (mv88e61xx_busychk(name))
+		return -1;
+
+	return 0;
+}
+
 /*
  * Power up the specified port and reset PHY
  */
