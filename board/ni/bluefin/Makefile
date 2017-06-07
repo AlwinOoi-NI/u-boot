@@ -31,6 +31,7 @@ LIB	= $(obj)lib$(BOARD).o
 COBJS-y	:= board.o led.o
 COBJS-$(CONFIG_CMD_DEFETHADDR) += defethaddr.o
 COBJS-$(CONFIG_CMD_SWITCHCFG) += switchcfg.o
+COBJS-$(CONFIG_CMD_SWITCHLOOP) += switchloop.o
 
 COBJS	:= $(sort $(COBJS-y))
 

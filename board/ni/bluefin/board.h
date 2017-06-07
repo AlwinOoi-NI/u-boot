@@ -12,4 +12,6 @@
 extern struct mv88e61xx_config bluefin_topaz_config;
 #define PORTINDEX(x)    (1 << x)
 
+int switch_check_self_loop(struct mv88e61xx_config *swcfg, u32 prt1, u32 prt2);
+
 #endif

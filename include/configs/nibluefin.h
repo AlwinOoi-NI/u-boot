@@ -144,6 +144,7 @@
 #define CONFIG_MV88E61XX_SWITCH
 #define CONFIG_RESET_PHY_R	/* call board driver's reset_phy */
 #define CONFIG_CMD_SWITCHCFG
+#define CONFIG_CMD_SWITCHLOOP
 #endif
 
 #define CONFIG_CMD_MII
