@@ -330,9 +330,34 @@ struct mv88e61xx_config bluefin_topaz_config = {
 	.ports_enabled = PORTINDEX(0)|PORTINDEX(1)|PORTINDEX(2)
 };
 
+
+extern int switch_check_self_loop(struct mv88e61xx_config *swcfg,
+				  u32 prt1, u32 prt2);
+
 void reset_phy(void)
 {
+#if !defined(CONFIG_MFG)
+	int selflooped;
+#endif
+
 	/* Configure and initialize switch. */
 	mv88e61xx_switch_initialize(&bluefin_topaz_config);
+
+#if !defined(CONFIG_MFG) && defined(CONFIG_RECOVERY_ON_SELF_LOOP)
+	/*
+	 * Check to see if we have an ethernet cable connected between the
+	 * two exposed ports on the switch. FieldDAQ devices do not have an
+	 * exposed reset button, so we use this to determine whether or not
+	 * we should go into recovery mode.
+	 */
+	selflooped = switch_check_self_loop(&bluefin_topaz_config, 1, 2);
+	if (selflooped == 1) {
+		/* enter recovery mode */
+		configure_led(LED_ID_STATUS, LED_ACTION_BLINK);
+		setenv("bootmode", "recovery");
+	} else {
+		setenv("bootmode", "normal");
+	}
+#endif
 }
 #endif /* CONFIG_MV88E61XX_SWITCH */

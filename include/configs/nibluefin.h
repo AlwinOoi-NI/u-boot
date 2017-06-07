@@ -26,6 +26,7 @@
 #define CONFIG_STATUS_LED_GPIO   1
 #define CONFIG_ACTIVE_LED_GPIO   15
 #define CONFIG_RESET_BUTTON_GPIO 48	/* not populated on RTM units */
+#define CONFIG_RECOVERY_ON_SELF_LOOP
 #else
 #error "Unknown CONFIG_DEVICE_DESC"
 #endif
