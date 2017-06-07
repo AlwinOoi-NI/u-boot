@@ -14,6 +14,7 @@
 #include <zynqpl.h>
 #include <usb/ulpi.h>
 #include <asm/gpio.h>
+#include "board.h"
 #include "led.h"
 
 #define BOOT_MODE_REG     (XPSS_SYS_CTRL_BASEADDR + 0x25C)
@@ -313,26 +314,25 @@ void ft_board_setup(void *blob, bd_t *bd)
 #endif
 
 #if defined(CONFIG_MV88E61XX_SWITCH)
+/*
+ * Bluefin has port 0 connected to the CPU, and ports 1 and 2
+ * are exposed externally.
+ */
+struct mv88e61xx_config bluefin_topaz_config = {
+	.name = "zynq_gem0",
+	.vlancfg = MV88E61XX_VLANCFG_DEFAULT,
+	.rgmii_delay = MV88E61XX_RGMII_DELAY_EN,
+	.led_init = MV88E61XX_LED_INIT_EN6341,
+	.mdip = MV88E61XX_MDIP_NOCHANGE,
+	.portstate = MV88E61XX_PORTSTT_FORWARDING,
+	.rmgmt = MV88E61XX_RMGMT_EN,
+	.cpuport = PORTINDEX(0),
+	.ports_enabled = PORTINDEX(0)|PORTINDEX(1)|PORTINDEX(2)
+};
+
 void reset_phy(void)
 {
-#define PORTINDEX(x)	(1 << x)
-	/*
-	 * Configure and initialize switch.
-	 * Bluefin has port 0 connected to the CPU, and ports 1 and 2
-	 * are exposed externally.
-	 */
-	struct mv88e61xx_config swcfg = {
-		.name = "zynq_gem0",
-		.vlancfg = MV88E61XX_VLANCFG_DEFAULT,
-		.rgmii_delay = MV88E61XX_RGMII_DELAY_EN,
-		.led_init = MV88E61XX_LED_INIT_EN6341,
-		.mdip = MV88E61XX_MDIP_NOCHANGE,
-		.portstate = MV88E61XX_PORTSTT_FORWARDING,
-		.rmgmt = MV88E61XX_RMGMT_EN,
-		.cpuport = PORTINDEX(0),
-		.ports_enabled = PORTINDEX(0)|PORTINDEX(1)|PORTINDEX(2)
-	};
-
-	mv88e61xx_switch_initialize(&swcfg);
+	/* Configure and initialize switch. */
+	mv88e61xx_switch_initialize(&bluefin_topaz_config);
 }
 #endif /* CONFIG_MV88E61XX_SWITCH */
