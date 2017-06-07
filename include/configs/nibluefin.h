@@ -27,6 +27,7 @@
 #define CONFIG_ACTIVE_LED_GPIO   15
 #define CONFIG_RESET_BUTTON_GPIO 48	/* not populated on RTM units */
 #define CONFIG_RECOVERY_ON_SELF_LOOP
+#define CONFIG_RECOVERY_CLEARS_CFG
 #else
 #error "Unknown CONFIG_DEVICE_DESC"
 #endif
@@ -288,6 +289,12 @@
 /* This address is 32k before the load address of the initrd */
 #define FDT_ADDR "0x7FF8000"
 
+#if defined(CONFIG_RECOVERY_CLEARS_CFG)
+#define CLEAR_CONFIG "ubi part boot-config && ubi remove config && ubi create config - dynamic; "
+#else
+#define CLEAR_CONFIG ""
+#endif
+
 #define REAL_EXTRA_ENV_SETTINGS \
 	"autoload=n\0" \
 	"silent=1\0" \
@@ -357,6 +364,7 @@
 		"led status blink; " \
 		"if test \\\"$bootmode\\\" = \\\"recovery\\\"; " \
 		"then " \
+			CLEAR_CONFIG \
 			"run ipresetcmd; " \
 		"fi; " \
 		"dcache off; " \
