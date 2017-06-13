@@ -52,6 +52,13 @@
 #define MV88E61XX_OP_OFST			10
 #define MV88E61XX_ADDR_OFST		5
 
+#define MV88E6341_LEDCNTL_BUSY_OFST	15
+#define MV88E6341_LEDCNTL_PORT_OFST	12
+
+#define MV88E6341_LEDCNTL_GLOBAL_CNTL_REG	0
+#define MV88E6341_LEDCNTL_PORT_CNTL01_REG	0
+#define MV88E6341_LEDCNTL_PORT_CNTL23_REG	1
+
 #ifdef CONFIG_MV88E61XX_MULTICHIP_ADRMODE
 static int mv88e61xx_busychk_multic(char *name, u32 devaddr);
 static void mv88e61xx_wr_phy(char *name, u32 phy_adr, u32 reg_ofs, u16 data);

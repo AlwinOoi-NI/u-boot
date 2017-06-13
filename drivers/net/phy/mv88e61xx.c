@@ -349,6 +349,20 @@ static int mv88361xx_led_init(struct mv88e61xx_config *swconfig, u32 prt)
 /*
  * LED setup for mv88e6341.
  */
+static int mv88e6341_ledcntl_write(struct mv88e61xx_config *swconfig,
+				   u32 port, u32 reg, u32 data)
+{
+	char *name = swconfig->name;
+	u32 portaddr = port + swconfig->port_addr_offset;
+
+	WR_PHY(name, portaddr, MV88E6341_LEDCNTL_REG,
+	       (1 << MV88E6341_LEDCNTL_BUSY_OFST) |
+	       (reg << MV88E6341_LEDCNTL_PORT_OFST) |
+	       data);
+
+	return 0;
+}
+
 static int mv88e6341_led_init(struct mv88e61xx_config *swconfig)
 {
 	char *name = swconfig->name;
@@ -359,18 +373,25 @@ static int mv88e6341_led_init(struct mv88e61xx_config *swconfig)
 		return 0;
 
 	/* Port 0 is "global". */
-	/* Direct LEDs = 0, Skip Columns: 0b0100 */
-	WR_PHY(name, swconfig->port_addr_offset, MV88E6341_LEDCNTL_REG, 0x8004);
+	#if defined(CONFIG_MV88E6341_LEDCTRL_GLOBAL)
+	mv88e6341_ledcntl_write(swconfig, 0,
+				MV88E6341_LEDCNTL_GLOBAL_CNTL_REG,
+				CONFIG_MV88E6341_LEDCTRL_GLOBAL);
+	#endif
 
 	/* Ports 1-4 have LED controls for ports */
 	for (prt = 1; prt < 5; prt++) {
 		if ((1 << prt) & swconfig->ports_enabled) {
-			u32 portaddr = prt + swconfig->port_addr_offset;
-
-			/* LED0: 0x3 (Link/Act), LED1: 0x3 (Gig Link) */
-			WR_PHY(name, portaddr, MV88E6341_LEDCNTL_REG, 0x8033);
-			/* LED1: 0x3 (Force Off), LED3: 0x9 (100 Link)  */
-			WR_PHY(name, portaddr, MV88E6341_LEDCNTL_REG, 0x909E);
+			#if defined(CONFIG_MV88E6341_LEDCTRL_PORT01)
+			mv88e6341_ledcntl_write(swconfig, prt,
+						MV88E6341_LEDCNTL_PORT_CNTL01_REG,
+						CONFIG_MV88E6341_LEDCTRL_PORT01);
+			#endif
+			#if defined(CONFIG_MV88E6341_LEDCTRL_PORT23)
+			mv88e6341_ledcntl_write(swconfig, prt,
+						MV88E6341_LEDCNTL_PORT_CNTL23_REG,
+						CONFIG_MV88E6341_LEDCTRL_PORT23);
+			#endif
 		}
 	}
 
