@@ -149,6 +149,14 @@
 #define CONFIG_CMD_SWITCHLOOP
 #endif
 
+/* Switch LED configuration */
+/* Direct LEDs: 0, Skip Columns: 0b0100 */
+#define CONFIG_MV88E6341_LEDCTRL_GLOBAL		0x004
+/* LED1: 0x3 (Gig Link), LED0: 0x3 (Link/Act) */
+#define CONFIG_MV88E6341_LEDCTRL_PORT01		0x033
+/* LED3: 0x9 (100 Link), LED2: 0x3 (Force Off) */
+#define CONFIG_MV88E6341_LEDCTRL_PORT23		0x09E
+
 #define CONFIG_CMD_MII
 #define CONFIG_MII
 #define CONFIG_PHY_GIGE
