@@ -150,12 +150,21 @@
 #endif
 
 /* Switch LED configuration */
+#if defined(CONFIG_BLUEFIN)
 /* Direct LEDs: 0, Skip Columns: 0b0100 */
 #define CONFIG_MV88E6341_LEDCTRL_GLOBAL		0x004
 /* LED1: 0x3 (Gig Link), LED0: 0x3 (Link/Act) */
 #define CONFIG_MV88E6341_LEDCTRL_PORT01		0x033
 /* LED3: 0x9 (100 Link), LED2: 0x3 (Force Off) */
 #define CONFIG_MV88E6341_LEDCTRL_PORT23		0x09E
+#elif defined(CONFIG_FIELDDAQ)
+/* Direct LEDs: 1, Skip Columns: 0b1111 */
+#define CONFIG_MV88E6341_LEDCTRL_GLOBAL		0x01F
+/* LED1: 0xE (Force Off), LED0: 0x3 (Link/Act) */
+#define CONFIG_MV88E6341_LEDCTRL_PORT01		0x0E3
+/* LED3: 0xE (Force Off), LED2: 0xE (Force Off) */
+#define CONFIG_MV88E6341_LEDCTRL_PORT23		0x0EE
+#endif
 
 #define CONFIG_CMD_MII
 #define CONFIG_MII
