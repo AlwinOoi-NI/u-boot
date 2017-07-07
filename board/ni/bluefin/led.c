@@ -119,6 +119,59 @@ int led_init(void)
 	return 0;
 }
 
+#if defined(CONFIG_FIELDDAQ)
+/*
+ * FieldDAQ has a bicolor status LED, so configure_led needs to handle some
+ * special mapping to set up the two led_values slots.
+ * STATUS_LED_GPIO -> Red Status LED
+ * ACTIVE_LED_GPIO -> Green Status LED
+ *
+ * LED_ACTION_OFF   -> Both Off
+ * LED_ACTION_ON    -> Both On ("yellow")
+ * LED_ACTION_BLINK -> Blinking Red
+ */
+int configure_led(led_id id, led_action action)
+{
+	int was_blinking = is_blinking();
+	int should_now_blink;
+
+	if (id != LED_ID_STATUS)
+		return 0;
+
+	if (action == LED_ACTION_ON) {
+		led_values[LED_ID_STATUS] = LED_ON;
+		led_values[LED_ID_ACTIVE] = LED_ON;
+	} else if (action == LED_ACTION_OFF) {
+		led_values[LED_ID_STATUS] = 0;
+		led_values[LED_ID_ACTIVE] = 0;
+	} else if (action == LED_ACTION_TOGGLE) {
+		led_values[LED_ID_STATUS] = !led_values[LED_ID_STATUS];
+		led_values[LED_ID_ACTIVE] = !led_values[LED_ID_ACTIVE];
+	} else if (action == LED_ACTION_BLINK) {
+		led_values[LED_ID_STATUS] = LED_BLINK;
+		led_values[LED_ID_ACTIVE] = 0;
+	} else {
+		printf("bad led action\n");
+		return -1;
+	}
+
+	set_gpio_led(LED_ID_STATUS, led_values[LED_ID_STATUS] & LED_ON);
+	set_gpio_led(LED_ID_ACTIVE, led_values[LED_ID_ACTIVE] & LED_ON);
+
+	/* figure out if we need to change the timer state */
+	should_now_blink = is_blinking();
+	if (!was_blinking && should_now_blink)
+		start_blinking();
+	else if (was_blinking && !should_now_blink)
+		stop_blinking();
+
+	return 0;
+
+}
+#else
+/*
+ * Assumes a device with discrete "status" and "active" LEDs, like Bluefin.
+ */
 int configure_led(led_id id, led_action action)
 {
 	int value;
@@ -155,6 +208,7 @@ int configure_led(led_id id, led_action action)
 
 	return 0;
 }
+#endif
 
 int do_led (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
@@ -166,8 +220,10 @@ int do_led (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 
 	if (strcmp(argv[1], "status") == 0)
 		id = LED_ID_STATUS;
+#if !defined(CONFIG_FIELDDAQ)
 	else if (strcmp(argv[1], "active") == 0)
 		id = LED_ID_ACTIVE;
+#endif
 	else
 		return CMD_RET_USAGE;
 
