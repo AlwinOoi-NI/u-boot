@@ -350,13 +350,15 @@ void reset_phy(void)
 	 * exposed reset button, so we use this to determine whether or not
 	 * we should go into recovery mode.
 	 */
-	selflooped = switch_check_self_loop(&bluefin_topaz_config, 1, 2);
-	if (selflooped == 1) {
-		/* enter recovery mode */
-		configure_led(LED_ID_STATUS, LED_ACTION_BLINK);
-		setenv("bootmode", "recovery");
-	} else {
-		setenv("bootmode", "normal");
+	if (strncmp(getenv("bootmode"), "recovery", 8) != 0) {
+		selflooped = switch_check_self_loop(&bluefin_topaz_config, 1, 2);
+		if (selflooped == 1) {
+			/* enter recovery mode */
+			configure_led(LED_ID_STATUS, LED_ACTION_BLINK);
+			setenv("bootmode", "recovery");
+		} else {
+			setenv("bootmode", "normal");
+		}
 	}
 #endif
 }
