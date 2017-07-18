@@ -21,7 +21,7 @@
 #define CONFIG_DEVICE_DESC "ENET-63xx"
 #define CONFIG_RESET_BUTTON_GPIO 47
 #elif defined(CONFIG_FIELDDAQ)
-#define CONFIG_DEVICE_CODE "7945"
+#define CONFIG_DEVICE_CODE "7001"	/* placeholder to be reprogrammed at MFG */
 #define CONFIG_DEVICE_DESC "FD-116xx"
 #define CONFIG_STATUS_LED_GPIO   1
 #define CONFIG_ACTIVE_LED_GPIO   15
