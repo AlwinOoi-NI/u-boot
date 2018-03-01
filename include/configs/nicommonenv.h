@@ -26,7 +26,7 @@
 
 #define READONLY_MFG_ENV_VARS \
 	"serial#:xo,ethaddr:mc,eth1addr:mc,usbgadgetethaddr:mc," \
-	"wirelessRegionFactory:so,wl12xxnvs:so,"
+	"wirelessRegionFactory:so,wireless_board_id:so,wl12xxnvs:so,"
 
 #define NET_TYPE_ENV_VARS \
 	"ipaddr:i,sipaddr:i,netmask:i,snetmask:i,gatewayip:i,sgatewayip:i," \
