@@ -28,6 +28,14 @@
 #define CONFIG_RESET_BUTTON_GPIO 48	/* not populated on RTM units */
 #define CONFIG_RECOVERY_ON_SELF_LOOP
 #define CONFIG_RECOVERY_CLEARS_CFG
+#elif defined(CONFIG_CORALREEF)
+#define CONFIG_DEVICE_CODE "7A4B"
+#define CONFIG_DEVICE_DESC "cRIO-9085"
+#define CONFIG_STATUS_LED_GPIO   46
+#define CONFIG_ACTIVE_LED_GPIO   47
+#define CONFIG_RESET_BUTTON_GPIO 48
+#undef CONFIG_TARGET_CLASS
+#define CONFIG_TARGET_CLASS      "cRIO-XMC"
 #else
 #error "Unknown CONFIG_DEVICE_DESC"
 #endif
@@ -125,7 +133,7 @@
 #define CONFIG_ZYNQ_UART1
 #define CONFIG_CONSOLE_UBOOT_DEV "zynquart1"
 
-#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ) || defined(CONFIG_CORALREEF)
 /* Bluefin only has UART1 enabled, so use first serial port. */
 #define CONFIG_CONSOLE_LINUX_DEV "ttyPS0"
 #elif defined(CONFIG_DORITO)
@@ -142,7 +150,7 @@
 #define CONFIG_ZYNQ_GEM0_BASE_ADDR	XPSS_GEM0_BASEADDR
 #define CONFIG_ZYNQ_GEM0_PHY_ADDR	0
 
-#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ) || defined(CONFIG_CORALREEF)
 #define CONFIG_MV88E61XX_SWITCH
 #define CONFIG_RESET_PHY_R	/* call board driver's reset_phy */
 #define CONFIG_CMD_SWITCHCFG
@@ -195,7 +203,7 @@
 
 #define CONFIG_ZYNQ_GPIO
 
-#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_FIELDDAQ) || defined(CONFIG_CORALREEF)
 #define CONFIG_CMD_I2C
 /* not really used */
 #define CONFIG_SYS_I2C_SPEED 400

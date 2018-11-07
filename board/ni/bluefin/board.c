@@ -327,7 +327,11 @@ struct mv88e61xx_config bluefin_topaz_config = {
 	.portstate = MV88E61XX_PORTSTT_FORWARDING,
 	.rmgmt = MV88E61XX_RMGMT_EN,
 	.cpuport = PORTINDEX(0),
+#if !defined(CONFIG_CORALREEF)
 	.ports_enabled = PORTINDEX(0)|PORTINDEX(1)|PORTINDEX(2)
+#else /* is coral reef */
+	.ports_enabled = PORTINDEX(0)|PORTINDEX(1)|PORTINDEX(2)|PORTINDEX(3)|PORTINDEX(4)
+#endif
 };
 
 
