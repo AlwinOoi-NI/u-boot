@@ -158,7 +158,7 @@
 #endif
 
 /* Switch LED configuration */
-#if defined(CONFIG_BLUEFIN)
+#if defined(CONFIG_BLUEFIN) || defined(CONFIG_CORALREEF)
 /* Direct LEDs: 0, Skip Columns: 0b0100 */
 #define CONFIG_MV88E6341_LEDCTRL_GLOBAL		0x004
 /* LED1: 0x3 (Gig Link), LED0: 0x3 (Link/Act) */
