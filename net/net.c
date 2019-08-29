@@ -1127,6 +1127,9 @@ NetReceive(uchar *inpkt, int len)
 			return;
 		}
 
+		if (ntohs(ip->udp_len) < UDP_HDR_SIZE || ntohs(ip->udp_len) > ntohs(ip->ip_len))
+			return;
+
 		debug_cond(DEBUG_DEV_PKT,
 			"received UDP (to=%pI4, from=%pI4, len=%d)\n",
 			&dst_ip, &src_ip, len);
