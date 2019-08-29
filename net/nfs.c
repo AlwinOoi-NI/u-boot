@@ -586,6 +586,9 @@ NfsHandler(uchar *pkt, unsigned dest, IPaddr_t sip, unsigned src, unsigned len)
 
 	debug("%s\n", __func__);
 
+	if (len > sizeof(struct rpc_t))
+		return;
+
 	if (dest != NfsOurPort)
 		return;
 
