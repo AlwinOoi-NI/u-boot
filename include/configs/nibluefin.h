@@ -195,7 +195,7 @@
 #else
 #define CONFIG_PXE_PLATFORM_DEFAULT	"default-" CONFIG_TARGET_CLASS
 #endif
-					
+
 #ifdef CONFIG_MFG
 #define CONFIG_ETHADDR 00:80:2f:00:00:00
 #define CONFIG_ENV_OVERWRITE
@@ -516,11 +516,13 @@
 	"bringup=" \
 		"dcache off; " \
 		"serial_save=${serial#:-DEADBEEF} && " \
+			"defpasswd_save=${defpasswd} && " \
 			"ethaddr_save=${ethaddr:-02:00:DE:AD:BE:EF} && " \
 			ETH1ADDR_SAVE \
 			"env default -f -a && " \
 			"env set ethaddr $ethaddr_save && " \
 			ETH1ADDR_LOAD \
+			"env set defpasswd $defpasswd_save && " \
 			"env set serial# $serial_save; " \
 		"setenv silent; " \
 		"if setenv bootcmd \"$realbootcmd\" && " \

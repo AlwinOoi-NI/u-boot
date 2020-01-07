@@ -191,12 +191,15 @@ int board_late_init (void)
 #if defined(CONFIG_MFG)
 	char serial[12] = "";
 	char ethaddr[20] = "";
+	char defpasswd[20] = "";
 
-	/* Preserve serial# and ethaddr if possible. */
+	/* Preserve serial#, ethaddr and defpasswd if possible. */
 	if (getenv("serial#") != NULL)
 		strncat(serial, getenv("serial#"), sizeof(serial));
 	if (getenv("ethaddr") != NULL)
 		strncat(ethaddr, getenv("ethaddr"), sizeof(ethaddr));
+	if (getenv("defpasswd") != NULL)
+		strncat(defpasswd, getenv("defpasswd"), sizeof(defpasswd));
 
 	set_default_env("Default env required for auto-bringup.\n");
 
@@ -204,6 +207,8 @@ int board_late_init (void)
 		setenv("serial#", serial);
 	if (strlen(ethaddr) != 0)
 		setenv("ethaddr", ethaddr);
+	if (strlen(defpasswd) != 0)
+		setenv("defpasswd", defpasswd);
 #endif
 
 #if !defined(CONFIG_MFG)
