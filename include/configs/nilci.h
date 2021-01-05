@@ -195,6 +195,14 @@
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
+#if defined(CONFIG_VB8034) || defined(CONFIG_VB8054)
+   #define CONFIG_PLATFORM_VB80X4
+#elif defined(CONFIG_VB8012)
+   #define CONFIG_PLATFORM_VB80X2
+#else
+   #error model is of an unknown platform
+#endif
+
 #ifdef CONFIG_VB8034
    #define DEVICE_CODE "0x77DE"
    #define DEVICE_DESC "NI VB-8034"
@@ -276,8 +284,8 @@
 		"cmp.b $loadaddr $verifyaddr " \
 			__stringify(CONFIG_BOARD_SIZE_LIMIT) ";\0"
 
-#if defined(CONFIG_VB8034) || defined(CONFIG_VB8054)
-/* For VB8034 and VB8054, deassert ethernet phy reset right before booting.
+#if defined(CONFIG_PLATFORM_VB80X4)
+/* For VB80x4 platform, deassert ethernet phy reset right before booting.
    This gives the power rails time to stabilize */
 #define LCI_BOOTCOMMAND \
 	"if test -n \\\\\"$configfpga\\\\\"; then " \
@@ -285,7 +293,7 @@
 		"source $loadaddr:bootscript;" \
 	"fi; " \
 	"echo 'Boot failed!' "
-#elif defined(CONFIG_VB8012)
+#elif defined(CONFIG_PLATFORM_VB80X2)
 #define LCI_BOOTCOMMAND \
 	"if test -n \\\\\"$configfpga\\\\\"; then " \
 		"source $loadaddr:bootscript;" \
@@ -293,8 +301,8 @@
 	"echo 'Boot failed!' "
 #endif
 
-/* For VB8034 and VB8054, drive PHY reset high and enable GPIO output. */
-#if defined(CONFIG_VB8034) || defined(CONFIG_VB8054)
+/* For VB80x4 platform, drive PHY reset high and enable GPIO output. */
+#if defined(CONFIG_PLATFORM_VB80X4)
 #define LCI_PREBOOT \
 	"dcache on; " \
 	"mw.l 0xE000A248 0xF0000; "\
@@ -314,7 +322,7 @@
                 "altrootdev=mtdblock9; " \
 	"fi; " \
 	"run fpgaloadcmd"
-#elif defined(CONFIG_VB8012)
+#elif defined(CONFIG_PLATFORM_VB80X2)
 #define LCI_PREBOOT \
 	"dcache on; " \
 	"ubi part boot-config; ubifsmount ubi:bootfs; " \
@@ -349,9 +357,9 @@
 #define CONFIG_NAND_BBT_NO_MARK
 
 #undef CONFIG_EXTRA_ENV_SETTINGS
-/* For VB-8034 and VB-8054, drive PHY reset high, set GPIO enable and set the direction.
+/* For VB-80x4 platform, drive PHY reset high, set GPIO enable and set the direction.
 * Unlock the nand in preboot only for these two devices. */
-#if defined(CONFIG_VB8034) || defined(CONFIG_VB8054)
+#if defined(CONFIG_PLATFORM_VB80X4)
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	LCI_ENV_SETTINGS \
 	"realbootcmd="LCI_BOOTCOMMAND"\0" \
@@ -409,7 +417,7 @@
 			"echo '*******' && " \
 			"echo '*******  Auto-bringup failed!'; " \
 		"fi;"
-#elif defined(CONFIG_VB8012)
+#elif defined(CONFIG_PLATFORM_VB80X2)
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	LCI_ENV_SETTINGS \
 	"realbootcmd="LCI_BOOTCOMMAND"\0" \
