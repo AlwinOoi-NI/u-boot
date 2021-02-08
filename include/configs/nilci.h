@@ -195,7 +195,7 @@
 #define CONFIG_SYS_LOAD_ADDR 0x8000000
 #define CONFIG_LOADADDR CONFIG_SYS_LOAD_ADDR
 
-#if defined(CONFIG_VB8034) || defined(CONFIG_VB8054) || defined(CONFIG_ADP5251) || defined(CONFIG_ADP5252)
+#if defined(CONFIG_VB8034) || defined(CONFIG_VB8054) || defined(CONFIG_ADP5470) || defined(CONFIG_ADP5490)
    #define CONFIG_PLATFORM_VB80X4
 #elif defined(CONFIG_VB8012) || defined(CONFIG_ADP5250)
    #define CONFIG_PLATFORM_VB80X2
@@ -215,12 +215,12 @@
 #elif CONFIG_ADP5250
    #define DEVICE_CODE "0x7AB9"
    #define DEVICE_DESC "Digilent ADP5250"
-#elif CONFIG_ADP5251
+#elif CONFIG_ADP5470
    #define DEVICE_CODE "0x7ABA"
-   #define DEVICE_DESC "Digilent ADP5251"
-#elif CONFIG_ADP5252
+   #define DEVICE_DESC "Digilent ADP5470"
+#elif CONFIG_ADP5490
    #define DEVICE_CODE "0x7ABB"
-   #define DEVICE_DESC "Digilent ADP5252"
+   #define DEVICE_DESC "Digilent ADP5490"
 #endif
 
 
